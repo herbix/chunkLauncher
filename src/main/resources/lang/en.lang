@@ -1,0 +1,123 @@
+
+msg.auth.connecting1=Connecting 
+msg.auth.connecting2=\u0020to check user name and password...
+msg.auth.failed=Authentication failed.
+msg.auth.succeeded=Authentication succeeded.
+msg.auth.noselection=Please select an auth type.
+msg.auth.minelogin.failed.0=Network error.
+msg.auth.minelogin.failed.1=Bad login.
+msg.auth.minelogin.failed.2=Inner error.
+msg.auth.minelogin.failed.3=No such user.
+msg.auth.minelogin.failed.4=Need verify.
+msg.auth.minelogin.failed.5=Bad password.
+msg.auth.skinme.donthavechar=You don't have this character.
+
+msg.download.failed=Download failed: 
+msg.download.start=Start download: 
+msg.download.succeeded=Download finished: 
+
+msg.game.basicrequire=You need assets and at least one game module to start game.
+msg.game.nousername=Please input user name.
+msg.game.isloggingin=The system is trying to log in.
+
+msg.module.alreadyinstalled=This module has been installed. 
+msg.module.failed=Installation failed.
+msg.module.isinstalling=The module is installing.
+msg.module.isuninstalling=The module is uninstalling.
+msg.module.noselection=Please select a module first.
+msg.module.notallowed=This version of minecraft is incompatible with your operating system.
+msg.module.reason=The reason: 
+msg.module.start=Start installation
+msg.module.startuninstall=Start uninstallation
+msg.module.succeeded=Installation finished
+msg.module.uninstallsucceeded=Uninstallation finished
+msg.module.delete=Deleting
+msg.module.notinstalled=The module is not installed.
+
+msg.update.request=New version ChunkLauncher is available. Do you want to update?
+msg.update.exception1=Exception occurs: 
+msg.update.exception2=. Updating stopped.
+
+msg.version.downloading=Updating version info...
+msg.version.failed=Unable to update version info.
+msg.version.succeeded=Version info has been updated.
+
+msg.profile.cannotremovedefault=Cannot remove default profile.
+msg.profile.removeconfirm=Are you sure you want to remove this profile?
+msg.profile.exists=Profile with this name has existed.
+msg.profile.inputname=Please input a profile name:
+
+msg.main.error=An error occurred:\u000A
+msg.main.error.title=Error
+
+msg.gamepath.error=Unable to use '.minecraft' directory.
+msg.help=Bug report: herbix@163.com.
+msg.jrepath.error=Unable to run java from specified jre path.
+msg.zip.unzip=Unzipping 
+msg.comingsoon=Cannot do this now.
+msg.assets.cannotload=Cannot load assets files.
+msg.run.unknownparam1=There is no param "
+msg.run.unknownparam2=".
+msg.twitch.inputname=Please input your player name:
+msg.yggdrasil.saved=Cannot connect to login server. Would you like to use local authentication data as your login sessions?
+msg.run.failed=Launching failed. Please read last.log for more information.
+msg.useproxy=Using proxy:
+msg.proxy.notsocks=Minecraft only supports Socks proxy. Direct link is used instead.
+
+ui.mode.d32=-d32
+ui.mode.d64=-d64
+ui.mode.default=Default
+
+ui.module.install=Install
+ui.module.installed=Installed
+ui.module.label=Versions:
+ui.module.notinstalled=
+ui.module.uninstall=Uninstall
+ui.module.notfinished=Half Installed
+ui.module.old=Old Versions
+ui.module.snapshot=Snapshots
+
+ui.table.name=Name
+ui.table.state=State
+ui.table.type=Type
+
+ui.jrepath.label=JRE path:
+ui.jrepath.filechooser.title=Choose JRE Path
+
+ui.profile.label=Profiles:
+ui.profile.add=Add
+ui.profile.remove=Remove
+
+ui.runpath.label=Work Directory
+ui.runpath.filechooser.title=Choose Work Directory
+
+ui.char.title=Character Select
+ui.char.ok=OK
+ui.char.cancel=Cancel
+
+ui.update.title=Updating...
+ui.launch=Launch
+ui.memory.label=Memory Size(MB):
+ui.offline=Offline
+ui.ok=OK
+ui.cancel=Cancel
+ui.password.label=Password:
+ui.savepassword=Save Password
+ui.username.label=User Name:
+ui.version.label=Version:
+
+ui.auth.type.label=Auth Type:
+ui.auth.type.offline=Offline
+ui.auth.type.minecraft=Official(Legacy)
+ui.auth.type.minelogin=MineLogin
+ui.auth.type.yggdrasil=Official
+ui.auth.type.twitch=Twitch
+
+ui.tab.profile=Profile Manage
+ui.tab.module=Module Manage
+ui.tab.system=System Settings
+
+ui.proxy.type.label=Proxy Type:
+ui.proxy.hostport.label=Proxy Server (Host:Port)
+ui.proxy.enable.label=Enable Proxy
+
