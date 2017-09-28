@@ -27,7 +27,18 @@ public class AuthType {
 
         try {
             alias = (String)auth.getDeclaredMethod("getAlias").invoke(null);
-            values.add(this);
+
+            boolean alreadyRegistered = false;
+            for (AuthType type : values) {
+                if (alias.equals(type.alias)) {
+                    alreadyRegistered = true;
+                    break;
+                }
+            }
+
+            if (!alreadyRegistered) {
+                values.add(this);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,8 +47,7 @@ public class AuthType {
     public ServerAuth newInstance(String name, String pass) {
         try {
             Constructor<?> constructor = auth.getConstructor(String.class, String.class);
-            ServerAuth result = (ServerAuth)constructor.newInstance(name, pass);
-            return result;
+            return (ServerAuth)constructor.newInstance(name, pass);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
