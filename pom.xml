@@ -32,6 +32,16 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>lang/en.lang</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>lang/en.lang</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>
