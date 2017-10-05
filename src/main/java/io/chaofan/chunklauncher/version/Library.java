@@ -77,7 +77,7 @@ public class Library {
     }
 
     public String getTempFilePath() {
-        return Config.TEMP_DIR + "/libraries/" + getKey();
+        return Config.TEMP_DIR + Config.MINECRAFT_LIBRARY_PATH + "/" + getKey();
     }
 
     private DownloadInfo getDownloadInfo() {
@@ -109,9 +109,9 @@ public class Library {
     public String getRealFilePath() {
         DownloadInfo info = getDownloadInfo();
         if (info != null && info.path != null) {
-            return Config.gamePath + "/libraries/" + info.path;
+            return Config.gamePath + Config.MINECRAFT_LIBRARY_PATH + "/" + info.path;
         }
-        return Config.gamePath + "/libraries/" + getKey();
+        return Config.gamePath + Config.MINECRAFT_LIBRARY_PATH + "/" + getKey();
     }
 
     public String getExtractTempPath() {
@@ -150,6 +150,9 @@ public class Library {
     }
 
     public boolean downloaded() {
+        if (!Config.enableChecksum) {
+            return new File(getRealFilePath()).isFile();
+        }
         DownloadInfo info = getDownloadInfo();
         if(info != null) {
             if (info.sha1 != null) {

@@ -1,3 +1,4 @@
+app.version=${project.version}
 
 msg.auth.connecting1=Connecting 
 msg.auth.connecting2=\u0020to check user name and password...

@@ -35,7 +35,7 @@ import io.chaofan.chunklauncher.version.Version;
 
 public class Launcher {
 
-    public static final String VERSION = "1.8.0";
+    public static final String VERSION = Lang.getString("app.version");
 
     private static final String helpWords = "Chunk Launcher V" + VERSION + " " + Lang.getString("msg.help");
 
@@ -90,9 +90,9 @@ public class Launcher {
             if(!gameFolder.mkdirs())
                 System.out.println(Lang.getString("msg.gamepath.error"));
         }
-        new File(Config.gamePath + "/versions").mkdirs();
-        new File(Config.gamePath + "/assets").mkdirs();
-        new File(Config.gamePath + "/libraries").mkdirs();
+        new File(Config.gamePath + Config.MINECRAFT_VERSION_PATH).mkdirs();
+        new File(Config.gamePath + Config.MINECRAFT_ASSET_PATH).mkdirs();
+        new File(Config.gamePath + Config.MINECRAFT_LIBRARY_PATH).mkdirs();
         new File(Config.TEMP_DIR).mkdirs();
     }
 
@@ -104,7 +104,7 @@ public class Launcher {
             refreshComponentsList();
         }
         mainDownloader.addDownload(
-            new Downloadable(Config.MINECRAFT_DOWNLOAD_BASE + Config.MINECRAFT_VERSION_FILE,
+            new Downloadable(Config.MINECRAFT_VERSION_DOWNLOAD_URL,
             Config.TEMP_DIR + "/version_temp", new VersionDownloadCallback())
             );
     }

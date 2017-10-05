@@ -24,10 +24,14 @@ public class Config {
         "https://libraries.minecraft.net";
     public static final String MINECRAFT_RESOURCE_BASE =
         "http://resources.download.minecraft.net";
+    public static final String MINECRAFT_VERSION_DOWNLOAD_URL =
+        "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     public static final String MINECRAFT_VERSION_FILE =
         "/versions/versions.json";
     public static final String MINECRAFT_VERSION_PATH =
         "/versions";
+    public static final String MINECRAFT_LIBRARY_PATH =
+        "/libraries";
     public static final String MINECRAFT_ASSET_PATH =
         "/assets";
     public static final String MINECRAFT_OBJECTS_PATH =
@@ -67,10 +71,10 @@ public class Config {
     public static boolean enableProxy = false;
     public static Proxy proxy = null;
     public static String proxyType = "HTTP";
-
     private static String proxyString;
     public static String proxyHost;
     public static int proxyPort;
+    public static boolean enableChecksum = false;
 
     public static void saveConfig() {
         Properties p = new Properties();
@@ -91,10 +95,10 @@ public class Config {
         p.setProperty("show-debug", String.valueOf(showDebugInfo));
         p.setProperty("show-old", String.valueOf(showOld));
         p.setProperty("show-snapshot", String.valueOf(showSnapshot));
-
         p.setProperty("proxy", getProxyString());
         p.setProperty("proxy-enabled", String.valueOf(enableProxy));
         p.setProperty("proxy-type", proxyType);
+        p.setProperty("enable-checksum", String.valueOf(enableChecksum));
 
         try {
             FileOutputStream out = new FileOutputStream(CONFIG_FILE);
@@ -166,6 +170,9 @@ public class Config {
                 enableProxy = Boolean.valueOf(p.getProperty("proxy-enabled", "false"));
             } catch (Exception e) {    }
             proxyType = p.getProperty("proxy-type", "HTTP");
+            try {
+                enableChecksum = Boolean.valueOf(p.getProperty("enable-checksum", "false"));
+            } catch (Exception e) {    }
 
             in.close();
         } catch (IOException e) {

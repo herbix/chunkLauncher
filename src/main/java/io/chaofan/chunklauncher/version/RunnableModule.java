@@ -305,7 +305,7 @@ public class RunnableModule extends Module {
     }
 
     private boolean gameJarDownloaded() {
-        if(tryLoadModuleInfo() && moduleInfo.downloads != null) {
+        if(Config.enableChecksum && tryLoadModuleInfo() && moduleInfo.downloads != null) {
             DownloadInfo info = moduleInfo.downloads.get("client");
             if(info != null && info.sha1 != null) {
                 return EasyFileAccess.doSha1Checksum2(info.sha1, getModuleJarPath());
@@ -615,6 +615,9 @@ public class RunnableModule extends Module {
     }
 
     private String getModuleJsonUrl() {
+        if (version.url != null) {
+            return version.url;
+        }
         return Config.MINECRAFT_DOWNLOAD_BASE + String.format(Config.MINECRAFT_VERSION_FORMAT, getName(), getName());
     }
 
@@ -693,7 +696,7 @@ public class RunnableModule extends Module {
         }
 
         if(moduleInfo.assetIndex != null && moduleInfo.assetIndex.sha1 != null) {
-            if(!EasyFileAccess.doSha1Checksum2(moduleInfo.assetIndex.sha1, getModuleAssetsIndexPath())) {
+            if(Config.enableChecksum && !EasyFileAccess.doSha1Checksum2(moduleInfo.assetIndex.sha1, getModuleAssetsIndexPath())) {
                 return false;
             }
         }

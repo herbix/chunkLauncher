@@ -168,7 +168,6 @@ public class Runner {
     }
 
     public void start() {
-
         try {
             ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[params.size()]));
             pb.directory(new File(Config.gamePath));
@@ -184,15 +183,15 @@ public class Runner {
 
             String line;
             while((line = in.readLine()) != null) {
-                if(line.toLowerCase().contains("lwjgl version")) {
+                out.write(line + "\n");
+                System.out.println(line);
+                if(checkWindowOpened(line)) {
                     if(!Config.showDebugInfo) {
                         out.close();
                         return;
                     }
                     windowOpened = true;
                 }
-                out.write(line + "\n");
-                System.out.println(line);
             }
             out.close();
 
@@ -204,7 +203,16 @@ public class Runner {
             e.printStackTrace();
             Launcher.exceptionReport(e);
         }
+    }
 
+    private boolean checkWindowOpened(String line) {
+        String moduleName = module.getName();
+        if (moduleName.startsWith("a") || moduleName.startsWith("b") || moduleName.equals("1.0") || moduleName.equals("1.1")) {
+            return line.toLowerCase().contains("initializing lwjgl");
+        } else if (moduleName.charAt(0) < '0' || moduleName.charAt(0) > '9') {
+            return true;
+        }
+        return line.toLowerCase().contains("lwjgl version");
     }
 
     private boolean isJre64Bit(String java) {
