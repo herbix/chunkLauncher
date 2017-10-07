@@ -152,9 +152,11 @@ public class Launcher {
     }
 
     private void initListenersFirst() {
-        frame.profileSetting.addActionListener(new SelectTabListener());
-        frame.moduleSetting.addActionListener(new SelectTabListener());
-        frame.systemSetting.addActionListener(new SelectTabListener());
+        SelectTabListener listener = new SelectTabListener();
+        frame.profileSetting.addActionListener(listener);
+        frame.moduleSetting.addActionListener(listener);
+        frame.directorySetting.addActionListener(listener);
+        frame.systemSetting.addActionListener(listener);
     }
 
     private void initListeners() {
@@ -183,7 +185,7 @@ public class Launcher {
 
         frame.removeProfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(Config.currentProfile.profileName.equals("(Default)")) {
+                if(Config.currentProfile.profileName.equals(Config.DEFAULT)) {
                     System.out.println(Lang.getString("msg.profile.cannotremovedefault"));
                     return;
                 }
@@ -202,7 +204,7 @@ public class Launcher {
                 Config.currentProfile.updateFromFrame(frame);
                 Config.currentProfile = (Profile)frame.profiles.getSelectedItem();
                 if(Config.currentProfile == null) {
-                    Config.currentProfile = Config.profiles.get("(Default)");
+                    Config.currentProfile = Config.profiles.get(Config.DEFAULT);
                 }
                 Config.currentProfile.updateToFrame(frame);
             }
@@ -210,6 +212,73 @@ public class Launcher {
 
         frame.showOld.addActionListener(new ShowInModuleListListener());
         frame.showSnapshot.addActionListener(new ShowInModuleListListener());
+
+        frame.directories.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.DESELECTED) {
+                    RunningDirectory deselected = (RunningDirectory) e.getItem();
+                    if (deselected != null) {
+                        deselected.directory = frame.directoryPath.getText();
+                    }
+                } else if (e.getStateChange() == ItemEvent.SELECTED) {
+                    RunningDirectory selected = (RunningDirectory) e.getItem();
+                    if (selected != null) {
+                        frame.directoryPath.setText(selected.directory);
+                    }
+                }
+            }
+        });
+
+        frame.addDirectory.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.directory.inputname"),
+                        "ChunkLauncher", JOptionPane.QUESTION_MESSAGE);
+                if(name == null) {
+                    return;
+                }
+                if(Config.directories.containsKey(name)) {
+                    System.out.println(Lang.getString("msg.directory.exists"));
+                    return;
+                }
+                RunningDirectory directory = new RunningDirectory(name, ".");
+
+                Config.directories.put(name, directory);
+                frame.directories.addItem(directory);
+                frame.runPathDirectories.addItem(directory);
+                frame.directories.setSelectedItem(directory);
+            }
+        });
+
+        frame.removeDirectory.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                RunningDirectory selectedDirectory = (RunningDirectory)frame.directories.getSelectedItem();
+                if(selectedDirectory == null) {
+                    System.out.println(Lang.getString("msg.directory.pleaseselectadirectory"));
+                    return;
+                }
+                if(selectedDirectory.name.equals(Config.DEFAULT)) {
+                    System.out.println(Lang.getString("msg.directory.cannotremovedefault"));
+                    return;
+                }
+                int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.directory.removeconfirm"),
+                        "ChunkLauncher", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if(r != JOptionPane.YES_OPTION) {
+                    return;
+                }
+                Config.directories.remove(selectedDirectory.name);
+                frame.directories.removeItem(selectedDirectory);
+                frame.runPathDirectories.removeItem(selectedDirectory);
+                for (Profile profile : Config.profiles.values()) {
+                    if (profile.runPath == selectedDirectory) {
+                        profile.runPath = Config.directories.get(Config.DEFAULT);
+                        if (profile == Config.currentProfile) {
+                            frame.runPathDirectories.setSelectedItem(profile.runPath);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     class SelectTabListener implements ActionListener {
@@ -332,26 +401,25 @@ public class Launcher {
     }
 
     public void selectSetting(JButton source) {
-        JPanel targetPanel = null;
+        String targetCard = null;
         if(source == frame.profileSetting) {
-            targetPanel = frame.profilePanel;
+            targetCard = "profile";
         } else if(source == frame.moduleSetting) {
-            targetPanel = frame.modulePanel;
+            targetCard = "module";
+        } else if(source == frame.directorySetting) {
+            targetCard = "directory";
         } else if(source == frame.systemSetting) {
-            targetPanel = frame.systemPanel;
+            targetCard = "system";
         } else {
             return;
         }
-        if(!targetPanel.isVisible()) {
-            frame.profileSetting.setSelected(false);
-            frame.moduleSetting.setSelected(false);
-            frame.systemSetting.setSelected(false);
-            frame.profilePanel.setVisible(false);
-            frame.modulePanel.setVisible(false);
-            frame.systemPanel.setVisible(false);
-            targetPanel.setVisible(true);
-            source.setSelected(true);
-        }
+        frame.selectedCard = targetCard;
+        frame.cards.show(frame.cardPanel, targetCard);
+        frame.profileSetting.setSelected(false);
+        frame.moduleSetting.setSelected(false);
+        frame.directorySetting.setSelected(false);
+        frame.systemSetting.setSelected(false);
+        source.setSelected(true);
     }
 
     public static void exceptionReport(Throwable t) {

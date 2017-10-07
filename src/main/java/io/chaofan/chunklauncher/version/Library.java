@@ -175,7 +175,7 @@ public class Library {
         }
         if(nativesMap != null) {
             String osName = OS.getCurrentPlatform().getName();
-            return nativesMap.getString(osName).contains("${arch}");
+            return nativesMap.has(osName) && nativesMap.getString(osName).contains("${arch}");
         }
         return false;
     }

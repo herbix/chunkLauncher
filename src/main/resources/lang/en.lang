@@ -48,6 +48,12 @@ msg.profile.removeconfirm=Are you sure you want to remove this profile?
 msg.profile.exists=Profile with this name has existed.
 msg.profile.inputname=Please input a profile name:
 
+msg.directory.pleaseselectadirectory=Please select a directory.
+msg.directory.cannotremovedefault=Cannot remove default directory.
+msg.directory.removeconfirm=Are you sure you want to remove this directory?
+msg.directory.exists=Directory with this name has existed.
+msg.directory.inputname=Please input a directory name:
+
 msg.main.error=An error occurred:\u000A
 msg.main.error.title=Error
 
@@ -89,6 +95,11 @@ ui.profile.label=Profiles:
 ui.profile.add=Add
 ui.profile.remove=Remove
 
+ui.directory.label=Directories:
+ui.directory.add=Add
+ui.directory.remove=Remove
+ui.directory.pathlabel=Path:
+
 ui.runpath.label=Work Directory
 ui.runpath.filechooser.title=Choose Work Directory
 
@@ -116,6 +127,7 @@ ui.auth.type.twitch=Twitch
 
 ui.tab.profile=Profile Manage
 ui.tab.module=Module Manage
+ui.tab.directory=Directory Manage
 ui.tab.system=System Settings
 
 ui.proxy.type.label=Proxy Type:

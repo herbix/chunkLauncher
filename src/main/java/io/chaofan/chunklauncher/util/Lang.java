@@ -13,14 +13,23 @@ import java.util.Properties;
  */
 public class Lang {
 
+    private static final String LANGUAGE_PRIMARY =
+            System.getProperty("user.language", "en") + "-" +
+            System.getProperty("user.country", "US");
+
+    private static final String LANGUAGE_SECONDARY =
+            System.getProperty("user.language", "en");
+
+    private static final String LANGUAGE_DEFAULT = "en";
+
     private static final String SYSTEM_LANG_FILE_PRIMARY = "/lang/" +
-        System.getProperty("user.language", "en") + "-" +
-        System.getProperty("user.country", "US") + ".lang";
+        LANGUAGE_PRIMARY + ".lang";
 
     private static final String SYSTEM_LANG_FILE_SECONDARY = "/lang/" +
-        System.getProperty("user.language", "en") + ".lang";
+        LANGUAGE_SECONDARY + ".lang";
 
-    private static final String SYSTEM_LANG_FILE_DEFAULT = "/lang/en.lang";
+    private static final String SYSTEM_LANG_FILE_DEFAULT = "/lang/" +
+        LANGUAGE_DEFAULT + ".lang";
 
     private static Properties langContentDefault = new Properties();
     private static Properties langContentSecondary = new Properties(langContentDefault);
@@ -34,6 +43,25 @@ public class Lang {
     public static String getString(String id) {
         String result = langContentPrimary.getProperty(id);
         return result == null ? id : result;
+    }
+
+    /**
+     * Register a string for language.
+     * @param language The language, for example 'en', 'zh-CN'.
+     * @param id The id, for example 'msg.auth.succeeded'
+     * @param value Localized string
+     */
+    public static void registerString(String language, String id, String value) {
+        language = language.toLowerCase();
+        if (language.equals(LANGUAGE_DEFAULT.toLowerCase())) {
+            langContentDefault.setProperty(id, value);
+        }
+        if (language.equals(LANGUAGE_SECONDARY.toLowerCase())) {
+            langContentSecondary.setProperty(id, value);
+        }
+        if (language.equals(LANGUAGE_PRIMARY.toLowerCase())) {
+            langContentPrimary.setProperty(id, value);
+        }
     }
 
     private static void loadDefaultLangFile() {

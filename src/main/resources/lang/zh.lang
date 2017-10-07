@@ -49,6 +49,12 @@ msg.profile.removeconfirm=是否要删除当前配置？
 msg.profile.exists=此配置已存在
 msg.profile.inputname=输入新配置的名称：
 
+msg.directory.pleaseselectadirectory=请选择一个配置
+msg.directory.cannotremovedefault=不能删除默认配置
+msg.directory.removeconfirm=是否要删除当前配置？
+msg.directory.exists=此配置已存在
+msg.directory.inputname=输入新配置的名称：
+
 msg.main.error=出现错误：\u000A
 msg.main.error.title=错误
 
@@ -90,8 +96,13 @@ ui.profile.label=登录配置：
 ui.profile.add=增加配置
 ui.profile.remove=删除配置
 
-ui.runpath.label=工作路径（储存存档，设置等）
-ui.runpath.filechooser.title=选择工作路径
+ui.directory.label=目录配置:
+ui.directory.add=增加配置
+ui.directory.remove=删除配置
+ui.directory.pathlabel=目录：
+
+ui.runpath.label=工作目录（储存存档，设置等）
+ui.runpath.filechooser.title=选择工作目录
 
 ui.char.title=选择角色
 ui.char.ok=确定
@@ -117,6 +128,7 @@ ui.auth.type.twitch=Twitch
 
 ui.tab.profile=登录管理
 ui.tab.module=组件管理
+ui.tab.directory=目录管理
 ui.tab.system=系统设置
 
 ui.proxy.type.label=代理类型：

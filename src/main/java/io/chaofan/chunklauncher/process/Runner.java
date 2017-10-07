@@ -101,7 +101,7 @@ public class Runner {
         valueMap.put("profile_name", Config.currentProfile.profileName);
         valueMap.put("version_name", module.getName());
 
-        valueMap.put("game_directory", Config.currentProfile.runPath);
+        valueMap.put("game_directory", Config.currentProfile.runPath.directory);
         valueMap.put("game_assets", Config.gamePath + Config.MINECRAFT_VIRTUAL_PATH);
 
         valueMap.put("assets_root", Config.gamePath + Config.MINECRAFT_ASSET_PATH);

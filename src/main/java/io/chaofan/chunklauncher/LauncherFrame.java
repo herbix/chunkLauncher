@@ -1,10 +1,6 @@
 package io.chaofan.chunklauncher;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FocusTraversalPolicy;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -18,24 +14,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
@@ -52,6 +31,10 @@ public class LauncherFrame extends JFrame {
 
     JPanel base = new JPanel();
 
+    JPanel cardPanel = new JPanel();
+    CardLayout cards = new CardLayout();
+    String selectedCard = "profile";
+
     JLabel modulesLabel = new JLabel(Lang.getString("ui.module.label"));
     DefaultTableModel modulesModel = new UneditableTableModel();
     JTable modules = new JTable(modulesModel);
@@ -61,6 +44,7 @@ public class LauncherFrame extends JFrame {
     JCheckBox showOld = new JCheckBox(Lang.getString("ui.module.old"));
     JCheckBox showSnapshot = new JCheckBox(Lang.getString("ui.module.snapshot"));
 
+    JComboBox<Profile> profiles2 = new JComboBox<Profile>();
     JLabel userLabel = new JLabel(Lang.getString("ui.username.label"));
     JTextField user = new JTextField();
     JLabel passLabel = new JLabel(Lang.getString("ui.password.label"));
@@ -80,8 +64,9 @@ public class LauncherFrame extends JFrame {
     JButton removeProfile = new JButton(Lang.getString("ui.profile.remove"));
 
     JLabel runPathLabel = new JLabel(Lang.getString("ui.runpath.label"));
-    JTextField runPath = new JTextField();
-    JButton runPathSearch = new JButton("...");
+    JComboBox<RunningDirectory> runPathDirectories = new JComboBox<RunningDirectory>();
+    //JTextField runPath = new JTextField();
+    //JButton runPathSearch = new JButton("...");
 
     ButtonGroup runningMode = new ButtonGroup();
     JRadioButton runningMode32 = new JRadioButton(Lang.getString("ui.mode.d32"), false);
@@ -103,11 +88,20 @@ public class LauncherFrame extends JFrame {
     JComboBox<String> proxyType = new JComboBox<String>(new String[]{"HTTP", "Socks"});
     JTextField proxy = new JTextField();
 
+    JComboBox<RunningDirectory> directories = new JComboBox<RunningDirectory>();
+    JButton addDirectory = new JButton(Lang.getString("ui.directory.add"));
+    JButton removeDirectory = new JButton(Lang.getString("ui.directory.remove"));
+    JLabel directoryPathLabel = new JLabel(Lang.getString("ui.directory.pathlabel"));
+    JTextField directoryPath = new JTextField();
+    JButton directoryPathSearch = new JButton("...");
+
     JButton profileSetting = new JButton(Lang.getString("ui.tab.profile"));
     JButton moduleSetting = new JButton(Lang.getString("ui.tab.module"));
+    JButton directorySetting = new JButton(Lang.getString("ui.tab.directory"));
     JButton systemSetting = new JButton(Lang.getString("ui.tab.system"));
     JPanel profilePanel = new JPanel();
     JPanel modulePanel = new JPanel();
+    JPanel directoryPanel = new JPanel();
     JPanel systemPanel = new JPanel();
 
     PrintStream thisStdOut = null;
@@ -133,17 +127,16 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-        setResizable(false);
         setTitle("ChunkLauncher for Minecraft V" + Launcher.VERSION + " (Made by Chaofan)");
         setIconImage(new ImageIcon(getClass().getResource("/favicon.png")).getImage());
-        base.setPreferredSize(new Dimension(600, 400));
+        base.setPreferredSize(new Dimension(600, 450));
         add(base);
         pack();
         setLocationByPlatform(true);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screen.width - getWidth()) / 2, (screen.height - getHeight()) / 2);
 
-        base.setLayout(null);
+        base.setLayout(new BorderLayout());
         createFrame();
         base.getRootPane().setDefaultButton(launch);
 
@@ -151,87 +144,94 @@ public class LauncherFrame extends JFrame {
     }
 
     private void createFrame() {
+        JPanel topPart = new JPanel();
+        topPart.setLayout(new GridBagLayout());
+        base.add(topPart, BorderLayout.NORTH);
 
-        base.add(commentLabel);
-        commentLabel.setLocation(0, 360);
-        commentLabel.setSize(600, 20);
+        topPart.add(profileSetting, gbc(0, 0, insets(5, 5, 0, 0)));
+        profileSetting.setPreferredSize(new Dimension(130, 35));
 
-        base.add(progress);
-        progress.setLocation(0, 380);
-        progress.setSize(600, 20);
+        topPart.add(moduleSetting, gbc(1, 0, insets(5, 5, 0, 0)));
+        moduleSetting.setPreferredSize(new Dimension(130, 35));
+
+        topPart.add(directorySetting, gbc(2, 0, insets(5, 5, 0, 0)));
+        directorySetting.setPreferredSize(new Dimension(130, 35));
+
+        topPart.add(systemSetting, gbc(3, 0, insets(5, 5, 0, 0)));
+        systemSetting.setPreferredSize(new Dimension(130, 35));
+
+        JPanel bottomPart = new JPanel();
+        bottomPart.setLayout(new GridBagLayout());
+        base.add(bottomPart, BorderLayout.SOUTH);
+
+        bottomPart.add(profilesLabel, gbc(0, 0, 0, 1, GridBagConstraints.BOTH, insets(0, 5)));
+        profilesLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+        profilesLabel.setPreferredSize(new Dimension(65, 20));
+
+        bottomPart.add(profiles, gbc(0, 1, 0, 1, GridBagConstraints.HORIZONTAL, insets(5)));
+        profiles.setPreferredSize(new Dimension(150, 23));
+
+        bottomPart.add(profileDetailLabel, gbc(2, 0, 1, 2, 1, 0, GridBagConstraints.HORIZONTAL, insets(5)));
+        profileDetailLabel.setPreferredSize(new Dimension(10, 45));
+
+        bottomPart.add(launch, gbc(3, 0, 1, 2, 0, 0, GridBagConstraints.BOTH, insets(5)));
+        launch.setPreferredSize(new Dimension(150, 40));
+
+        bottomPart.add(commentLabel, gbc(0, 2, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL));
+        commentLabel.setPreferredSize(new Dimension(10, 20));
+
+        bottomPart.add(progress, gbc(0, 3, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL));
+        progress.setPreferredSize(new Dimension(10, 20));
         HttpFetcher.setJProgressBar(progress);
 
-        base.add(profileSetting);
-        profileSetting.setLocation(440, 10);
-        profileSetting.setSize(150, 40);
-
-        base.add(moduleSetting);
-        moduleSetting.setLocation(440, 60);
-        moduleSetting.setSize(150, 40);
-
-        base.add(systemSetting);
-        systemSetting.setLocation(440, 110);
-        systemSetting.setSize(150, 40);
-
-        base.add(launch);
-        launch.setLocation(440, 320);
-        launch.setSize(150, 40);
-
-        base.add(profilesLabel);
-        profilesLabel.setLocation(440, 155);
-        profilesLabel.setSize(65, 20);
-
-        base.add(profiles);
-        profiles.setLocation(440, 180);
-        profiles.setSize(150, 23);
-
-        base.add(profileDetailLabel);
-        profileDetailLabel.setLocation(440, 210);
-        profileDetailLabel.setSize(150, 100);
+        cardPanel.setLayout(cards);
+        cardPanel.setPreferredSize(new Dimension(430, 350));
+        base.add(cardPanel, BorderLayout.CENTER);
 
         //================ profile panel ====================
 
-        base.add(profilePanel);
-        profilePanel.setLocation(0, 12);
-        profilePanel.setSize(430, 325);
-        profilePanel.setLayout(null);
-        profilePanel.setVisible(false);
+        cardPanel.add(profilePanel, "profile");
+        profilePanel.setLayout(new GridBagLayout());
+        profilePanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 10));
+
+        JPanel profilesComboBoxLine = new JPanel();
+        profilesComboBoxLine.setLayout(new GridBagLayout());
+        profilePanel.add(profilesComboBoxLine, gbc(0, 0, 1, 0, GridBagConstraints.HORIZONTAL));
 
         JLabel profilesLabel2 = new JLabel(Lang.getString("ui.profile.label"));
-        JComboBox<Profile> profiles2 = new JComboBox<Profile>();
 
-        profilePanel.add(profilesLabel2);
-        profilesLabel2.setLocation(110, 10);
-        profilesLabel2.setSize(65, 20);
+        profilesComboBoxLine.add(profilesLabel2, gbc(0, 0, insets(0, 5, 0, 0)));
+        profilesLabel2.setPreferredSize(new Dimension(80, 20));
 
-        profilePanel.add(profiles2);
-        profiles2.setLocation(175, 10);
-        profiles2.setSize(150, 23);
+        profilesComboBoxLine.add(profiles2, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        profiles2.setPreferredSize(new Dimension(10, 23));
         profiles2.setModel(profiles.getModel());
 
-        profilePanel.add(addProfile);
-        addProfile.setLocation(105, 40);
-        addProfile.setSize(100, 30);
+        profilesComboBoxLine.add(addProfile, gbc(2, 0, insets(5)));
+        addProfile.setPreferredSize(new Dimension(100, 30));
 
-        profilePanel.add(removeProfile);
-        removeProfile.setLocation(225, 40);
-        removeProfile.setSize(100, 30);
+        profilesComboBoxLine.add(removeProfile, gbc(3, 0, insets(5, 0)));
+        removeProfile.setPreferredSize(new Dimension(100, 30));
 
-        profilePanel.add(userLabel);
-        userLabel.setLocation(105, 78);
-        userLabel.setSize(200, 20);
+        JPanel userLine = new JPanel();
+        userLine.setLayout(new GridBagLayout());
+        profilePanel.add(userLine, gbc(0, 1, 1, 0, GridBagConstraints.HORIZONTAL));
 
-        profilePanel.add(user);
-        user.setLocation(105, 98);
-        user.setSize(220, 25);
+        userLine.add(userLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        userLabel.setPreferredSize(new Dimension(80, 20));
 
-        profilePanel.add(passLabel);
-        passLabel.setLocation(105, 125);
-        passLabel.setSize(200, 20);
+        userLine.add(user, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        user.setPreferredSize(new Dimension(10, 25));
 
-        profilePanel.add(pass);
-        pass.setLocation(105, 145);
-        pass.setSize(220, 25);
+        JPanel passwordLine = new JPanel();
+        passwordLine.setLayout(new GridBagLayout());
+        profilePanel.add(passwordLine, gbc(0, 2, 1, 0, GridBagConstraints.HORIZONTAL));
+
+        passwordLine.add(passLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        passLabel.setPreferredSize(new Dimension(80, 20));
+
+        passwordLine.add(pass, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        pass.setPreferredSize(new Dimension(10, 25));
         pass.addFocusListener(new FocusAdapter(){
             @Override
             public void focusGained(FocusEvent e) {
@@ -240,66 +240,53 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-        profilePanel.add(savePass);
-        savePass.setLocation(105, 173);
-        savePass.setSize(190, 20);
+        profilePanel.add(savePass, gbc(0, 3, 1, 0, GridBagConstraints.HORIZONTAL, insets(0, 85, 5, 0)));
+        savePass.setPreferredSize(new Dimension(10, 20));
 
-        profilePanel.add(authType);
-        authType.setLocation(185, 208);
-        authType.setSize(140, 23);
+        JPanel authTypeLine = new JPanel();
+        authTypeLine.setLayout(new GridBagLayout());
+        profilePanel.add(authTypeLine, gbc(0, 4, 1, 0, GridBagConstraints.HORIZONTAL));
+
+        authTypeLine.add(authTypeLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        authTypeLabel.setPreferredSize(new Dimension(80, 20));
+
+        authTypeLine.add(authType, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        authType.setPreferredSize(new Dimension(10, 23));
         for(AuthType at : AuthType.values()) {
             authType.addItem(at);
         }
 
-        profilePanel.add(authTypeLabel);
-        authTypeLabel.setLocation(105, 208);
-        authTypeLabel.setSize(80, 20);
+        JPanel gameVersionLine = new JPanel();
+        gameVersionLine.setLayout(new GridBagLayout());
+        profilePanel.add(gameVersionLine, gbc(0, 5, 1, 0, GridBagConstraints.HORIZONTAL));
 
-        profilePanel.add(gameVersion);
-        gameVersion.setLocation(185, 236);
-        gameVersion.setSize(140, 23);
+        gameVersionLine.add(gameVersionLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        gameVersionLabel.setPreferredSize(new Dimension(80, 20));
 
-        profilePanel.add(gameVersionLabel);
-        gameVersionLabel.setLocation(105, 236);
-        gameVersionLabel.setSize(80, 20);
+        gameVersionLine.add(gameVersion, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        gameVersion.setPreferredSize(new Dimension(10, 23));
 
-        profilePanel.add(runPathLabel);
-        runPathLabel.setLocation(105, 275);
-        runPathLabel.setSize(200, 20);
+        JPanel runPathLine = new JPanel();
+        runPathLine.setLayout(new GridBagLayout());
+        profilePanel.add(runPathLine, gbc(0, 6, 1, 0, GridBagConstraints.HORIZONTAL));
 
-        profilePanel.add(runPath);
-        runPath.setLocation(105, 300);
-        runPath.setSize(190, 25);
+        runPathLine.add(runPathLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        runPathLabel.setPreferredSize(new Dimension(200, 20));
 
-        profilePanel.add(runPathSearch);
-        runPathSearch.setLocation(300, 300);
-        runPathSearch.setSize(25, 25);
-        runPathSearch.addActionListener(new ActionListener() {
-            private JFileChooser fc = new JFileChooser();
-            public void actionPerformed(ActionEvent e) {
-                fc.setCurrentDirectory(new File(runPath.getText()));
-                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                fc.showDialog(LauncherFrame.this, Lang.getString("ui.runpath.filechooser.title"));
-                if(fc.getSelectedFile() != null)
-                    runPath.setText(fc.getSelectedFile().getPath());
-            }
-        });
+        runPathLine.add(runPathDirectories, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        runPathDirectories.setPreferredSize(new Dimension(10, 25));
 
         //================ module panel ====================
 
-        base.add(modulePanel);
-        modulePanel.setLocation(0, 0);
-        modulePanel.setSize(430, 350);
-        modulePanel.setLayout(null);
-        modulePanel.setVisible(false);
+        cardPanel.add(modulePanel, "module");
+        modulePanel.setLayout(new BorderLayout());
 
-        modulePanel.add(modulesLabel);
+        modulePanel.add(modulesLabel, BorderLayout.NORTH);
         modulesLabel.setLocation(5, 0);
-        modulesLabel.setSize(300, 20);
+        modulesLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+        modulesLabel.setPreferredSize(new Dimension(300, 20));
 
         modulePanel.add(modulesOuter);
-        modulesOuter.setLocation(0, 20);
-        modulesOuter.setSize(430, 290);
         modulesModel.addColumn(Lang.getString("ui.table.name"));
         modulesModel.addColumn(Lang.getString("ui.table.type"));
         modulesModel.addColumn(Lang.getString("ui.table.state"));
@@ -308,57 +295,92 @@ public class LauncherFrame extends JFrame {
         modules.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(75);
         modules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        modulePanel.add(installModules);
-        installModules.setLocation(5, 320);
+        JPanel moduleBottomPart = new JPanel();
+        moduleBottomPart.setLayout(null);
+        moduleBottomPart.setPreferredSize(new Dimension(300, 50));
+        modulePanel.add(moduleBottomPart, BorderLayout.SOUTH);
+
+        moduleBottomPart.add(installModules);
+        installModules.setLocation(5, 10);
         installModules.setSize(90, 30);
 
-        modulePanel.add(uninstallModules);
-        uninstallModules.setLocation(100, 320);
+        moduleBottomPart.add(uninstallModules);
+        uninstallModules.setLocation(100, 10);
         uninstallModules.setSize(90, 30);
 
-        modulePanel.add(showOld);
-        showOld.setLocation(195, 322);
+        moduleBottomPart.add(showOld);
+        showOld.setLocation(195, 12);
         showOld.setSize(100, 25);
 
-        modulePanel.add(showSnapshot);
-        showSnapshot.setLocation(295, 322);
+        moduleBottomPart.add(showSnapshot);
+        showSnapshot.setLocation(295, 12);
         showSnapshot.setSize(100, 25);
+
+        //================ directory panel ====================
+
+        cardPanel.add(directoryPanel, "directory");
+        directoryPanel.setLayout(new GridBagLayout());
+        directoryPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 10));
+
+        JPanel directoriesComboBoxLine = new JPanel();
+        directoriesComboBoxLine.setLayout(new GridBagLayout());
+        directoryPanel.add(directoriesComboBoxLine, gbc(0, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+
+        JLabel directoriesLabel = new JLabel(Lang.getString("ui.directory.label"));
+
+        directoriesComboBoxLine.add(directoriesLabel, gbc(0, 0, insets(0, 5, 0, 0)));
+        directoriesLabel.setPreferredSize(new Dimension(80, 20));
+
+        directoriesComboBoxLine.add(directories, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        directories.setPreferredSize(new Dimension(10, 23));
+
+        directoriesComboBoxLine.add(addDirectory, gbc(2, 0, insets(5)));
+        addDirectory.setPreferredSize(new Dimension(100, 30));
+
+        directoriesComboBoxLine.add(removeDirectory, gbc(3, 0, insets(5, 0)));
+        removeDirectory.setPreferredSize(new Dimension(100, 30));
+
+        JPanel runPathLine2 = new JPanel();
+        runPathLine2.setLayout(new GridBagLayout());
+        directoryPanel.add(runPathLine2, gbc(0, 1, 1, 0, GridBagConstraints.HORIZONTAL));
+
+        runPathLine2.add(directoryPathLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        directoryPathLabel.setPreferredSize(new Dimension(80, 20));
+
+        runPathLine2.add(directoryPath, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        directoryPath.setPreferredSize(new Dimension(10, 25));
+
+        runPathLine2.add(directoryPathSearch, gbc(2, 0, insets(5, 5, 5, 0)));
+        directoryPathSearch.setPreferredSize(new Dimension(25, 25));
+        directoryPathSearch.addActionListener(new ActionListener() {
+            private JFileChooser fc = new JFileChooser();
+            public void actionPerformed(ActionEvent e) {
+                fc.setCurrentDirectory(new File(directoryPath.getText()));
+                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fc.showDialog(LauncherFrame.this, Lang.getString("ui.runpath.filechooser.title"));
+                if(fc.getSelectedFile() != null)
+                    directoryPath.setText(fc.getSelectedFile().getPath());
+            }
+        });
 
         //================ system panel ====================
 
-        base.add(systemPanel);
-        systemPanel.setLocation(100, 40);
-        systemPanel.setSize(230, 260);
-        systemPanel.setLayout(null);
-        systemPanel.setVisible(false);
+        cardPanel.add(systemPanel, "system");
+        systemPanel.setLayout(new GridBagLayout());
+        systemPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 10));
 
-        runningMode.add(runningMode32);
-        runningMode.add(runningMode64);
-        runningMode.add(runningModeDefault);
+        JPanel jrePathLine = new JPanel();
+        jrePathLine.setLayout(new GridBagLayout());
+        systemPanel.add(jrePathLine, gbc(0, 0, 1, 0, GridBagConstraints.HORIZONTAL));
 
-        systemPanel.add(runningMode32);
-        runningMode32.setLocation(5, 55);
-        runningMode32.setSize(62, 20);
+        jrePathLine.add(jrePathLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        jrePathLabel.setPreferredSize(new Dimension(180, 20));
 
-        systemPanel.add(runningMode64);
-        runningMode64.setLocation(77, 55);
-        runningMode64.setSize(63, 20);
+        jrePathLine.add(jrePath, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        jrePath.setPreferredSize(new Dimension(10, 25));
 
-        systemPanel.add(runningModeDefault);
-        runningModeDefault.setLocation(150, 55);
-        runningModeDefault.setSize(70, 20);
-
-        systemPanel.add(jrePathLabel);
-        jrePathLabel.setLocation(5, 0);
-        jrePathLabel.setSize(200, 20);
-
-        systemPanel.add(jrePath);
-        jrePath.setLocation(5, 25);
-        jrePath.setSize(190, 25);
-
-        systemPanel.add(jrePathSearch);
-        jrePathSearch.setLocation(200, 25);
-        jrePathSearch.setSize(25, 25);
+        jrePathLine.add(jrePathSearch, gbc(2, 0, insets(5, 5, 5, 0)));
+        jrePathSearch.setPreferredSize(new Dimension(25, 25));
         jrePathSearch.addActionListener(new ActionListener() {
             private JFileChooser fc = new JFileChooser();
             public void actionPerformed(ActionEvent e) {
@@ -370,17 +392,35 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-        systemPanel.add(memorySizeLabel);
-        memorySizeLabel.setLocation(5, 85);
-        memorySizeLabel.setSize(110, 20);
+        JPanel archLine = new JPanel();
+        archLine.setLayout(new GridBagLayout());
+        systemPanel.add(archLine, gbc(0, 1, 1, 0, GridBagConstraints.HORIZONTAL));
 
-        systemPanel.add(memorySize);
-        memorySize.setLocation(115, 85);
-        memorySize.setSize(110, 25);
+        runningMode.add(runningMode32);
+        runningMode.add(runningMode64);
+        runningMode.add(runningModeDefault);
 
-        systemPanel.add(memorySizeSlider);
-        memorySizeSlider.setLocation(5, 110);
-        memorySizeSlider.setSize(220, 38);
+        archLine.add(runningMode32, gbc(0, 0, 1, 0, GridBagConstraints.HORIZONTAL, insets(5, 180, 5, 0)));
+        runningMode32.setPreferredSize(new Dimension(62, 20));
+
+        archLine.add(runningMode64, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        runningMode64.setPreferredSize(new Dimension(63, 20));
+
+        archLine.add(runningModeDefault, gbc(2, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        runningModeDefault.setPreferredSize(new Dimension(70, 20));
+
+        JPanel memoryLine = new JPanel();
+        memoryLine.setLayout(new GridBagLayout());
+        systemPanel.add(memoryLine, gbc(0, 2, 1, 0, GridBagConstraints.HORIZONTAL));
+
+        memoryLine.add(memorySizeLabel, gbc(0, 0, insets(5)));
+        memorySizeLabel.setPreferredSize(new Dimension(175, 20));
+
+        memoryLine.add(memorySize, gbc(2, 0, insets(5, 5, 5, 0)));
+        memorySize.setPreferredSize(new Dimension(110, 25));
+
+        memoryLine.add(memorySizeSlider, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        memorySizeSlider.setPreferredSize(new Dimension(10, 38));
         memorySizeSlider.setMinimum(0);
         memorySizeSlider.setMaximum(8192);
         memorySizeSlider.addChangeListener(new ChangeListener(){
@@ -389,25 +429,86 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-        systemPanel.add(enableProxy);
-        enableProxy.setLocation(5, 160);
-        enableProxy.setSize(220, 20);
+        systemPanel.add(enableProxy, gbc(0, 3, 1, 0, GridBagConstraints.HORIZONTAL, insets(5)));
+        enableProxy.setPreferredSize(new Dimension(10, 20));
 
-        systemPanel.add(proxyTypeLabel);
-        proxyTypeLabel.setLocation(5, 185);
-        proxyTypeLabel.setSize(100, 20);
+        JPanel proxyTypeLine = new JPanel();
+        proxyTypeLine.setLayout(new GridBagLayout());
+        systemPanel.add(proxyTypeLine, gbc(0, 4, 1, 0, GridBagConstraints.HORIZONTAL));
 
-        systemPanel.add(proxyType);
-        proxyType.setLocation(105, 185);
-        proxyType.setSize(120, 20);
+        proxyTypeLine.add(proxyTypeLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        proxyTypeLabel.setPreferredSize(new Dimension(180, 20));
 
-        systemPanel.add(proxyHostPortLabel);
-        proxyHostPortLabel.setLocation(5, 210);
-        proxyHostPortLabel.setSize(220, 20);
+        proxyTypeLine.add(proxyType, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        proxyType.setPreferredSize(new Dimension(10, 25));
 
-        systemPanel.add(proxy);
-        proxy.setLocation(5, 235);
-        proxy.setSize(220, 20);
+        JPanel proxyLine = new JPanel();
+        proxyLine.setLayout(new GridBagLayout());
+        systemPanel.add(proxyLine, gbc(0, 5, 1, 0, GridBagConstraints.HORIZONTAL));
+
+        proxyLine.add(proxyHostPortLabel, gbc(0, 0, insets(5, 5, 5, 0)));
+        proxyHostPortLabel.setPreferredSize(new Dimension(180, 20));
+
+        proxyLine.add(proxy, gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        proxy.setPreferredSize(new Dimension(10, 25));
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy) {
+        GridBagConstraints result = new GridBagConstraints();
+        result.gridx = gridx;
+        result.gridy = gridy;
+        return result;
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy, double weightx, double weighty) {
+        GridBagConstraints result = gbc(gridx, gridy);
+        result.weightx = weightx;
+        result.weighty = weighty;
+        return result;
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy, double weightx, double weighty, int fill) {
+        GridBagConstraints result = gbc(gridx, gridy, weightx, weighty);
+        result.fill = fill;
+        return result;
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy, int width, int height, double weightx, double weighty, int fill) {
+        GridBagConstraints result = gbc(gridx, gridy, weightx, weighty, fill);
+        result.gridwidth = width;
+        result.gridheight = height;
+        return result;
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy, Insets insets) {
+        GridBagConstraints result = gbc(gridx, gridy);
+        result.insets = insets;
+        return result;
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy, double weightx, double weighty, int fill, Insets insets) {
+        GridBagConstraints result = gbc(gridx, gridy, weightx, weighty, fill);
+        result.insets = insets;
+        return result;
+    }
+
+    private GridBagConstraints gbc(int gridx, int gridy, int width, int height, double weightx, double weighty, int fill, Insets insets) {
+        GridBagConstraints result = gbc(gridx, gridy, weightx, weighty, fill, insets);
+        result.gridwidth = width;
+        result.gridheight = height;
+        return result;
+    }
+
+    private Insets insets(int v) {
+        return new Insets(v, v, v, v);
+    }
+
+    private Insets insets(int y, int x) {
+        return new Insets(y, x, y, x);
+    }
+
+    private Insets insets(int t, int l, int b, int r) {
+        return new Insets(t, l, b, r);
     }
 
     public void setStdOut() {
@@ -479,50 +580,91 @@ public class LauncherFrame extends JFrame {
 
     class LauncherFrameFocusTraversalPolicy extends FocusTraversalPolicy {
 
-        public List<Component> componentList = new ArrayList<Component>();
+        public List<Component> componentListProfile = new ArrayList<Component>();
+        public List<Component> componentListModule = new ArrayList<Component>();
+        public List<Component> componentListSystem = new ArrayList<Component>();
 
         public LauncherFrameFocusTraversalPolicy() {
-            componentList.add(profiles);
-            componentList.add(addProfile);
-            componentList.add(removeProfile);
-            componentList.add(user);
-            componentList.add(pass);
-            componentList.add(savePass);
-            componentList.add(authType);
-            componentList.add(gameVersion);
-            componentList.add(runPath);
-            componentList.add(runPathSearch);
-            componentList.add(launch);
-            componentList.add(jrePath);
-            componentList.add(jrePathSearch);
-            componentList.add(runningMode32);
-            componentList.add(runningMode64);
-            componentList.add(runningModeDefault);
-            componentList.add(memorySize);
-            componentList.add(memorySizeSlider);
+            componentListProfile.add(profileSetting);
+            componentListProfile.add(moduleSetting);
+            componentListProfile.add(systemSetting);
+            componentListProfile.add(profiles2);
+            componentListProfile.add(addProfile);
+            componentListProfile.add(removeProfile);
+            componentListProfile.add(user);
+            componentListProfile.add(pass);
+            componentListProfile.add(savePass);
+            componentListProfile.add(authType);
+            componentListProfile.add(gameVersion);
+            componentListProfile.add(runPathDirectories);
+            componentListProfile.add(profiles);
+            componentListProfile.add(launch);
+
+            componentListModule.add(profileSetting);
+            componentListModule.add(moduleSetting);
+            componentListModule.add(systemSetting);
+            componentListModule.add(modules);
+            componentListModule.add(installModules);
+            componentListModule.add(uninstallModules);
+            componentListModule.add(showOld);
+            componentListModule.add(showSnapshot);
+            componentListModule.add(profiles);
+            componentListModule.add(launch);
+
+            componentListSystem.add(profileSetting);
+            componentListSystem.add(moduleSetting);
+            componentListSystem.add(systemSetting);
+            componentListSystem.add(jrePath);
+            componentListSystem.add(jrePathSearch);
+            componentListSystem.add(runningMode32);
+            componentListSystem.add(runningMode64);
+            componentListSystem.add(runningModeDefault);
+            componentListSystem.add(memorySizeSlider);
+            componentListSystem.add(memorySize);
+            componentListSystem.add(enableProxy);
+            componentListSystem.add(proxyType);
+            componentListSystem.add(proxy);
+            componentListSystem.add(profiles);
+            componentListSystem.add(launch);
+        }
+
+        private List<Component> getCurrentComponentList() {
+            if (selectedCard.equals("profile")) {
+                return componentListProfile;
+            } else if (selectedCard.equals("module")) {
+                return componentListModule;
+            } else if (selectedCard.equals("system")) {
+                return componentListSystem;
+            }
+            return componentListProfile;
         }
 
         public Component getComponentAfter(Container aContainer,
-                Component aComponent) {
+                                           Component aComponent) {
+            List<Component> componentList = getCurrentComponentList();
             int i = componentList.indexOf(aComponent);
             return componentList.get((i + 1) % componentList.size());
         }
 
         public Component getComponentBefore(Container aContainer,
-                Component aComponent) {
+                                            Component aComponent) {
+            List<Component> componentList = getCurrentComponentList();
             int i = componentList.indexOf(aComponent);
             return componentList.get((i + componentList.size() - 1) % componentList.size());
         }
 
         public Component getFirstComponent(Container aContainer) {
+            List<Component> componentList = getCurrentComponentList();
             return componentList.get(0);
         }
 
         public Component getLastComponent(Container aContainer) {
+            List<Component> componentList = getCurrentComponentList();
             return componentList.get(componentList.size() - 1);
         }
 
         public Component getDefaultComponent(Container aContainer) {
+            List<Component> componentList = getCurrentComponentList();
             return componentList.get(0);
         }
 

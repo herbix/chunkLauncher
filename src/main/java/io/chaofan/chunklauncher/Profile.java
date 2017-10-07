@@ -20,7 +20,7 @@ public class Profile {
 
     public String version = "";
 
-    public String runPath = Config.gamePath;
+    public RunningDirectory runPath = Config.directories.get(Config.DEFAULT);
 
     public Profile(String name, String saved) {
         profileName = name;
@@ -39,7 +39,11 @@ public class Profile {
         savePass = split[2].toLowerCase().equals("true");
         authType = split[3];
         version = split[4];
-        runPath = split[5];
+        RunningDirectory directory = Config.directories.get(split[5]);
+        if (directory == null) {
+            directory = new RunningDirectory(split[5], split[5]);
+        }
+        runPath = directory;
     }
 
     public String toSavedString() {
@@ -64,14 +68,14 @@ public class Profile {
         frame.savePass.setSelected(savePass);
         frame.authType.setSelectedItem(AuthType.valueOf(authType));
         frame.gameVersion.setSelectedItem(version);
-        frame.runPath.setText(runPath);
+        frame.runPathDirectories.setSelectedItem(runPath);
         frame.profileDetailLabel.setText(getDetailString());
     }
 
     public String getDetailString() {
         return "<html><body><p>" +
-                Lang.getString("ui.username.label") + "<br/>" + user + "</p><p>" +
-                Lang.getString("ui.auth.type.label") + " " + AuthType.valueOf(authType).toString() + "</p><p>" +
+                Lang.getString("ui.username.label") + " " + user + "</p><p>" +
+                Lang.getString("ui.auth.type.label") + " " + String.valueOf(AuthType.valueOf(authType)) + "</p><p>" +
                 Lang.getString("ui.version.label") + " " + version + "</p>" +
                 "</body></html>";
     }
@@ -88,9 +92,8 @@ public class Profile {
             version = frame.gameVersion.getSelectedItem().toString();
         if(version == null)
             version = "";
-        runPath = frame.runPath.getText();
-        if(runPath.equals(""))
-            runPath = Config.gamePath;
+        RunningDirectory runPathSelection = (RunningDirectory) frame.runPathDirectories.getSelectedItem();
+        runPath = runPathSelection == null ? Config.directories.get(Config.DEFAULT) : runPathSelection;
     }
 
     @Override

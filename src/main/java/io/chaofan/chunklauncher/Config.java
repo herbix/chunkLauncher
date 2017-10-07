@@ -55,6 +55,8 @@ public class Config {
 
     public static final String TEMP_DIR = new File(new File(System.getProperty("java.io.tmpdir")), "ChunkLauncher").getPath();
 
+    public static final String DEFAULT = "(Default)";
+
     public static Profile currentProfile = null;
     public static Map<String, Profile> profiles = new HashMap<String, Profile>();
     public static String jrePath = System.getProperty("java.home");
@@ -75,6 +77,7 @@ public class Config {
     public static String proxyHost;
     public static int proxyPort;
     public static boolean enableChecksum = false;
+    public static Map<String, RunningDirectory> directories = new HashMap<String, RunningDirectory>();
 
     public static void saveConfig() {
         Properties p = new Properties();
@@ -85,12 +88,13 @@ public class Config {
         p.setProperty("game-path", gamePathOld);
         p.setProperty("current-etag", currentETag);
         p.setProperty("dont-update-until", String.valueOf(dontUpdateUntil));
-        String profileList = "";
+        StringBuilder profileList = new StringBuilder();
         for(String profileName : profiles.keySet()) {
-            profileList += profileName + ";";
+            profileList.append(profileName);
+            profileList.append(";");
             p.setProperty("profile-" + profileName, profiles.get(profileName).toSavedString());
         }
-        p.setProperty("profiles", profileList);
+        p.setProperty("profiles", profileList.toString());
         p.setProperty("current-profile", currentProfile.profileName);
         p.setProperty("show-debug", String.valueOf(showDebugInfo));
         p.setProperty("show-old", String.valueOf(showOld));
@@ -99,6 +103,14 @@ public class Config {
         p.setProperty("proxy-enabled", String.valueOf(enableProxy));
         p.setProperty("proxy-type", proxyType);
         p.setProperty("enable-checksum", String.valueOf(enableChecksum));
+        StringBuilder directoryList = new StringBuilder();
+        for(Map.Entry<String, RunningDirectory> entry : directories.entrySet()) {
+            directoryList.append(entry.getKey());
+            directoryList.append(";");
+            directoryList.append(entry.getValue().directory);
+            directoryList.append(";");
+        }
+        p.setProperty("directories", directoryList.toString());
 
         try {
             FileOutputStream out = new FileOutputStream(CONFIG_FILE);
@@ -113,8 +125,10 @@ public class Config {
         InputStream in;
         Properties p = new Properties();
 
-        profiles.put("(Default)", new Profile("(Default)", null));
-        currentProfile = profiles.get("(Default)");
+        directories.put(DEFAULT, new RunningDirectory(DEFAULT, "."));
+
+        profiles.put(DEFAULT, new Profile(DEFAULT, null));
+        currentProfile = profiles.get(DEFAULT);
 
         try {
             in = new FileInputStream(CONFIG_FILE);
@@ -150,19 +164,6 @@ public class Config {
                 dontUpdateUntil = Long.valueOf(p.getProperty("dont-update-until", String.valueOf(Long.MIN_VALUE)));
             } catch (Exception e) {    }
 
-            profiles.clear();
-            String profileList = p.getProperty("profiles", "");
-            String[] split = profileList.split(";");
-            for(String profileName : split) {
-                if(profileName.equals(""))
-                    continue;
-                Profile profile = new Profile(profileName, p.getProperty("profile-" + profileName, null));
-                profiles.put(profileName, profile);
-            }
-
-            String current = p.getProperty("current-profile", "(Default)");
-            currentProfile = profiles.get(current);
-
             try {
                 setProxyString(p.getProperty("proxy", null));
             } catch (Exception e) {    }
@@ -174,6 +175,38 @@ public class Config {
                 enableChecksum = Boolean.valueOf(p.getProperty("enable-checksum", "false"));
             } catch (Exception e) {    }
 
+            // Load directories first because profiles use them.
+            directories.clear();
+            String directoryList = p.getProperty("directories", "");
+            String[] split = directoryList.split(";");
+            for(int i=0; i<split.length-1; i+=2) {
+                directories.put(split[i], new RunningDirectory(split[i], split[i+1]));
+            }
+
+            if (!directories.containsKey(DEFAULT)) {
+                directories.put(DEFAULT, new RunningDirectory(DEFAULT, "."));
+            }
+
+            profiles.clear();
+            String profileList = p.getProperty("profiles", "");
+            split = profileList.split(";");
+            for(String profileName : split) {
+                if(profileName.equals(""))
+                    continue;
+                Profile profile = new Profile(profileName, p.getProperty("profile-" + profileName, null));
+                profiles.put(profileName, profile);
+                if (!directories.containsKey(profile.runPath.name)) {
+                    directories.put(profile.runPath.name, profile.runPath);
+                }
+            }
+
+            if (!profiles.containsKey(DEFAULT)) {
+                profiles.put(DEFAULT, new Profile(DEFAULT, null));
+            }
+
+            String current = p.getProperty("current-profile", DEFAULT);
+            currentProfile = profiles.get(current);
+
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -181,12 +214,6 @@ public class Config {
     }
 
     public static void updateToFrame(LauncherFrame frame) {
-        frame.profiles.removeAllItems();
-        for(Profile profile : profiles.values()) {
-            frame.profiles.addItem(profile);
-        }
-        frame.profiles.setSelectedItem(currentProfile);
-        currentProfile.updateToFrame(frame);
         frame.jrePath.setText(jrePath);
         frame.memorySizeSlider.setValue(memory);
         if(!d32 && !d64)
@@ -201,17 +228,34 @@ public class Config {
         frame.proxy.setText(getProxyString());
         frame.proxyType.setSelectedItem(proxyType);
         frame.enableProxy.setSelected(enableProxy);
+        // update directories first
+        frame.directories.removeAllItems();
+        frame.runPathDirectories.removeAllItems();
+        for (RunningDirectory directory : directories.values()) {
+            frame.directories.addItem(directory);
+            frame.runPathDirectories.addItem(directory);
+        }
+        RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
+        if (selectedDirectory != null) {
+            frame.directoryPath.setText(selectedDirectory.directory);
+        }
+        frame.profiles.removeAllItems();
+        for(Profile profile : profiles.values()) {
+            frame.profiles.addItem(profile);
+        }
+        frame.profiles.setSelectedItem(currentProfile);
+        currentProfile.updateToFrame(frame);
     }
 
     public static void updateFromFrame(LauncherFrame frame) {
         profiles.clear();
         for(int i=0; i<frame.profiles.getItemCount(); i++) {
-            Profile profile = (Profile)frame.profiles.getItemAt(i);
+            Profile profile = frame.profiles.getItemAt(i);
             profiles.put(profile.profileName, profile);
         }
         currentProfile = (Profile)frame.profiles.getSelectedItem();
         if(currentProfile == null)
-            currentProfile = profiles.get("(Default)");
+            currentProfile = profiles.get(DEFAULT);
         currentProfile.updateFromFrame(frame);
         jrePath = frame.jrePath.getText();
         if(jrePath.equals("")) {
@@ -229,7 +273,15 @@ public class Config {
         try {
             setProxyString(frame.proxy.getText());
         } catch (Exception e) {    }
-
+        RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
+        if (selectedDirectory != null) {
+            selectedDirectory.directory = frame.directoryPath.getText();
+        }
+        directories.clear();
+        for(int i=0; i<frame.directories.getItemCount(); i++) {
+            RunningDirectory directory = frame.directories.getItemAt(i);
+            directories.put(directory.name, directory);
+        }
     }
 
     public static String getProxyString() {
