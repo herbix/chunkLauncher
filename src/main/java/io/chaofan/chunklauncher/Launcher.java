@@ -41,8 +41,11 @@ public class Launcher {
     private static final Launcher instance = new Launcher();
     private static Thread shutdownHook;
 
-    private boolean showFrame = true;
+    private volatile boolean showFrame = true;
     private LauncherFrame frame = null;
+    private volatile boolean initFrameDone = false;
+
+    public static boolean undecoratedFrame = false;
 
     private Downloader mainDownloader = null;
 
@@ -381,7 +384,27 @@ public class Launcher {
 
     private void run() {
 
-        initFrame();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (instance) {
+                    initFrame();
+                    instance.notifyAll();
+                    initFrameDone = true;
+                }
+            }
+        });
+
+        synchronized (instance) {
+            if (!initFrameDone) {
+                try {
+                    instance.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         System.out.println(helpWords);
 
         if(Config.proxy != null) {
@@ -460,6 +483,7 @@ public class Launcher {
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            undecoratedFrame = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -478,9 +502,14 @@ public class Launcher {
         } catch (Throwable t) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             t.printStackTrace(new PrintStream(out));
-            String str = out.toString();
-            JOptionPane.showMessageDialog(null, Lang.getString("msg.main.error") + str,
-                    Lang.getString("msg.main.error.title"), JOptionPane.ERROR_MESSAGE);
+            final String str = out.toString();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(null, Lang.getString("msg.main.error") + str,
+                            Lang.getString("msg.main.error.title"), JOptionPane.ERROR_MESSAGE);
+                }
+            });
             exceptionReport(str);
         }
     }

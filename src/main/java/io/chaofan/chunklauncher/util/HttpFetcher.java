@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 
-import javax.swing.JProgressBar;
+import javax.swing.*;
 
 import java.net.HttpURLConnection;
 
@@ -71,7 +71,7 @@ public final class HttpFetcher {
             n = downloaded * 100 / length;
         }
 
-        progress.setValue(o + n);
+        setProgressValue(o + n);
 
         while ((count = in.read(buffer)) >= 0) {
             downloaded += count;
@@ -79,14 +79,23 @@ public final class HttpFetcher {
                 out.write(buffer, 0, count);
                 if(length != 0) {
                     n = downloaded * 100 / length;
-                    progress.setValue(o + n);
+                    setProgressValue(o + n);
                 }
             }
         }
 
-        progress.setValue(o + 100);
+        setProgressValue(o + 100);
 
         return downloaded;
+    }
+
+    private static void setProgressValue(final int value) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                progress.setValue(value);
+            }
+        });
     }
 
     /**

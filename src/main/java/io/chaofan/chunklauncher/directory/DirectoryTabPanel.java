@@ -38,6 +38,7 @@ public class DirectoryTabPanel extends JPanel {
     private File directory;
 
     public DirectoryTabPanel(JFrame frame, DirectoryType type, final int flags) {
+        setOpaque(false);
         this.frame = frame;
         this.type = type;
         createPanel(flags);
@@ -58,6 +59,7 @@ public class DirectoryTabPanel extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JPanel rightPart = new JPanel();
+        rightPart.setOpaque(false);
         rightPart.setLayout(new GridBagLayout());
         add(rightPart, BorderLayout.EAST);
 
@@ -76,7 +78,9 @@ public class DirectoryTabPanel extends JPanel {
         rightPart.add(remove, UI.gbc(0, 4, UI.insets(5, 10)));
         remove.setPreferredSize(new Dimension(100, 35));
 
-        rightPart.add(new JPanel(), UI.gbc(0, 5, 1, 1, GridBagConstraints.BOTH));
+        JPanel padding = new JPanel();
+        padding.setOpaque(false);
+        rightPart.add(padding, UI.gbc(0, 5, 1, 1, GridBagConstraints.BOTH));
     }
 
     private void initListeners() {

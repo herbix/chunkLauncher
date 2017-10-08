@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JProgressBar;
+import javax.swing.*;
 
 import io.chaofan.chunklauncher.Launcher;
 import io.chaofan.chunklauncher.util.EasyZipAccess;
@@ -37,7 +37,7 @@ public class RunnableModule extends Module {
         install(null);
     }
 
-    public void install(JProgressBar progress) {
+    public void install(final JProgressBar progress) {
         if(isUninstalling) {
             System.out.println(Lang.getString("msg.module.isuninstalling"));
             return;
@@ -70,8 +70,13 @@ public class RunnableModule extends Module {
 
         if(progress != null) {
             this.progress = progress;
-            progress.setValue(0);
-            progress.setMaximum(moduleDownloader.downloadCount() * 100);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    progress.setValue(0);
+                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
+                }
+            });
         }
 
         moduleDownloader.stopAfterAllDone();
@@ -102,7 +107,12 @@ public class RunnableModule extends Module {
                 }
             } else {
                 if(progress != null) {
-                    progress.setValue(0);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.setValue(0);
+                        }
+                    });
                 }
                 moduleDownloader.forceStop();
                 System.out.println(Lang.getString("msg.module.failed") + "[" + getName() + "]");
@@ -299,8 +309,13 @@ public class RunnableModule extends Module {
         }
 
         if(progress != null) {
-            progress.setValue(0);
-            progress.setMaximum(moduleDownloader.downloadCount() * 100);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    progress.setValue(0);
+                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
+                }
+            });
         }
     }
 

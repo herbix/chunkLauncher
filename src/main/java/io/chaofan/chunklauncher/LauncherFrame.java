@@ -114,6 +114,10 @@ public class LauncherFrame extends JFrame {
     private PrintStream oldStdErr;
 
     public LauncherFrame() {
+        if (Launcher.undecoratedFrame) {
+            setUndecorated(true);
+            this.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
+        }
         addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e) {
@@ -279,6 +283,8 @@ public class LauncherFrame extends JFrame {
 
         runPathLine.add(runPathDirectories, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         runPathDirectories.setPreferredSize(new Dimension(10, 25));
+
+        profilePanel.add(new JPanel(), UI.gbc(0, 100, 1, 1, GridBagConstraints.BOTH));
 
         //================ module panel ====================
 
@@ -508,6 +514,8 @@ public class LauncherFrame extends JFrame {
 
         proxyLine.add(proxy, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         proxy.setPreferredSize(new Dimension(10, 25));
+
+        systemPanel.add(new JPanel(), UI.gbc(0, 100, 1, 1, GridBagConstraints.BOTH));
     }
 
     public void setStdOut() {
