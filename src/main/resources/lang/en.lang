@@ -114,6 +114,7 @@ ui.directory.tab.remove=Delete
 ui.directory.tab.item=Name
 ui.directory.tab.lastmodified=Last Modified
 ui.directory.tab.version=Version
+ui.directory.tab.mcversion=MC Version
 ui.directory.tab.state=State
 ui.directory.tab.enabled=Enabled
 ui.directory.tab.disabled=Disabled

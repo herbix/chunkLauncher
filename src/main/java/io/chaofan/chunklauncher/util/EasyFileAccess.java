@@ -16,17 +16,11 @@ public class EasyFileAccess {
 
     public static String loadFile(String path) {
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         InputStream in = null;
 
         try {
             in = new FileInputStream(path);
-            int n;
-            byte[] buffer = new byte[65536];
-            while((n = in.read(buffer)) >= 0) {
-                out.write(buffer, 0, n);
-            }
+            return loadInputStream(in);
         } catch(Exception e) {
             return null;
         } finally {
@@ -35,6 +29,20 @@ public class EasyFileAccess {
                     in.close();
             } catch (IOException e) {
             }
+        }
+    }
+
+    public static String loadInputStream(InputStream in) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+            int n;
+            byte[] buffer = new byte[65536];
+            while((n = in.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+        } catch(Exception e) {
+            return null;
         }
 
         return new String(out.toByteArray());

@@ -115,6 +115,7 @@ ui.directory.tab.remove=刪除
 ui.directory.tab.item=名稱
 ui.directory.tab.lastmodified=修改時間
 ui.directory.tab.version=版本
+ui.directory.tab.mcversion=遊戲版本
 ui.directory.tab.state=狀態
 ui.directory.tab.enabled=啟用
 ui.directory.tab.disabled=禁用

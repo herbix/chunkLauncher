@@ -1,30 +1,11 @@
 package io.chaofan.chunklauncher.directory;
 
-import io.chaofan.chunklauncher.util.Lang;
-
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 public enum DirectoryType {
-    SAVE(Save.class, new String[] {
-            Lang.getString("ui.directory.tab.lastmodified")
-    }, new int[] {
-            150
-    }, null),
-
-    PACK(Pack.class, new String[] {
-            Lang.getString("ui.directory.tab.lastmodified")
-    }, new int[] {
-            150
-    }, new FileNameExtensionFilter(Lang.getString("ui.directory.tab.zipfile"), "zip")),
-
-    MOD(Mod.class, new String[] {
-            Lang.getString("ui.directory.tab.lastmodified"),
-            Lang.getString("ui.directory.tab.state")
-    }, new int[] {
-            150,
-            50
-    }, new FileNameExtensionFilter(Lang.getString("ui.directory.tab.jarfile"), "jar"));
+    SAVE(Save.class, Save.HEADERS, Save.HEADER_WIDTHS, null),
+    PACK(Pack.class, Pack.HEADERS, Pack.HEADER_WIDTHS, Pack.INSTALL_FILTER),
+    MOD(Mod.class, Mod.HEADERS, Mod.HEADER_WIDTHS, Mod.INSTALL_FILTER);
 
     private final Class<? extends ITableRowProvider> type;
     private final String[] header;

@@ -235,17 +235,24 @@ public class DirectoryTabPanel extends JPanel {
     }
 
     private void initializeColumn() {
-        tableModel.addColumn(Lang.getString("ui.directory.tab.item"));
-        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        tableModel.setRowCount(0);
+        tableModel.setColumnCount(0);
 
-        int columnId = 1;
+        tableModel.addColumn(Lang.getString("ui.directory.tab.item"));
+
         String[] header = type.getHeader();
-        int[] width = type.getWidth();
         for (String column : header) {
             tableModel.addColumn(column);
-            table.getColumnModel().getColumn(columnId).setPreferredWidth(width[columnId-1]);
+        }
+
+        int columnId = 1;
+        int[] widths = type.getWidth();
+        for (int width : widths) {
+            table.getColumnModel().getColumn(columnId).setPreferredWidth(width);
             columnId++;
         }
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(180);
     }
 
     private void refresh() {
