@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -39,7 +38,7 @@ public class Launcher {
 
     private static final String helpWords = "Chunk Launcher V" + VERSION + " " + Lang.getString("msg.help");
 
-    private static Launcher instance;
+    private static final Launcher instance = new Launcher();
     private static Thread shutdownHook;
 
     private boolean showFrame = true;
@@ -168,7 +167,7 @@ public class Launcher {
             public void actionPerformed(ActionEvent e) {
                 String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.profile.inputname"),
                     "ChunkLauncher", JOptionPane.QUESTION_MESSAGE);
-                if(name == null) {
+                if(name == null || name.equals("")) {
                     return;
                 }
                 if(Config.profiles.containsKey(name)) {
@@ -234,7 +233,7 @@ public class Launcher {
             public void actionPerformed(ActionEvent e) {
                 String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.directory.inputname"),
                         "ChunkLauncher", JOptionPane.QUESTION_MESSAGE);
-                if(name == null) {
+                if(name == null || name.equals("")) {
                     return;
                 }
                 if(Config.directories.containsKey(name)) {
@@ -401,7 +400,7 @@ public class Launcher {
     }
 
     public void selectSetting(JButton source) {
-        String targetCard = null;
+        String targetCard;
         if(source == frame.profileSetting) {
             targetCard = "profile";
         } else if(source == frame.moduleSetting) {
@@ -475,7 +474,6 @@ public class Launcher {
         });
 
         try {
-            instance = new Launcher();
             instance.run();
         } catch (Throwable t) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();

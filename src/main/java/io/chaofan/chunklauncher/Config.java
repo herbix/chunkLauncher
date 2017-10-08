@@ -44,12 +44,6 @@ public class Config {
         "/versions/%s/%s.json";
     public static final String MINECRAFT_VERSION_GAME_FORMAT =
         "/versions/%s/%s.jar";
-    public static final String MINECRAFT_VERSION_GAME_RUN_FORMAT =
-        "/versions/%s/%s_run.jar";
-    public static final String MINECRAFT_VERSION_GAME_EXTRACT_TEMP_FORMAT =
-        "/versions/%s/%s_temp/";
-    public static final String MINECRAFT_VERSION_GAME_EXTRACT_FORMAT =
-        "/versions/%s/%s/";
     public static final String MINECRAFT_VERSION_NATIVE_PATH_FORMAT =
         "/versions/%s/%s-natives";
 
@@ -77,6 +71,7 @@ public class Config {
     public static String proxyHost;
     public static int proxyPort;
     public static boolean enableChecksum = false;
+    public static RunningDirectory currentDirectory = null;
     public static Map<String, RunningDirectory> directories = new HashMap<String, RunningDirectory>();
 
     public static void saveConfig() {
@@ -111,6 +106,7 @@ public class Config {
             directoryList.append(";");
         }
         p.setProperty("directories", directoryList.toString());
+        p.setProperty("current-directory", currentDirectory.name);
 
         try {
             FileOutputStream out = new FileOutputStream(CONFIG_FILE);
@@ -139,41 +135,41 @@ public class Config {
             }
             try {
                 d64 = Boolean.valueOf(p.getProperty("d64", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 d32 = Boolean.valueOf(p.getProperty("d32", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 showDebugInfo = Boolean.valueOf(p.getProperty("show-debug", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 showOld = Boolean.valueOf(p.getProperty("show-old", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 showSnapshot = Boolean.valueOf(p.getProperty("show-snapshot", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 memory = Integer.valueOf(p.getProperty("memory", "1024"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             gamePathOld = p.getProperty("game-path", Util.getWorkingDirectory().getPath());
             gamePath = new File(gamePathOld).getAbsolutePath();
             try {
                 currentETag = p.getProperty("current-etag", "");
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 dontUpdateUntil = Long.valueOf(p.getProperty("dont-update-until", String.valueOf(Long.MIN_VALUE)));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
 
             try {
                 setProxyString(p.getProperty("proxy", null));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             try {
                 enableProxy = Boolean.valueOf(p.getProperty("proxy-enabled", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
             proxyType = p.getProperty("proxy-type", "HTTP");
             try {
                 enableChecksum = Boolean.valueOf(p.getProperty("enable-checksum", "false"));
-            } catch (Exception e) {    }
+            } catch (Exception ignored) {    }
 
             // Load directories first because profiles use them.
             directories.clear();
@@ -186,6 +182,8 @@ public class Config {
             if (!directories.containsKey(DEFAULT)) {
                 directories.put(DEFAULT, new RunningDirectory(DEFAULT, "."));
             }
+            String current = p.getProperty("current-directory", DEFAULT);
+            currentDirectory = directories.get(current);
 
             profiles.clear();
             String profileList = p.getProperty("profiles", "");
@@ -204,7 +202,7 @@ public class Config {
                 profiles.put(DEFAULT, new Profile(DEFAULT, null));
             }
 
-            String current = p.getProperty("current-profile", DEFAULT);
+            current = p.getProperty("current-profile", DEFAULT);
             currentProfile = profiles.get(current);
 
             in.close();
@@ -235,6 +233,7 @@ public class Config {
             frame.directories.addItem(directory);
             frame.runPathDirectories.addItem(directory);
         }
+        frame.directories.setSelectedItem(currentDirectory);
         RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
         if (selectedDirectory != null) {
             frame.directoryPath.setText(selectedDirectory.directory);
@@ -267,12 +266,12 @@ public class Config {
         showSnapshot = frame.showSnapshot.isSelected();
         try {
             memory = Integer.valueOf(frame.memorySize.getText());
-        } catch (Exception e) {    }
+        } catch (Exception ignored) {    }
         enableProxy = frame.enableProxy.isSelected();
         proxyType = frame.proxyType.getSelectedItem().toString();
         try {
             setProxyString(frame.proxy.getText());
-        } catch (Exception e) {    }
+        } catch (Exception ignored) {    }
         RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
         if (selectedDirectory != null) {
             selectedDirectory.directory = frame.directoryPath.getText();
@@ -282,6 +281,7 @@ public class Config {
             RunningDirectory directory = frame.directories.getItemAt(i);
             directories.put(directory.name, directory);
         }
+        currentDirectory = selectedDirectory;
     }
 
     public static String getProxyString() {

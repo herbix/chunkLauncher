@@ -73,6 +73,20 @@ public class EasyFileAccess {
         return result;
     }
 
+    public static boolean copyDirectory(File file, File targetFile) {
+        if(file.isDirectory()) {
+            boolean result = true;
+            for(File f : file.listFiles()) {
+                result &= copyDirectory(f, new File(targetFile, f.getName()));
+            }
+            return result;
+        } else if (file.isFile()) {
+            return copyFile(file, targetFile);
+        } else {
+            return false;
+        }
+    }
+
     public static boolean copyFile(File file, File targetFile) {
         try {
             FileInputStream in = new FileInputStream(file);

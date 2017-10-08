@@ -40,13 +40,22 @@ msg.update.request=檢測到新版本的ChunkLauncher，是否要更新？
 msg.update.exception1=出現異常：
 msg.update.exception2=，無法完成更新
 
-msg.version.downloading=正在獲取版本信息……
-msg.version.failed=獲取版本信息失敗
-msg.version.succeeded=獲取版本信息成功
+msg.version.downloading=正在獲取版本資訊……
+msg.version.failed=獲取版本資訊失敗
+msg.version.succeeded=獲取版本資訊成功
 
 msg.profile.cannotremovedefault=不能刪除預設配置
 msg.profile.removeconfirm=是否要刪除當前配置？
+msg.profile.exists=此配置已存在
 msg.profile.inputname=輸入新配置的名稱：
+
+msg.directory.pleaseselectadirectory=請選擇一個配置
+msg.directory.cannotremovedefault=不能刪除預設配置
+msg.directory.removeconfirm=是否要刪除當前配置？
+msg.directory.exists=此配置已存在
+msg.directory.inputname=輸入新配置的名稱：
+msg.directory.tab.removeconfirm=是否要刪除當前項？
+msg.directory.tab.inputname=輸入目標名稱：
 
 msg.main.error=出現錯誤：\u000A
 msg.main.error.title=錯誤
@@ -60,15 +69,19 @@ msg.assets.cannotload=無法複製資源檔
 msg.run.unknownparam1=執行階段錯誤，不存在參數“
 msg.run.unknownparam2=”
 msg.twitch.inputname=請輸入你想要的角色名：
-msg.yggdrasil.saved=無法連接到登入伺服器，是否要使用本地保存的連接信息？
-msg.run.failed=啟動失敗。查閱last.log以了解可能的原因。
+msg.yggdrasil.saved=無法連接到登入伺服器，是否要使用本地保存的連接資訊？
+msg.run.failed=啟動失敗。查閱last.log來瞭解可能的原因。
 msg.useproxy=使用代理：
 msg.proxy.notsocks=Minecraft僅支持Socks類型的代理。遊戲中將使用直接連接。
 
+ui.mode.d32=32位
+ui.mode.d64=64位
 ui.mode.default=默認
 
 ui.module.install=安裝組件
 ui.module.installed=已安裝
+ui.module.label=版本：
+ui.module.notinstalled=
 ui.module.uninstall=卸載組件
 ui.module.notfinished=未完成安裝
 ui.module.old=顯示早期版本
@@ -82,18 +95,45 @@ ui.jrepath.label=JRE路徑（置空為使用默認）
 ui.jrepath.filechooser.title=選擇jre目錄
 
 ui.profile.label=登入配置：
+ui.profile.add=增加配置
 ui.profile.remove=刪除配置
 
-ui.runpath.label=工作路徑（儲存存檔，設置等）
-ui.runpath.filechooser.title=選擇工作路徑
+ui.directory.label=目錄配置:
+ui.directory.add=增加配置
+ui.directory.remove=刪除配置
+ui.directory.pathlabel=目錄：
+ui.directory.saves=存檔
+ui.directory.resourcepacks=資源包
+ui.directory.texturepacks=材質包
+ui.directory.shaderpacks=渲染器包
+ui.directory.mods=模組
+ui.directory.tab.install=安裝
+ui.directory.tab.enable=啟用
+ui.directory.tab.disable=禁用
+ui.directory.tab.copy=複製
+ui.directory.tab.remove=刪除
+ui.directory.tab.item=名稱
+ui.directory.tab.lastmodified=修改時間
+ui.directory.tab.version=版本
+ui.directory.tab.state=狀態
+ui.directory.tab.enabled=啟用
+ui.directory.tab.disabled=禁用
+ui.directory.tab.zipfile=Zip文件
+ui.directory.tab.jarfile=Jar文件
+
+ui.runpath.label=工作目錄（儲存存檔，設置等）
+ui.runpath.filechooser.title=選擇工作目錄
 
 ui.char.title=選擇角色
 ui.char.ok=確定
+ui.char.cancel=取消
 
+ui.update.title=正在更新...
 ui.launch=進入遊戲
-ui.memory.label=記憶體使用(MB)：
+ui.memory.label=使用記憶體大小(MB)：
 ui.offline=離線遊戲
 ui.ok=確定
+ui.cancel=取消
 ui.password.label=密碼：
 ui.savepassword=保存密碼
 ui.username.label=用戶名：
@@ -102,11 +142,15 @@ ui.version.label=遊戲版本
 ui.auth.type.label=登入方式
 ui.auth.type.offline=離線模式
 ui.auth.type.minecraft=正版（舊）
+ui.auth.type.minelogin=MineLogin
+ui.auth.type.yggdrasil=正版
+ui.auth.type.twitch=Twitch
 
 ui.tab.profile=登入管理
 ui.tab.module=組件管理
+ui.tab.directory=目錄管理
 ui.tab.system=系統設置
 
 ui.proxy.type.label=代理類型：
-ui.proxy.hostport.label=代理伺服器地址（主機名:端口）
+ui.proxy.hostport.label=代理伺服器位址（主機名稱:埠）
 ui.proxy.enable.label=啟用代理
