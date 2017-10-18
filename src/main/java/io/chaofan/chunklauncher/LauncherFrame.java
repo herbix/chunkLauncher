@@ -68,8 +68,6 @@ public class LauncherFrame extends JFrame {
 
     JLabel runPathLabel = new JLabel(Lang.getString("ui.runpath.label"));
     JComboBox<RunningDirectory> runPathDirectories = new JComboBox<RunningDirectory>();
-    //JTextField runPath = new JTextField();
-    //JButton runPathSearch = new JButton("...");
 
     ButtonGroup runningMode = new ButtonGroup();
     JRadioButton runningMode32 = new JRadioButton(Lang.getString("ui.mode.d32"), false);
@@ -172,23 +170,25 @@ public class LauncherFrame extends JFrame {
         bottomPart.setLayout(new GridBagLayout());
         base.add(bottomPart, BorderLayout.SOUTH);
 
-        bottomPart.add(profilesLabel, UI.gbc(0, 0, 0, 1, GridBagConstraints.BOTH, UI.insets(0, 5)));
+        bottomPart.add(new JSeparator(), UI.gbc(0, 0, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(2, 5)));
+
+        bottomPart.add(profilesLabel, UI.gbc(0, 1, 0, 1, GridBagConstraints.BOTH, UI.insets(0, 5)));
         profilesLabel.setVerticalAlignment(SwingConstants.BOTTOM);
         profilesLabel.setPreferredSize(new Dimension(65, 20));
 
-        bottomPart.add(profiles, UI.gbc(0, 1, 0, 1, GridBagConstraints.HORIZONTAL, UI.insets(5)));
+        bottomPart.add(profiles, UI.gbc(0, 2, 0, 1, GridBagConstraints.HORIZONTAL, UI.insets(5)));
         profiles.setPreferredSize(new Dimension(150, 23));
 
-        bottomPart.add(profileDetailLabel, UI.gbc(2, 0, 1, 2, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(5)));
+        bottomPart.add(profileDetailLabel, UI.gbc(2, 1, 1, 2, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(5)));
         profileDetailLabel.setPreferredSize(new Dimension(10, 50));
 
-        bottomPart.add(launch, UI.gbc(3, 0, 1, 2, 0, 0, GridBagConstraints.BOTH, UI.insets(5)));
+        bottomPart.add(launch, UI.gbc(3, 1, 1, 2, 0, 0, GridBagConstraints.BOTH, UI.insets(5)));
         launch.setPreferredSize(new Dimension(150, 35));
 
-        bottomPart.add(commentLabel, UI.gbc(0, 2, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL));
+        bottomPart.add(commentLabel, UI.gbc(0, 3, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL));
         commentLabel.setPreferredSize(new Dimension(10, 20));
 
-        bottomPart.add(progress, UI.gbc(0, 3, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL));
+        bottomPart.add(progress, UI.gbc(0, 4, GridBagConstraints.REMAINDER, 1, 1, 0, GridBagConstraints.HORIZONTAL));
         progress.setPreferredSize(new Dimension(10, 20));
         HttpFetcher.setJProgressBar(progress);
 
@@ -380,7 +380,7 @@ public class LauncherFrame extends JFrame {
             @Override public void insertUpdate(DocumentEvent e) { update(); }
             @Override public void removeUpdate(DocumentEvent e) { update(); }
             @Override public void changedUpdate(DocumentEvent e) { update(); }
-            public void update() {
+            private void update() {
                 File directory = new File(directoryPath.getText());
                 if (!directory.isAbsolute()) {
                     directory = new File(Config.gamePath, directoryPath.getText());
@@ -639,14 +639,15 @@ public class LauncherFrame extends JFrame {
         }
 
         private List<Component> getCurrentComponentList() {
-            if (selectedCard.equals("profile")) {
-                return componentListProfile;
-            } else if (selectedCard.equals("module")) {
-                return componentListModule;
-            } else if (selectedCard.equals("directory")) {
-                return componentListDirectory;
-            } else if (selectedCard.equals("system")) {
-                return componentListSystem;
+            switch (selectedCard) {
+                case "profile":
+                    return componentListProfile;
+                case "module":
+                    return componentListModule;
+                case "directory":
+                    return componentListDirectory;
+                case "system":
+                    return componentListSystem;
             }
             return componentListProfile;
         }

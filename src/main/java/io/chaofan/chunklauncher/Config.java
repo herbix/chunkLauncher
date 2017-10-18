@@ -106,7 +106,9 @@ public class Config {
             directoryList.append(";");
         }
         p.setProperty("directories", directoryList.toString());
-        p.setProperty("current-directory", currentDirectory.name);
+        if (currentDirectory != null) {
+            p.setProperty("current-directory", currentDirectory.name);
+        }
 
         try {
             FileOutputStream out = new FileOutputStream(CONFIG_FILE);
@@ -121,7 +123,9 @@ public class Config {
         InputStream in;
         Properties p = new Properties();
 
+        // Keep it here in case no property file loaded
         directories.put(DEFAULT, new RunningDirectory(DEFAULT, "."));
+        currentDirectory = directories.get(DEFAULT);
 
         profiles.put(DEFAULT, new Profile(DEFAULT, null));
         currentProfile = profiles.get(DEFAULT);

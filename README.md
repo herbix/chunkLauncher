@@ -21,6 +21,7 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLaucher">SS
 * Enable/Disable mods
 * Copy saves
 * Delete saves/resource packs/shader packs/mods
+* Update to JRE 1.7
 
 ## Executable
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
