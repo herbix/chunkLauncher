@@ -55,6 +55,9 @@ msg.directory.exists=Directory with this name has existed.
 msg.directory.inputname=Please input a directory name:
 msg.directory.tab.removeconfirm=Are you sure you want to remove this item?
 msg.directory.tab.inputname=Please input target name:
+msg.directory.tab.existed=The item exists.
+msg.directory.tab.copyfailed=Copy failed.
+msg.directory.pleaseselectanitem=Please select an item.
 
 msg.main.error=An error occurred:\u000A
 msg.main.error.title=Error

@@ -56,6 +56,9 @@ msg.directory.exists=此配置已存在
 msg.directory.inputname=输入新配置的名称：
 msg.directory.tab.removeconfirm=是否要删除当前项？
 msg.directory.tab.inputname=输入目标名称：
+msg.directory.tab.existed=此项已存在
+msg.directory.tab.copyfailed=复制失败
+msg.directory.pleaseselectanitem=请选择一项
 
 msg.main.error=出现错误：\u000A
 msg.main.error.title=错误
