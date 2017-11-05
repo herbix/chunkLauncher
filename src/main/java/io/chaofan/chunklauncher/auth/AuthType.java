@@ -2,6 +2,7 @@ package io.chaofan.chunklauncher.auth;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.lang.reflect.Constructor;
 
@@ -70,13 +71,20 @@ public class AuthType {
 
         addAllAuthClasses(ClassUtil.getClassesFromPackage(targetPackage, false));
 
+        List<File> fileList = new ArrayList<>();
         File[] files = new File(".").listFiles();
         if (files != null) {
-            for (File f : files) {
-                if (f.getName().toLowerCase().endsWith(".jar")) {
-                    if (!ClassUtil.isInClassPath(f.getPath())) {
-                        addAllAuthClasses(ClassUtil.getClassesFromPackage(targetPackage, f.getPath(), true));
-                    }
+            fileList.addAll(Arrays.asList(files));
+        }
+        files = new File("lib").listFiles();
+        if (files != null) {
+            fileList.addAll(Arrays.asList(files));
+        }
+
+        for (File f : fileList) {
+            if (f.getName().toLowerCase().endsWith(".jar")) {
+                if (!ClassUtil.isInClassPath(f.getPath())) {
+                    addAllAuthClasses(ClassUtil.getClassesFromPackage(targetPackage, f.getPath(), true));
                 }
             }
         }

@@ -7,13 +7,6 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.8.1
-* Change download url
-* Add an option about jar checksum (default disable) to speed up launcher opening
-* Fixed the bug that show failure when start old version games
-
-## Working Version
-
 ### 1.9.0
 * Change UI
 * Add "Directory Manage"
@@ -23,10 +16,18 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 * Delete saves/resource packs/shader packs/mods
 * Update to JRE 1.7
 
+## Working Version
+No.
+
 ## Executable
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.8.1
+* Change download url
+* Add an option about jar checksum (default disable) to speed up launcher opening
+* Fixed the bug that show failure when start old version games
 
 ### 1.8.0
 * Rename from SSAST Launcher
