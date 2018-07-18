@@ -60,33 +60,6 @@ public class Runner {
             }
         }
 
-        params.add(java);
-
-        params.add("-Xmx" + Config.memory + "M");
-        params.add("-Xms" + Config.memory + "M");
-
-        params.add("-cp");
-        String cp = "";
-        cp += module.getClassPath();
-
-        params.add(cp);
-
-        String arch = isJre64Bit(javaraw) ? "64" : "32";
-
-        if(Config.d64)
-            arch = "64";
-        if(Config.d32)
-            arch = "32";
-
-        params.add("-Djava.library.path=" + module.getNativePath(arch));
-
-        if(Config.d64)
-            params.add("-d64");
-        if(Config.d32)
-            params.add("-d32");
-
-        params.add(module.getMainClass());
-
         Map<String, String> valueMap = new HashMap<String, String>();
 
         valueMap.put("auth_access_token", auth.getAccessToken());
@@ -108,6 +81,38 @@ public class Runner {
         valueMap.put("assets_index_name", module.getAssetsIndex());
 
         valueMap.put("version_type", module.getType());
+
+        String arch = isJre64Bit(javaraw) ? "64" : "32";
+
+        if(Config.d64)
+            arch = "64";
+        if(Config.d32)
+            arch = "32";
+
+        valueMap.put("natives_directory", module.getNativePath(arch));
+
+        valueMap.put("launcher_name", "ChunkLauncher");
+        valueMap.put("launcher_version", Launcher.VERSION);
+
+        valueMap.put("classpath", module.getClassPath());
+
+        params.add(java);
+
+        params.add("-Xmx" + Config.memory + "M");
+        params.add("-Xms" + Config.memory + "M");
+
+        if(Config.d64)
+            params.add("-d64");
+        if(Config.d32)
+            params.add("-d32");
+
+        String[] jvmParams = module.getJvmParams();
+        if(!replaceParams(jvmParams, valueMap)) {
+            return false;
+        }
+
+        params.addAll(Arrays.asList(jvmParams));
+        params.add(module.getMainClass());
 
         String[] gameParams = module.getRunningParams();
         if(!replaceParams(gameParams, valueMap)) {

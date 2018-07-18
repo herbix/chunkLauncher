@@ -65,37 +65,37 @@ public final class HttpFetcher {
         byte[] buffer = new byte[4096];
         int count;
 
-        int o = progress.getValue() / 100 * 100;
         int n = 0;
         if(length != 0) {
             n = downloaded * 100 / length;
         }
-
-        setProgressValue(o + n);
 
         while ((count = in.read(buffer)) >= 0) {
             downloaded += count;
             if (count > 0) {
                 out.write(buffer, 0, count);
                 if(length != 0) {
-                    n = downloaded * 100 / length;
-                    setProgressValue(o + n);
+                    int newN = downloaded * 100 / length;
+                    increaseProgressValue(newN - n);
+                    n = newN;
                 }
             }
         }
 
-        setProgressValue(o + 100);
+        increaseProgressValue(100 - n);
 
         return downloaded;
     }
 
-    private static void setProgressValue(final int value) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                progress.setValue(value);
-            }
-        });
+    private static void increaseProgressValue(final int value) {
+        if (value > 0) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    progress.setValue(progress.getValue() + value);
+                }
+            });
+        }
     }
 
     /**

@@ -12,6 +12,7 @@ public class RunnableModuleInfo {
 
     public String id;
     public String[] minecraftArguments;
+    public String[] jvmArguments;
     public String time;
     public String mainClass;
     public String releaseTime;
@@ -28,7 +29,6 @@ public class RunnableModuleInfo {
 
     public RunnableModuleInfo(JSONObject json) {
         id = json.getString("id");
-        minecraftArguments = json.getString("minecraftArguments").split("[\\s]+");
         time = json.getString("time");
         mainClass = json.getString("mainClass");
         releaseTime = json.getString("releaseTime");
@@ -77,6 +77,8 @@ public class RunnableModuleInfo {
         if(json.has("assetIndex")) {
             this.assetIndex = new DownloadInfo("assetIndex", json.getJSONObject("assetIndex"));
         }
+
+        parseArguments(json);
     }
 
     public boolean canRunInThisOS() {
@@ -91,5 +93,52 @@ public class RunnableModuleInfo {
         if (this.assetIndex == null) {
             this.assetIndex = inherited.assetIndex;
         }
+    }
+
+    private void parseArguments(JSONObject json) {
+        jvmArguments = "-Djava.library.path=${natives_directory} -cp ${classpath}".split("[\\s]+");
+
+        if (json.has("arguments")) {
+            JSONObject obj = json.getJSONObject("arguments");
+            minecraftArguments = parseArguments(obj.getJSONArray("game"));
+            if (obj.has("jvm")) {
+                jvmArguments = parseArguments(obj.getJSONArray("jvm"));
+            }
+        } else if (json.has("minecraftArguments")) {
+            minecraftArguments = json.getString("minecraftArguments").split("[\\s]+");
+        } else {
+            throw new IllegalArgumentException("Must have arguments | minecraftArguments");
+        }
+    }
+
+    private String[] parseArguments(JSONArray arr) {
+        List<String> result = new ArrayList<String>();
+
+        for(int i=0; i<arr.length(); i++) {
+            Object obj = arr.get(i);
+            if (obj instanceof String) {
+                result.add((String)obj);
+            } else if (obj instanceof JSONObject) {
+                JSONArray rls = ((JSONObject)obj).getJSONArray("rules");
+                List<Rule> rules = new ArrayList<Rule>();
+                for(int j=0; j<rls.length(); j++) {
+                    rules.add(new Rule(rls.getJSONObject(j)));
+                }
+
+                if (Rule.isAllowed(rules)) {
+                    Object value = ((JSONObject)obj).get("value");
+                    if (value instanceof String) {
+                        result.add((String)value);
+                    } else if (value instanceof JSONArray) {
+                        JSONArray valueArr = (JSONArray)value;
+                        for(int j=0; j<valueArr.length(); j++) {
+                            result.add(valueArr.getString(j));
+                        }
+                    }
+                }
+            }
+        }
+
+        return result.toArray(new String[result.size()]);
     }
 }

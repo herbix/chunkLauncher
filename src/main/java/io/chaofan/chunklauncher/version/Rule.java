@@ -1,6 +1,6 @@
 package io.chaofan.chunklauncher.version;
 
-import java.util.List;
+import java.util.*;
 
 import io.chaofan.chunklauncher.util.OS;
 import org.json.JSONObject;
@@ -13,20 +13,35 @@ public class Rule {
 
     public String osName;
     public String osVersion;
+    public String osArch;
+
+    public HashMap<String, Boolean> features = new HashMap<String, Boolean>();
 
     public Rule(JSONObject json) {
         action = json.getString("action").equals("allow") ? ALLOW : DISALLOW;
         if(json.has("os")) {
             JSONObject os = json.getJSONObject("os");
-            osName = os.getString("name");
+            if(os.has("name"))
+                osName = os.getString("name");
             if(os.has("version"))
                 osVersion = os.getString("version");
-            else
-                osVersion = null;
+            if(os.has("arch"))
+                osArch = os.getString("arch");
+        }
+
+        if(json.has("features")) {
+            JSONObject obj = json.getJSONObject("features");
+            for(String key : obj.keySet()) {
+                features.put(key, obj.getBoolean(key));
+            }
         }
     }
 
     public static boolean isAllowed(List<Rule> rules) {
+        return isAllowed(rules, new HashSet<String>());
+    }
+
+    public static boolean isAllowed(List<Rule> rules, HashSet<String> providedFeatures) {
         boolean allowed = true;
 
         if(rules != null) {
@@ -34,16 +49,27 @@ public class Rule {
 
             for(int i=0; i<rules.size(); i++) {
                 Rule r = rules.get(i);
-                if(r.osName == null) {
+                if(checkRuleCondition(r, providedFeatures)) {
                     allowed = (r.action == ALLOW);
-                } else {
-                    if(OS.matchOsNameAndVersion(r.osName, r.osVersion)) {
-                        allowed = (r.action == ALLOW);
-                    }
                 }
             }
         }
 
         return allowed;
+    }
+
+    private static boolean checkRuleCondition(Rule r, HashSet<String> providedFeatures) {
+        boolean osCheck = r.osName == null || OS.matchOsNameAndVersion(r.osName, r.osVersion);
+        boolean osArchCheck = r.osArch == null || OS.matchOsArch(r.osArch);
+        boolean featureCheck = true;
+
+        for(Map.Entry<String, Boolean> featureEntry : r.features.entrySet()) {
+            if(featureEntry.getValue() != providedFeatures.contains(featureEntry.getKey())) {
+                featureCheck = false;
+                break;
+            }
+        }
+
+        return osCheck && featureCheck;
     }
 }

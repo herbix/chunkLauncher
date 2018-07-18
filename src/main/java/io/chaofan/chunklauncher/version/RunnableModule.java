@@ -514,6 +514,10 @@ public class RunnableModule extends Module {
         return moduleInfo.minecraftArguments.clone();
     }
 
+    public String[] getJvmParams() {
+        return moduleInfo.jvmArguments.clone();
+    }
+
     public String getMainClass() {
         return moduleInfo.mainClass;
     }

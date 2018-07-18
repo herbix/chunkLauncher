@@ -46,4 +46,7 @@ public enum OS {
         return true;
     }
 
+    public static boolean matchOsArch(String osArch) {
+        return System.getProperty("os.arch").matches(osArch);
+    }
 }

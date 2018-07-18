@@ -7,14 +7,9 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.0
-* Change UI
-* Add "Directory Manage"
-* Install resource packs/shader packs/mods
-* Enable/Disable mods
-* Copy saves
-* Delete saves/resource packs/shader packs/mods
-* Update to JRE 1.7
+### 1.9.1
+* Adapt minecraft 1.13-pre version
+* Multi-process downloading
 
 ## Working Version
 No.
@@ -23,6 +18,15 @@ No.
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.9.0
+* Change UI
+* Add "Directory Manage"
+* Install resource packs/shader packs/mods
+* Enable/Disable mods
+* Copy saves
+* Delete saves/resource packs/shader packs/mods
+* Update to JRE 1.7
 
 ### 1.8.1
 * Change download url
