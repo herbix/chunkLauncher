@@ -221,6 +221,16 @@ public class RunnableModule extends Module {
                         moduleDownloader.addDownload(
                             new Downloadable(rm.getModuleJsonUrl(),
                             new GameDownloadCallback("json-inhert", null)));
+
+                        if(progress != null) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progress.setValue(0);
+                                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
+                                }
+                            });
+                        }
                     }
                     return true;
                 } else {
@@ -236,6 +246,16 @@ public class RunnableModule extends Module {
             moduleDownloader.addDownload(
                 new Downloadable(getModuleAssetsIndexUrl(),
                 new AssetDownloadCallback("json", null)));
+
+            if(progress != null) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.setValue(0);
+                        progress.setMaximum(moduleDownloader.downloadCount() * 100);
+                    }
+                });
+            }
         } else {
             addDownloadList();
         }

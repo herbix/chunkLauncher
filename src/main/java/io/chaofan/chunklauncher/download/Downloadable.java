@@ -61,7 +61,7 @@ public class Downloadable {
         else
             System.out.println(Lang.getString("msg.download.failed") + url);
         if(callback != null) {
-            callback.downloadDone(this, succeed, downloader.queueEmpty());
+            callback.downloadDone(this, succeed, downloader.unfinishedTaskCount() == 1);
         }
     }
 }

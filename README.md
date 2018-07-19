@@ -9,7 +9,7 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ### 1.9.1
 * Adapt minecraft 1.13-pre version
-* Multi-process downloading
+* Multi-thread downloading
 
 ## Working Version
 No.

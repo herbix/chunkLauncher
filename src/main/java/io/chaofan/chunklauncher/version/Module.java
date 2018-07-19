@@ -30,6 +30,6 @@ public abstract class Module {
     public abstract String getType();
 
     public boolean isDownloading() {
-        return moduleDownloader != null && moduleDownloader.getState() != Thread.State.TERMINATED;
+        return moduleDownloader != null && moduleDownloader.getState() <= Downloader.RUNNING;
     }
 }
