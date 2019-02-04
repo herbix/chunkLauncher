@@ -120,7 +120,16 @@ public class Library {
     }
 
     public boolean needDownloadInOS() {
-        return Rule.isAllowed(rules);
+        if (!Rule.isAllowed(rules)) {
+            return false;
+        }
+
+        if (nativesMap == null) {
+            return true;
+        }
+
+        String osName = OS.getCurrentPlatform().getName();
+        return nativesMap.has(osName);
     }
 
     public boolean needExtract() {

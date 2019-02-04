@@ -7,9 +7,8 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.1
-* Adapt minecraft 1.13-pre version
-* Multi-thread downloading
+### 1.9.2
+* Hot fix for OSX installation
 
 ## Working Version
 No.
@@ -18,6 +17,10 @@ No.
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.9.1
+* Adapt minecraft 1.13-pre version
+* Multi-thread downloading
 
 ### 1.9.0
 * Change UI
