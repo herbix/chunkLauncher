@@ -81,17 +81,18 @@ ui.mode.d64=-d64
 ui.mode.default=Default
 
 ui.module.install=Install
-ui.module.installed=Installed
+ui.module.installed=\u2B1B
 ui.module.label=Versions:
-ui.module.notinstalled=
+ui.module.notinstalled=\u2B1C
 ui.module.uninstall=Uninstall
-ui.module.notfinished=Half Installed
+ui.module.notfinished=\u2B15
 ui.module.old=Old Versions
 ui.module.snapshot=Snapshots
 
 ui.table.name=Name
 ui.table.state=State
 ui.table.type=Type
+ui.table.releasetime=Release Time
 
 ui.jrepath.label=JRE path:
 ui.jrepath.filechooser.title=Choose JRE Path

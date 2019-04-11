@@ -2,6 +2,10 @@ package io.chaofan.chunklauncher.version;
 
 import io.chaofan.chunklauncher.download.Downloader;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public abstract class Module {
 
     protected Downloader moduleDownloader;
@@ -23,6 +27,8 @@ public abstract class Module {
 
     public abstract String getReleaseTime();
 
+    public abstract String getActualReleaseTime();
+
     public abstract String getTime();
 
     public abstract String getState();
@@ -31,5 +37,17 @@ public abstract class Module {
 
     public boolean isDownloading() {
         return moduleDownloader != null && moduleDownloader.getState() <= Downloader.RUNNING;
+    }
+
+    public String getFormattedReleaseTime() {
+        Date releaseTime = null;
+        try {
+            releaseTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX").parse(getActualReleaseTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
+
+        return new SimpleDateFormat("yyyy-MM-dd").format(releaseTime);
     }
 }

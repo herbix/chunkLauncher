@@ -19,6 +19,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import io.chaofan.chunklauncher.directory.*;
@@ -297,12 +298,19 @@ public class LauncherFrame extends JFrame {
         modulesLabel.setPreferredSize(new Dimension(300, 20));
 
         modulePanel.add(modulesOuter);
+        modulesModel.addColumn(Lang.getString("ui.table.state"));
         modulesModel.addColumn(Lang.getString("ui.table.name"));
         modulesModel.addColumn(Lang.getString("ui.table.type"));
-        modulesModel.addColumn(Lang.getString("ui.table.state"));
-        modules.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(125);
-        modules.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(75);
+        modulesModel.addColumn(Lang.getString("ui.table.releasetime"));
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        modules.getTableHeader().getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        modules.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(75);
+        modules.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(50);
+        modules.getTableHeader().getColumnModel().getColumn(0).setMinWidth(30);
+        modules.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(250);
         modules.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(75);
+        modules.getTableHeader().getColumnModel().getColumn(3).setPreferredWidth(250);
         modules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JPanel moduleBottomPart = new JPanel();

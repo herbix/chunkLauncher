@@ -1,13 +1,9 @@
 package io.chaofan.chunklauncher.version;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -29,13 +25,13 @@ public class ModuleManager {
         moduleFromListItem.clear();
         for(int i=0, j=0; i<modules.length; i++) {
             Module m = modules[i];
-            if(!Config.showOld && m.getType().startsWith("old")) {
+            if(!m.isInstalled() && !Config.showOld && m.getType().startsWith("old")) {
                 continue;
             }
-            if(!Config.showSnapshot && m.getType().startsWith("snapshot")) {
+            if(!m.isInstalled() && !Config.showSnapshot && m.getType().startsWith("snapshot")) {
                 continue;
             }
-            model.addRow(new String[]{ m.getName(), m.getType(), m.getState() });
+            model.addRow(new String[]{ m.getState(), m.getName(), m.getType(), m.getFormattedReleaseTime() });
             moduleFromListItem.put(j, m);
             j++;
         }
@@ -101,7 +97,7 @@ public class ModuleManager {
 
         Collections.sort(moduleList, new Comparator<Module>(){
             public int compare(Module o1, Module o2) {
-                return -o1.getReleaseTime().compareTo(o2.getReleaseTime());
+                return -o1.getActualReleaseTime().compareTo(o2.getActualReleaseTime());
             }
         });
 

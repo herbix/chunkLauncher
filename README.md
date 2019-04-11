@@ -7,8 +7,10 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.2
-* Hot fix for OSX installation
+### 1.9.3
+* Add release time in module manager
+* Change install state to icon
+* Handle minecraft forge release time
 
 ## Working Version
 No.
@@ -17,6 +19,9 @@ No.
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.9.2
+* Hot fix for OSX installation
 
 ### 1.9.1
 * Adapt minecraft 1.13-pre version

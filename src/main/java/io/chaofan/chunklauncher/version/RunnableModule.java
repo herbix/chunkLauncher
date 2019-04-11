@@ -602,6 +602,10 @@ public class RunnableModule extends Module {
         return " ";
     }
 
+    public String getActualReleaseTime() {
+        return getName().toLowerCase().contains("forge") ? getTime() : getReleaseTime();
+    }
+
     public String getType() {
         if(version.type != null)
             return version.type;

@@ -82,17 +82,15 @@ ui.mode.d64=64位
 ui.mode.default=默认
 
 ui.module.install=安装组件
-ui.module.installed=已安装
 ui.module.label=版本：
-ui.module.notinstalled=
 ui.module.uninstall=卸载组件
-ui.module.notfinished=未完成安装
 ui.module.old=显示早期版本
 ui.module.snapshot=显示快照版本
 
 ui.table.name=名称
 ui.table.state=状态
 ui.table.type=类型
+ui.table.releasetime=发布时间
 
 ui.jrepath.label=JRE路径（置空为使用默认）
 ui.jrepath.filechooser.title=选择jre目录
