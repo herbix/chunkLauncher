@@ -106,6 +106,9 @@ public class ModuleManager {
         moduleFromName.clear();
         for(Module m : modules) {
             moduleFromName.put(m.getName(), m);
+        }
+
+        for(Module m : modules) {
             m.getState();
         }
     }
