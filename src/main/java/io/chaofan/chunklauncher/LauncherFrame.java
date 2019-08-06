@@ -303,7 +303,7 @@ public class LauncherFrame extends JFrame {
         modulesModel.addColumn(Lang.getString("ui.table.type"));
         modulesModel.addColumn(Lang.getString("ui.table.releasetime"));
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         modules.getTableHeader().getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         modules.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(75);
         modules.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(50);

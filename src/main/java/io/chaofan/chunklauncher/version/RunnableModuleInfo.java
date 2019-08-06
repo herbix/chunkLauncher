@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import io.chaofan.chunklauncher.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,22 +23,36 @@ public class RunnableModuleInfo {
     public List<Rule> rules;
     public String assets;
     public String inheritsFrom;
-    public Stack<RunnableModule> inhertStack;
+    public Stack<RunnableModule> inheritStack;
     public String jar;
     public DownloadInfo assetIndex;
     public Map<String, DownloadInfo> downloads;
+    public JSONObject originalJson;
+    public JSONObject fullJson;
 
     public RunnableModuleInfo(JSONObject json) {
+        originalJson = json;
+        updateUsingJsonObject(json);
+    }
+
+    public void updateUsingJsonObject(JSONObject json) {
+        fullJson = json;
         id = json.getString("id");
         time = json.getString("time");
         mainClass = json.getString("mainClass");
         releaseTime = json.getString("releaseTime");
         type = json.getString("type");
-        if(json.has("incompatibilityReason"))
+        if(json.has("incompatibilityReason")) {
             incompatibilityReason = json.getString("incompatibilityReason");
+        } else {
+            incompatibilityReason = "";
+        }
+
         if(json.has("inheritsFrom")) {
             inheritsFrom = json.getString("inheritsFrom");
-            inhertStack = new Stack<RunnableModule>();
+            inheritStack = new Stack<RunnableModule>();
+        } else {
+            inheritsFrom = null;
         }
 
         JSONArray libs = json.getJSONArray("libraries");
@@ -56,6 +71,8 @@ public class RunnableModuleInfo {
             for(int i=0; i<rls.length(); i++) {
                 rules.add(new Rule(rls.getJSONObject(i)));
             }
+        } else {
+            rules = null;
         }
 
         if(json.has("assets")) {
@@ -72,10 +89,14 @@ public class RunnableModuleInfo {
 
         if(json.has("downloads")) {
             this.downloads = DownloadInfo.getDownloadInfo(json.getJSONObject("downloads"));
+        } else {
+            this.downloads = null;
         }
 
         if(json.has("assetIndex")) {
             this.assetIndex = new DownloadInfo("assetIndex", json.getJSONObject("assetIndex"));
+        } else {
+            this.assetIndex = null;
         }
 
         parseArguments(json);
@@ -86,13 +107,11 @@ public class RunnableModuleInfo {
     }
 
     public void addInheritedInfo(RunnableModuleInfo inherited) {
-        this.libraries.addAll(inherited.libraries);
-        if (this.assets.equals("legacy")) {
-            this.assets = inherited.assets;
+        JSONObject mergedJson = JsonUtil.mergeJson(originalJson, inherited.fullJson);
+        if (mergedJson.has("inheritsFrom")) {
+            mergedJson.remove("inheritsFrom");
         }
-        if (this.assetIndex == null) {
-            this.assetIndex = inherited.assetIndex;
-        }
+        updateUsingJsonObject(mergedJson);
     }
 
     private void parseArguments(JSONObject json) {

@@ -22,9 +22,14 @@ public class Mod implements ITableRowProvider, IEnableProvider {
             Lang.getString("ui.directory.tab.state")
     };
     public static final int[] HEADER_WIDTHS = new int[]{
-            30,
-            30,
-            50
+            50,
+            50,
+            20
+    };
+    public static final boolean[] COLUMN_CENTER = new boolean[] {
+            false,
+            false,
+            true
     };
     public static final FileFilter INSTALL_FILTER =
             new FileNameExtensionFilter(Lang.getString("ui.directory.tab.jarfile"), "jar");

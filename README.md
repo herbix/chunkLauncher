@@ -7,8 +7,11 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.4
-* Hot fix for module loading
+### 1.9.5
+* Change some states to icon
+* Update to JRE 1.8
+* Update json inheritance mechanisms
+* Fix support for pre-1.6 game versions
 
 ## Working Version
 No.
@@ -17,6 +20,9 @@ No.
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.9.4
+* Hot fix for module loading
 
 ### 1.9.3
 * Add release time in module manager
@@ -48,6 +54,6 @@ No.
 * Rename from SSAST Launcher
 * Remove third party auth methods. Keep official and offline auth.
 
-### Previous verions
+### Previous versions
 
 See <a href="http://github.com/herbix/ssastLaucher">SSAST Launcher</a>.

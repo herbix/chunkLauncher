@@ -7,14 +7,16 @@ import java.io.File;
 
 public class AssetItem {
 
+    private RunnableModuleAssets assets;
     private String name;
     private String hash;
     private int size;
 
-    public AssetItem(JSONObject json, String name) {
+    public AssetItem(JSONObject json, String name, RunnableModuleAssets assets) {
         this.name = name;
         this.hash = json.getString("hash");
         this.size = json.getInt("size");
+        this.assets = assets;
     }
 
     public String getName() {
@@ -39,10 +41,6 @@ public class AssetItem {
 
     public String getFullUrl() {
         return Config.MINECRAFT_RESOURCE_BASE + "/" + getKey();
-    }
-
-    public String getVirtualPath() {
-        return Config.gamePath + Config.MINECRAFT_VIRTUAL_PATH + "/" + getName();
     }
 
     public boolean downloaded() {

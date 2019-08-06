@@ -142,7 +142,7 @@ public class RunnableModule extends Module {
 
         private void downloadDoneJsonInhert(Downloadable d) {
             JSONObject json = new JSONObject(d.getDownloaded());
-            RunnableModule currentModule = moduleInfo.inhertStack.peek();
+            RunnableModule currentModule = moduleInfo.inheritStack.peek();
             currentModule.moduleInfo = new RunnableModuleInfo(json);
             new File(currentModule.getModuleJsonPath()).getParentFile().mkdirs();
             EasyFileAccess.saveFile(currentModule.getModuleJsonPath(), d.getDownloaded());
@@ -151,10 +151,10 @@ public class RunnableModule extends Module {
                 return;
             }
 
-            moduleInfo.inhertStack.pop();
+            moduleInfo.inheritStack.pop();
             RunnableModule stackModule = currentModule;
-            while(!moduleInfo.inhertStack.empty()) {
-                RunnableModule t = moduleInfo.inhertStack.pop();
+            while(!moduleInfo.inheritStack.empty()) {
+                RunnableModule t = moduleInfo.inheritStack.pop();
                 t.moduleInfo.addInheritedInfo(stackModule.moduleInfo);
                 stackModule = t;
             }
@@ -217,7 +217,7 @@ public class RunnableModule extends Module {
                 RunnableModule rm = (RunnableModule)m;
                 if(!rm.tryLoadModuleInfo() || rm.checkInherit()) {
                     if(needDownload) {
-                        moduleInfo.inhertStack.push(rm);
+                        moduleInfo.inheritStack.push(rm);
                         moduleDownloader.addDownload(
                             new Downloadable(rm.getModuleJsonUrl(),
                             new GameDownloadCallback("json-inhert", null)));
@@ -632,29 +632,11 @@ public class RunnableModule extends Module {
     }
 
     public boolean isAssetsVirtual() {
-        return tryLoadModuleAssets() && moduleAssets.virtual;
+        return tryLoadModuleAssets() && (moduleAssets.virtual || moduleAssets.mapToResources);
     }
 
     public boolean copyAssetsToVirtual() {
-        File virtualDir = new File(Config.gamePath + Config.MINECRAFT_VIRTUAL_PATH);
-        virtualDir.mkdirs();
-
-        for(AssetItem asset : moduleAssets.objects) {
-            String path = asset.getRealFilePath();
-            File file = new File(path);
-            if(!file.isFile()) {
-                return false;
-            }
-            File targetFile = new File(asset.getVirtualPath());
-            if(targetFile.isFile()) {
-                continue;
-            }
-            if(!EasyFileAccess.copyFile(file, targetFile)) {
-                return false;
-            }
-        }
-
-        return true;
+        return moduleAssets.copyAssetsToVirtual();
     }
 
     private String getModuleJsonUrl() {

@@ -118,8 +118,6 @@ ui.directory.tab.lastmodified=修改時間
 ui.directory.tab.version=版本
 ui.directory.tab.mcversion=遊戲版本
 ui.directory.tab.state=狀態
-ui.directory.tab.enabled=啟用
-ui.directory.tab.disabled=禁用
 ui.directory.tab.zipfile=Zip文件
 ui.directory.tab.jarfile=Jar文件
 

@@ -5,8 +5,7 @@ import java.io.IOException;
 import io.chaofan.chunklauncher.auth.AuthType;
 import io.chaofan.chunklauncher.util.Lang;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 public class Profile {
 
@@ -110,7 +109,7 @@ public class Profile {
             str[i] ^= magic[i % magic.length];
         }
 
-        String result = new BASE64Encoder().encode(str);
+        String result = Base64.getEncoder().encodeToString(str);
         int equalIndex = result.indexOf('=');
         if(equalIndex > 0) {
             result = result.substring(0, equalIndex);
@@ -124,11 +123,7 @@ public class Profile {
 
         byte[] str;
 
-        try {
-            str = new BASE64Decoder().decodeBuffer(encoded);
-        } catch (IOException e) {
-            return "";
-        }
+        str = Base64.getDecoder().decode(encoded);
 
         for(int i=0; i<str.length; i++) {
             str[i] ^= magic[i % magic.length];

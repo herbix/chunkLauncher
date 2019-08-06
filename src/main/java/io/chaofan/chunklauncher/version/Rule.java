@@ -70,6 +70,6 @@ public class Rule {
             }
         }
 
-        return osCheck && featureCheck;
+        return osCheck && osArchCheck && featureCheck;
     }
 }

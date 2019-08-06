@@ -8,6 +8,7 @@ import io.chaofan.chunklauncher.util.UI;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -254,6 +255,19 @@ public class DirectoryTabPanel extends JPanel {
         for (int width : widths) {
             table.getColumnModel().getColumn(columnId).setPreferredWidth(width);
             columnId++;
+        }
+
+        columnId = 1;
+        boolean[] columnCenters = type.getColumnCenter();
+        if (columnCenters != null) {
+            for (boolean columnCenter : columnCenters) {
+                if (columnCenter) {
+                    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                    table.getColumnModel().getColumn(columnId).setCellRenderer(centerRenderer);
+                }
+                columnId++;
+            }
         }
 
         table.getColumnModel().getColumn(0).setPreferredWidth(180);

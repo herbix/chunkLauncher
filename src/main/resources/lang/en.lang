@@ -120,8 +120,8 @@ ui.directory.tab.lastmodified=Last Modified
 ui.directory.tab.version=Version
 ui.directory.tab.mcversion=MC Version
 ui.directory.tab.state=State
-ui.directory.tab.enabled=Enabled
-ui.directory.tab.disabled=Disabled
+ui.directory.tab.enabled=\u2B1B
+ui.directory.tab.disabled=\u2B1C
 ui.directory.tab.zipfile=Zip File
 ui.directory.tab.jarfile=Jar File
 
