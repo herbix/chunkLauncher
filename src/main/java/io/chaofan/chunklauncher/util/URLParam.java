@@ -11,7 +11,7 @@ public class URLParam {
 
         StringBuilder sb = new StringBuilder();
 
-        for(Entry<String,String> entry : map.entrySet()) {
+        for (Entry<String, String> entry : map.entrySet()) {
 
             try {
                 sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
@@ -24,7 +24,7 @@ public class URLParam {
 
         }
 
-        if(sb.length() > 0)
+        if (sb.length() > 0)
             sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();

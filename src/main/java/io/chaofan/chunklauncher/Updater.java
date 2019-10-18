@@ -25,19 +25,19 @@ public class Updater {
     private String eTag = "";
     private int size = 0;
 
-    private InputStream getRemoteFileInfo(String updateUrl) throws Exception {
+    private InputStream getRemoteFileInfo(String updateUrl) {
         URLConnection conn;
         try {
             conn = new URL(updateUrl).openConnection();
-            if(!eTag.equals("")) {
+            if (!eTag.equals("")) {
                 conn.addRequestProperty("If-None-Match", "\"" + eTag + "\"");
             }
             conn.connect();
-            int code = ((HttpURLConnection)conn).getResponseCode();
-            if(code == 200) {
+            int code = ((HttpURLConnection) conn).getResponseCode();
+            if (code == 200) {
                 size = conn.getContentLength();
                 eTag = conn.getHeaderField("ETag");
-                eTag = eTag.substring(1, eTag.length()-1);
+                eTag = eTag.substring(1, eTag.length() - 1);
                 return conn.getInputStream();
             } else {
                 return null;
@@ -59,13 +59,13 @@ public class Updater {
 
         InputStream in = file.getInputStream(updaterEntry);
         File saved = new File(new File(Config.TEMP_DIR), "io/chaofan/chunklauncher/UpdaterLater.class");
-        if(!saved.getParentFile().mkdirs())
+        if (!saved.getParentFile().mkdirs())
             return false;
         FileOutputStream out = new FileOutputStream(saved);
 
         byte[] buffer = new byte[65536];
         int count;
-        while((count = in.read(buffer)) >= 0) {
+        while ((count = in.read(buffer)) >= 0) {
             out.write(buffer, 0, count);
         }
 
@@ -76,17 +76,12 @@ public class Updater {
     }
 
     void checkUpdate() {
-        new Thread() {
-            @Override
-            public void run() {
-                checkUpdate0();
-            }
-        }.start();
+        new Thread(this::checkUpdate0).start();
     }
 
     void checkUpdate0() {
 
-        if(Config.dontUpdateUntil > new Date().getTime()) {
+        if (Config.dontUpdateUntil > new Date().getTime()) {
             return;
         }
 
@@ -94,9 +89,9 @@ public class Updater {
 
         try {
             currentFile = URLDecoder.decode(
-                Launcher.class.getResource("/io/chaofan/chunklauncher/Launcher.class").toString(), "UTF-8");
+                    Launcher.class.getResource("/io/chaofan/chunklauncher/Launcher.class").toString(), "UTF-8");
 
-            if(!currentFile.startsWith("jar:")) {
+            if (!currentFile.startsWith("jar:")) {
                 return;
             }
 
@@ -104,20 +99,20 @@ public class Updater {
             currentFile = currentFile.substring(0, currentFile.lastIndexOf('!'));
 
             InputStream in = getRemoteFileInfo(UPDATE_URL);
-            if(in == null)
+            if (in == null)
                 return;
 
-            if(Config.currentETag.equals(""))
-                if(checkSizeEqual()) {
+            if (Config.currentETag.equals(""))
+                if (checkSizeEqual()) {
                     Config.currentETag = eTag;
                     return;
                 }
 
-            if(eTag.equals(Config.currentETag))
+            if (eTag.equals(Config.currentETag))
                 return;
 
             int selection = JOptionPane.showConfirmDialog(null, Lang.getString("msg.update.request"), "ChunkLauncher", JOptionPane.YES_NO_OPTION);
-            if(selection != JOptionPane.YES_OPTION) {
+            if (selection != JOptionPane.YES_OPTION) {
                 Config.dontUpdateUntil = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
                 eTag = Config.currentETag;
                 in.close();
@@ -130,7 +125,7 @@ public class Updater {
             dialog.setVisible(true);
 
             try {
-                if(!extractUpdater())
+                if (!extractUpdater())
                     throw new Exception("Cannot extract updater.");
 
                 File tempFile = new File(new File(Config.TEMP_DIR), "ChunkLauncher.jar");
@@ -139,13 +134,13 @@ public class Updater {
                 byte[] buffer = new byte[65536];
                 int count;
                 int downloaded = 0;
-                while((count = in.read(buffer)) >= 0) {
-                    if(count > 0) {
+                while ((count = in.read(buffer)) >= 0) {
+                    if (count > 0) {
                         downloaded += count;
                         out.write(buffer, 0, count);
-                        dialog.setProgress((double)downloaded / size);
+                        dialog.setProgress((double) downloaded / size);
                     }
-                    if(!dialog.isVisible()) {
+                    if (!dialog.isVisible()) {
                         in.close();
                         out.close();
                         return;
@@ -159,8 +154,8 @@ public class Updater {
 
                 String java = System.getProperty("java.home") + "/bin/java";
 
-                if(OS.getCurrentPlatform() == OS.WINDOWS) {
-                    if(new File(java + "w.exe").exists()) {
+                if (OS.getCurrentPlatform() == OS.WINDOWS) {
+                    if (new File(java + "w.exe").exists()) {
                         java += "w.exe";
                     }
                 }

@@ -50,12 +50,12 @@ public class Save implements ITableRowProvider {
             Tag rootTag = in.readTag();
             if (rootTag instanceof CompoundTag) {
                 Tag tag = ((CompoundTag) rootTag).getValue().get("Data");
-                if (tag != null && tag instanceof CompoundTag) {
+                if (tag instanceof CompoundTag) {
                     CompoundMap dataTagMap = ((CompoundTag) tag).getValue();
                     Tag versionTag = dataTagMap.get("Version");
-                    if (versionTag != null && versionTag instanceof CompoundTag) {
+                    if (versionTag instanceof CompoundTag) {
                         Tag versionString = ((CompoundTag) versionTag).getValue().get("Name");
-                        if (versionString != null && versionString instanceof StringTag) {
+                        if (versionString instanceof StringTag) {
                             version = ((StringTag) versionString).getValue();
                         }
                     }
@@ -85,9 +85,9 @@ public class Save implements ITableRowProvider {
 
     @Override
     public Object[] provideRow() {
-        return new Object[] {
-            version,
-            format.format(new Date(file.lastModified()))
+        return new Object[]{
+                version,
+                format.format(new Date(file.lastModified()))
         };
     }
 

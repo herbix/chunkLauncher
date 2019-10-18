@@ -9,12 +9,12 @@ public class Version {
     public String type;
     public String url;
 
-    public Version(JSONObject arrelem) {
-        this.id = arrelem.getString("id");
-        this.time = arrelem.getString("time");
-        this.releaseTime = arrelem.getString("releaseTime");
-        this.type = arrelem.getString("type");
-        this.url = arrelem.has("url") ? arrelem.getString("url") : null;
+    public Version(JSONObject json) {
+        this.id = json.getString("id");
+        this.time = json.getString("time");
+        this.releaseTime = json.getString("releaseTime");
+        this.type = json.getString("type");
+        this.url = json.has("url") ? json.getString("url") : null;
     }
 
     public Version() {

@@ -30,35 +30,35 @@ public class Library {
     public Library(JSONObject json) {
         name = json.getString("name");
         extract = json.has("extract");
-        if(extract) {
+        if (extract) {
             JSONArray exls = json.getJSONObject("extract").getJSONArray("exclude");
-            extractExclude = new ArrayList<String>();
-            for(int i=0; i<exls.length(); i++) {
+            extractExclude = new ArrayList<>();
+            for (int i = 0; i < exls.length(); i++) {
                 extractExclude.add(exls.getString(i));
             }
         }
-        if(json.has("natives")) {
+        if (json.has("natives")) {
             nativesMap = json.getJSONObject("natives");
         }
-        if(json.has("rules")) {
+        if (json.has("rules")) {
             JSONArray rls = json.getJSONArray("rules");
-            rules = new ArrayList<Rule>();
-            for(int i=0; i<rls.length(); i++) {
+            rules = new ArrayList<>();
+            for (int i = 0; i < rls.length(); i++) {
                 rules.add(new Rule(rls.getJSONObject(i)));
             }
         }
-        if(json.has("url")) {
+        if (json.has("url")) {
             url = json.getString("url");
-            if(!url.endsWith("/"))
+            if (!url.endsWith("/"))
                 url += "/";
         }
-        if(json.has("downloads")) {
+        if (json.has("downloads")) {
             downloads = DownloadInfo.getDownloadInfo(json.getJSONObject("downloads"));
         }
     }
 
     public String getKey() {
-        if(key != null) {
+        if (key != null) {
             return key;
         }
         String result = "";
@@ -66,9 +66,9 @@ public class Library {
         result += part[0].replace('.', '/') + "/" + part[1] + "/" + part[2] + "/";
         result += part[1] + "-" + part[2];
 
-        if(nativesMap != null) {
+        if (nativesMap != null) {
             String osName = OS.getCurrentPlatform().getName();
-            result += "-" + nativesMap.getString(osName).replaceAll("\\$\\{arch\\}", arch);
+            result += "-" + nativesMap.getString(osName).replaceAll("\\$\\{arch}", arch);
         }
 
         result += ".jar";
@@ -81,12 +81,12 @@ public class Library {
     }
 
     private DownloadInfo getDownloadInfo() {
-        if(downloads != null) {
-            if(nativesMap != null) {
+        if (downloads != null) {
+            if (nativesMap != null) {
                 DownloadInfo info = downloads.get("classifiers");
-                if(info != null) {
+                if (info != null) {
                     String osName = OS.getCurrentPlatform().getName();
-                    return info.getPlatformDownloadInfo(nativesMap.getString(osName).replaceAll("\\$\\{arch\\}", arch));
+                    return info.getPlatformDownloadInfo(nativesMap.getString(osName).replaceAll("\\$\\{arch}", arch));
                 }
             } else {
                 return downloads.get("artifact");
@@ -100,7 +100,7 @@ public class Library {
         if (info != null && info.url != null) {
             return info.url;
         }
-        if(url != null)
+        if (url != null)
             return url + getKey();
         else
             return Config.MINECRAFT_DOWNLOAD_LIBRARY + "/" + getKey();
@@ -141,10 +141,10 @@ public class Library {
     }
 
     public String getShaUrl() {
-        if(getDownloadInfo() != null) {
+        if (getDownloadInfo() != null) {
             return null;
         }
-        if(url != null) {
+        if (url != null) {
             return null;
         }
         return getFullUrl() + ".sha1";
@@ -163,7 +163,7 @@ public class Library {
             return new File(getRealFilePath()).isFile();
         }
         DownloadInfo info = getDownloadInfo();
-        if(info != null) {
+        if (info != null) {
             if (info.sha1 != null) {
                 return EasyFileAccess.doSha1Checksum2(info.sha1, getRealFilePath());
             } else {
@@ -179,10 +179,10 @@ public class Library {
     }
 
     public boolean have64BitVersion() {
-        if(!needDownloadInOS()) {
+        if (!needDownloadInOS()) {
             return false;
         }
-        if(nativesMap != null) {
+        if (nativesMap != null) {
             String osName = OS.getCurrentPlatform().getName();
             return nativesMap.has(osName) && nativesMap.getString(osName).contains("${arch}");
         }

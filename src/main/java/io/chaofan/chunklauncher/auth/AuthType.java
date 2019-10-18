@@ -10,8 +10,8 @@ import io.chaofan.chunklauncher.util.ClassUtil;
 
 public class AuthType {
 
-    private static List<AuthType> values = new ArrayList<AuthType>();
-    private static boolean authTypeInited = false;
+    private static List<AuthType> values = new ArrayList<>();
+    private static boolean authTypeInitialized = false;
 
     private String name;
     private Class<?> auth;
@@ -19,7 +19,7 @@ public class AuthType {
 
     private AuthType(Class<?> auth) {
         try {
-            this.name = (String)auth.getDeclaredMethod("getAuthTypeName").invoke(null);
+            this.name = (String) auth.getDeclaredMethod("getAuthTypeName").invoke(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,17 +27,9 @@ public class AuthType {
         this.auth = auth;
 
         try {
-            alias = (String)auth.getDeclaredMethod("getAlias").invoke(null);
+            alias = (String) auth.getDeclaredMethod("getAlias").invoke(null);
 
-            boolean alreadyRegistered = false;
-            for (AuthType type : values) {
-                if (alias.equals(type.alias)) {
-                    alreadyRegistered = true;
-                    break;
-                }
-            }
-
-            if (!alreadyRegistered) {
+            if (values.stream().noneMatch(t -> alias.equals(t.alias))) {
                 values.add(this);
             }
         } catch (Exception e) {
@@ -48,7 +40,7 @@ public class AuthType {
     public ServerAuth newInstance(String name, String pass) {
         try {
             Constructor<?> constructor = auth.getConstructor(String.class, String.class);
-            return (ServerAuth)constructor.newInstance(name, pass);
+            return (ServerAuth) constructor.newInstance(name, pass);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -91,37 +83,36 @@ public class AuthType {
     }
 
     private static void addAllAuthClasses(Class<?>[] authClasses) {
-        for(Class<?> authClass : authClasses) {
-            if(authClass.getSuperclass() != null &&
-                authClass.getSuperclass().equals(ServerAuth.class) &&
-                !authClass.equals(OfflineServerAuth.class) &&
-                !authClass.equals(MinecraftYggdrasilServerAuth.class)) {
+        for (Class<?> authClass : authClasses) {
+            if (authClass.getSuperclass() != null &&
+                    authClass.getSuperclass().equals(ServerAuth.class) &&
+                    !authClass.equals(OfflineServerAuth.class) &&
+                    !authClass.equals(MinecraftYggdrasilServerAuth.class)) {
                 new AuthType(authClass);
             }
         }
     }
 
     public static AuthType valueOf(String value) {
-        if(!authTypeInited) {
+        if (!authTypeInitialized) {
             initAuthType();
-            authTypeInited = true;
+            authTypeInitialized = true;
         }
-        for(AuthType at : values) {
-            if(at.value().equals(value)) {
+        for (AuthType at : values) {
+            if (at.value().equals(value)) {
                 return at;
             }
         }
-        if(values.size() > 0)
+        if (values.size() > 0)
             return values.get(0);
         return null;
     }
 
     public static List<AuthType> values() {
-        if(!authTypeInited) {
+        if (!authTypeInitialized) {
             initAuthType();
-            authTypeInited = true;
+            authTypeInitialized = true;
         }
         return values;
     }
-
 }

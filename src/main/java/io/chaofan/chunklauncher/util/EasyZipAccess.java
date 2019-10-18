@@ -21,37 +21,37 @@ public class EasyZipAccess {
             Enumeration<? extends ZipEntry> list = toUnZip.entries();
             ZipEntry fileInZip;
 
-            while(list.hasMoreElements()) {
+            while (list.hasMoreElements()) {
                 fileInZip = list.nextElement();
-                if(fileInZip.isDirectory())
+                if (fileInZip.isDirectory())
                     continue;
                 String name = fileInZip.getName();
 
-                if(excludes != null) {
+                if (excludes != null) {
 
                     boolean inExclude = false;
-                    for(String s : excludes) {
-                        if(s.endsWith("/")) {
-                            if(name.startsWith(s)) {
+                    for (String s : excludes) {
+                        if (s.endsWith("/")) {
+                            if (name.startsWith(s)) {
                                 inExclude = true;
                                 break;
                             }
                         } else {
-                            if(name.equals(s)) {
+                            if (name.equals(s)) {
                                 inExclude = true;
                                 break;
                             }
                         }
                     }
 
-                    if(inExclude)
+                    if (inExclude)
                         continue;
                 }
 
                 int lastIndex = name.lastIndexOf('/') + 1;
                 String prefixedName = "";
 
-                if(lastIndex != -1) {
+                if (lastIndex != -1) {
                     prefixedName = name.substring(0, lastIndex);
                 }
 
@@ -67,9 +67,9 @@ public class EasyZipAccess {
 
                     int count = 0;
                     byte[] buffer = new byte[4096];
-                    while(count >= 0) {
+                    while (count >= 0) {
                         count = in.read(buffer);
-                        if(count > 0) {
+                        if (count > 0) {
                             out.write(buffer, 0, count);
                         }
                     }
@@ -82,7 +82,7 @@ public class EasyZipAccess {
                     extractedFileReal.delete();
                     extractedFile.renameTo(extractedFileReal);
 
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -102,37 +102,37 @@ public class EasyZipAccess {
             Enumeration<? extends ZipEntry> list = toUnZip.entries();
             ZipEntry fileInZip;
 
-            while(list.hasMoreElements()) {
+            while (list.hasMoreElements()) {
                 fileInZip = list.nextElement();
-                if(fileInZip.isDirectory())
+                if (fileInZip.isDirectory())
                     continue;
                 String name = fileInZip.getName();
 
-                if(excludes != null) {
+                if (excludes != null) {
 
                     boolean inExclude = false;
-                    for(String s : excludes) {
-                        if(s.endsWith("/")) {
-                            if(name.startsWith(s)) {
+                    for (String s : excludes) {
+                        if (s.endsWith("/")) {
+                            if (name.startsWith(s)) {
                                 inExclude = true;
                                 break;
                             }
                         } else {
-                            if(name.equals(s)) {
+                            if (name.equals(s)) {
                                 inExclude = true;
                                 break;
                             }
                         }
                     }
 
-                    if(inExclude)
+                    if (inExclude)
                         continue;
                 }
 
                 int lastIndex = name.lastIndexOf('/') + 1;
                 String prefixedName = "";
 
-                if(lastIndex != -1) {
+                if (lastIndex != -1) {
                     prefixedName = name.substring(0, lastIndex);
                 }
 
@@ -141,7 +141,7 @@ public class EasyZipAccess {
 
                 File extractedFileReal = new File(dest + prefixedName);
 
-                if(!extractedFileReal.exists()) {
+                if (!extractedFileReal.exists()) {
                     return false;
                 }
             }
@@ -157,12 +157,12 @@ public class EasyZipAccess {
         try {
             JarOutputStream toAdd = new JarOutputStream(new FileOutputStream(fileName));
             source = source.replace('/', System.getProperty("file.separator").charAt(0));
-            if(source.endsWith(System.getProperty("file.separator"))) {
+            if (source.endsWith(System.getProperty("file.separator"))) {
                 source = source.substring(0, source.length() - 1);
             }
             addAll(toAdd, source, source, filePrefix);
             toAdd.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
 
@@ -172,23 +172,26 @@ public class EasyZipAccess {
     private static void addAll(JarOutputStream zip, String filePath, String base, String filePrefix) throws Exception {
         File file = new File(filePath);
 
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
 
             File[] list = file.listFiles();
 
-            for(int i=0; i<list.length; i++)
-                addAll(zip, filePath + System.getProperty("file.separator") + list[i].getName(), base, filePrefix);
+            if (list != null) {
+                for (File value : list) {
+                    addAll(zip, filePath + System.getProperty("file.separator") + value.getName(), base, filePrefix);
+                }
+            }
 
         } else {
 
-            if(!file.getName().startsWith(filePrefix))
+            if (!file.getName().startsWith(filePrefix))
                 return;
 
             String name = filePath.substring(base.length() + 1);
             int lastIndex = name.lastIndexOf(System.getProperty("file.separator")) + 1;
             String prefixedName = "";
 
-            if(lastIndex != 0) {
+            if (lastIndex != 0) {
                 prefixedName = name.substring(0, lastIndex);
             }
 
@@ -201,9 +204,9 @@ public class EasyZipAccess {
             DataInputStream in = new DataInputStream(new FileInputStream(file));
             int count = 1;
             byte[] buffer = new byte[4096];
-            while(count >= 0) {
+            while (count >= 0) {
                 count = in.read(buffer);
-                if(count > 0) {
+                if (count > 0) {
                     zip.write(buffer, 0, count);
                 }
             }
@@ -218,14 +221,14 @@ public class EasyZipAccess {
         ZipFile file = new ZipFile(f);
         Enumeration<? extends ZipEntry> list = file.entries();
         ZipEntry fileInZip;
-        while(list.hasMoreElements()) {
+        while (list.hasMoreElements()) {
             fileInZip = list.nextElement();
-            if(fileInZip.isDirectory())
+            if (fileInZip.isDirectory())
                 continue;
             String name = fileInZip.getName();
             String[] part = name.split("\\.");
             String ext = part[part.length - 1];
-            if(ext.equals("class"))
+            if (ext.equals("class"))
                 Innerlist.add(name);
         }
         file.close();

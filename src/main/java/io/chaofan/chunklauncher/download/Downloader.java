@@ -3,11 +3,6 @@ package io.chaofan.chunklauncher.download;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class Downloader implements Runnable {
 
@@ -20,8 +15,8 @@ public class Downloader implements Runnable {
 
     private boolean stopAfterAllDone = false;
 
-    private final LinkedList<Downloadable> downloading = new LinkedList<Downloadable>();
-    private final List<Thread> threads = new ArrayList<Thread>();
+    private final LinkedList<Downloadable> downloading = new LinkedList<>();
+    private final List<Thread> threads = new ArrayList<>();
     private volatile int state = NOT_START;
 
     private final int threadCountLimit;
@@ -32,7 +27,7 @@ public class Downloader implements Runnable {
 
     @Override
     public void run() {
-        while(!downloadStop && state == RUNNING) {
+        while (!downloadStop && state == RUNNING) {
             Downloadable todown;
             synchronized (downloading) {
                 if (downloading.isEmpty()) {
@@ -67,7 +62,7 @@ public class Downloader implements Runnable {
             throw new IllegalStateException("state != RUNNING | NOT_START");
         }
 
-        synchronized(downloading) {
+        synchronized (downloading) {
             downloading.add(d);
             if (state == RUNNING) {
                 startThreadIfNeeded();

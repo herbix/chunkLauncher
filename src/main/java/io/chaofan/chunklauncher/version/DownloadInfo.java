@@ -9,7 +9,7 @@ import java.util.Map;
 public class DownloadInfo {
 
     public static Map<String, DownloadInfo> getDownloadInfo(JSONObject json) {
-        Map<String, DownloadInfo> result = new HashMap<String, DownloadInfo>();
+        Map<String, DownloadInfo> result = new HashMap<>();
         Iterator it = json.keys();
         while (it.hasNext()) {
             String key = it.next().toString();

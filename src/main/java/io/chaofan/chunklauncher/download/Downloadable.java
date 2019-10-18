@@ -6,9 +6,9 @@ import io.chaofan.chunklauncher.util.HttpFetcher;
 import io.chaofan.chunklauncher.util.Lang;
 
 public class Downloadable {
-    private String url = null;
-    private String saveFilePath = null;
-    private DownloadCallback callback = null;
+    private String url;
+    private String saveFilePath;
+    private DownloadCallback callback;
     private String downloaded = null;
 
     public Downloadable(String url, String saveFilePath) {
@@ -38,15 +38,15 @@ public class Downloadable {
     }
 
     public void download(Downloader downloader) {
-        if(url == null) {
+        if (url == null) {
             return;
         }
         boolean succeed;
-        if(callback != null) {
+        if (callback != null) {
             callback.downloadStart(this);
         }
         System.out.println(Lang.getString("msg.download.start") + url);
-        if(saveFilePath == null) {
+        if (saveFilePath == null) {
             downloaded = HttpFetcher.fetch(url);
             succeed = (downloaded != null);
         } else {
@@ -56,11 +56,11 @@ public class Downloadable {
                 succeed = false;
             }
         }
-        if(succeed)
+        if (succeed)
             System.out.println(Lang.getString("msg.download.succeeded") + url);
         else
             System.out.println(Lang.getString("msg.download.failed") + url);
-        if(callback != null) {
+        if (callback != null) {
             callback.downloadDone(this, succeed, downloader.unfinishedTaskCount() == 1);
         }
     }

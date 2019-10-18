@@ -37,7 +37,7 @@ public class Pack implements ITableRowProvider {
 
     @Override
     public Object[] provideRow() {
-        return new Object[] {
+        return new Object[]{
                 format.format(new Date(file.lastModified()))
         };
     }

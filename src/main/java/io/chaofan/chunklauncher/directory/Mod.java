@@ -9,8 +9,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -26,7 +24,7 @@ public class Mod implements ITableRowProvider, IEnableProvider {
             50,
             20
     };
-    public static final boolean[] COLUMN_CENTER = new boolean[] {
+    public static final boolean[] COLUMN_CENTER = new boolean[]{
             false,
             false,
             true
@@ -90,11 +88,9 @@ public class Mod implements ITableRowProvider, IEnableProvider {
         }
     }
 
-    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     @Override
     public Object[] provideRow() {
-        return new Object[] {
+        return new Object[]{
                 version,
                 mcVersion,
                 file.getName().endsWith(".disabled") ?

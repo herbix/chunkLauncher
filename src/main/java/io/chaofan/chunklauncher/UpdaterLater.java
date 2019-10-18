@@ -16,37 +16,37 @@ public class UpdaterLater {
         }
     */
 
-        if(args.length <= 0) {
+        if (args.length <= 0) {
             return;
         }
 
         File tempFile = new File(args[0]);
         File realFile = new File(args[1]);
 
-        if(!tempFile.isFile())
+        if (!tempFile.isFile())
             return;
 
         boolean deleted = false;
 
-        if(realFile.isFile())
-            for(int i=0; i<10; i++) {
+        if (realFile.isFile())
+            for (int i = 0; i < 10; i++) {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(realFile.delete()) {
+                if (realFile.delete()) {
                     deleted = true;
                     break;
                 }
             }
 
-        if(!deleted) {
+        if (!deleted) {
             return;
         }
 
-        for(int i=0; i<10; i++) {
-            if(tempFile.renameTo(realFile))
+        for (int i = 0; i < 10; i++) {
+            if (tempFile.renameTo(realFile))
                 break;
             try {
                 Thread.sleep(200);
@@ -59,8 +59,8 @@ public class UpdaterLater {
 
         String java = System.getProperty("java.home") + "/bin/java";
 
-        if(getCurrentPlatform().equals("windows")) {
-            if(new File(java + "w.exe").exists()) {
+        if (getCurrentPlatform().equals("windows")) {
+            if (new File(java + "w.exe").exists()) {
                 java += "w.exe";
             }
         }

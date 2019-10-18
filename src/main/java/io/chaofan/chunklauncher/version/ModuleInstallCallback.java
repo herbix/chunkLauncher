@@ -2,8 +2,8 @@ package io.chaofan.chunklauncher.version;
 
 public interface ModuleInstallCallback {
 
-    public void installStart();
+    void installStart();
 
-    public void installDone();
+    void installDone();
 
 }

@@ -1,33 +1,26 @@
 package io.chaofan.chunklauncher;
 
+import io.chaofan.chunklauncher.auth.AuthType;
+import io.chaofan.chunklauncher.directory.DirectoryTabPanel;
+import io.chaofan.chunklauncher.directory.DirectoryType;
+import io.chaofan.chunklauncher.download.Downloader;
+import io.chaofan.chunklauncher.util.HttpFetcher;
+import io.chaofan.chunklauncher.util.Lang;
+import io.chaofan.chunklauncher.util.UI;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-
-import io.chaofan.chunklauncher.directory.*;
-import io.chaofan.chunklauncher.util.HttpFetcher;
-import io.chaofan.chunklauncher.auth.AuthType;
-import io.chaofan.chunklauncher.download.Downloader;
-import io.chaofan.chunklauncher.util.Lang;
-import io.chaofan.chunklauncher.util.UI;
 
 public class LauncherFrame extends JFrame {
 
@@ -48,27 +41,27 @@ public class LauncherFrame extends JFrame {
     JCheckBox showOld = new JCheckBox(Lang.getString("ui.module.old"));
     JCheckBox showSnapshot = new JCheckBox(Lang.getString("ui.module.snapshot"));
 
-    JComboBox<Profile> profiles2 = new JComboBox<Profile>();
+    JComboBox<Profile> profiles2 = new JComboBox<>();
     JLabel userLabel = new JLabel(Lang.getString("ui.username.label"));
     JTextField user = new JTextField();
     JLabel passLabel = new JLabel(Lang.getString("ui.password.label"));
     JTextField pass = new JPasswordField();
     JCheckBox savePass = new JCheckBox(Lang.getString("ui.savepassword"));
     JLabel authTypeLabel = new JLabel(Lang.getString("ui.auth.type.label"));
-    JComboBox<AuthType> authType = new JComboBox<AuthType>();
+    JComboBox<AuthType> authType = new JComboBox<>();
     JLabel gameVersionLabel = new JLabel(Lang.getString("ui.version.label"));
-    JComboBox<String> gameVersion = new JComboBox<String>();
+    JComboBox<String> gameVersion = new JComboBox<>();
     JButton launch = new JButton(Lang.getString("ui.launch"));
 
     JLabel profilesLabel = new JLabel(Lang.getString("ui.profile.label"));
-    JComboBox<Profile> profiles = new JComboBox<Profile>();
+    JComboBox<Profile> profiles = new JComboBox<>();
     JLabel profileDetailLabel = new JLabel();
 
     JButton addProfile = new JButton(Lang.getString("ui.profile.add"));
     JButton removeProfile = new JButton(Lang.getString("ui.profile.remove"));
 
     JLabel runPathLabel = new JLabel(Lang.getString("ui.runpath.label"));
-    JComboBox<RunningDirectory> runPathDirectories = new JComboBox<RunningDirectory>();
+    JComboBox<RunningDirectory> runPathDirectories = new JComboBox<>();
 
     ButtonGroup runningMode = new ButtonGroup();
     JRadioButton runningMode32 = new JRadioButton(Lang.getString("ui.mode.d32"), false);
@@ -87,10 +80,10 @@ public class LauncherFrame extends JFrame {
     JLabel proxyTypeLabel = new JLabel(Lang.getString("ui.proxy.type.label"));
     JLabel proxyHostPortLabel = new JLabel(Lang.getString("ui.proxy.hostport.label"));
     JCheckBox enableProxy = new JCheckBox(Lang.getString("ui.proxy.enable.label"));
-    JComboBox<String> proxyType = new JComboBox<String>(new String[]{"HTTP", "Socks"});
+    JComboBox<String> proxyType = new JComboBox<>(new String[]{"HTTP", "Socks"});
     JTextField proxy = new JTextField();
 
-    JComboBox<RunningDirectory> directories = new JComboBox<RunningDirectory>();
+    JComboBox<RunningDirectory> directories = new JComboBox<>();
     JButton addDirectory = new JButton(Lang.getString("ui.directory.add"));
     JButton removeDirectory = new JButton(Lang.getString("ui.directory.remove"));
     JLabel directoryPathLabel = new JLabel(Lang.getString("ui.directory.pathlabel"));
@@ -117,10 +110,10 @@ public class LauncherFrame extends JFrame {
             setUndecorated(true);
             this.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
         }
-        addWindowListener(new WindowAdapter(){
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if(thisStdOut != null && thisStdOut == System.out) {
+                if (thisStdOut != null && thisStdOut == System.out) {
                     System.setOut(oldStdOut);
                 }
                 Config.updateFromFrame(LauncherFrame.this);
@@ -128,6 +121,7 @@ public class LauncherFrame extends JFrame {
                 Downloader.stopAll();
                 dispose();
             }
+
             @Override
             public void windowClosed(WindowEvent e) {
                 System.exit(0);
@@ -241,7 +235,7 @@ public class LauncherFrame extends JFrame {
 
         passwordLine.add(pass, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         pass.setPreferredSize(new Dimension(10, 25));
-        pass.addFocusListener(new FocusAdapter(){
+        pass.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 pass.setSelectionStart(0);
@@ -261,7 +255,7 @@ public class LauncherFrame extends JFrame {
 
         authTypeLine.add(authType, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         authType.setPreferredSize(new Dimension(10, 23));
-        for(AuthType at : AuthType.values()) {
+        for (AuthType at : AuthType.values()) {
             authType.addItem(at);
         }
 
@@ -372,11 +366,12 @@ public class LauncherFrame extends JFrame {
         directoryPathSearch.setPreferredSize(new Dimension(25, 25));
         directoryPathSearch.addActionListener(new ActionListener() {
             private JFileChooser fc = new JFileChooser();
+
             public void actionPerformed(ActionEvent e) {
                 fc.setCurrentDirectory(new File(directoryPath.getText()));
                 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 fc.showDialog(LauncherFrame.this, Lang.getString("ui.runpath.filechooser.title"));
-                if(fc.getSelectedFile() != null)
+                if (fc.getSelectedFile() != null)
                     directoryPath.setText(fc.getSelectedFile().getPath());
             }
         });
@@ -385,9 +380,21 @@ public class LauncherFrame extends JFrame {
         directoryManages.setPreferredSize(new Dimension(10, 10));
 
         directoryPath.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { update(); }
-            @Override public void removeUpdate(DocumentEvent e) { update(); }
-            @Override public void changedUpdate(DocumentEvent e) { update(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
             private void update() {
                 File directory = new File(directoryPath.getText());
                 if (!directory.isAbsolute()) {
@@ -424,7 +431,7 @@ public class LauncherFrame extends JFrame {
                     directoryManages.addTab(Lang.getString("ui.directory.mods"),
                             DirectoryTabPanel.createDirectoryTab(LauncherFrame.this, DirectoryType.MOD,
                                     DirectoryTabPanel.INSTALL | DirectoryTabPanel.ENABLE |
-                                    DirectoryTabPanel.DISABLE | DirectoryTabPanel.REMOVE, mods));
+                                            DirectoryTabPanel.DISABLE | DirectoryTabPanel.REMOVE, mods));
                 }
 
                 if (directoryManages.getTabCount() == 0) {
@@ -454,11 +461,12 @@ public class LauncherFrame extends JFrame {
         jrePathSearch.setPreferredSize(new Dimension(25, 25));
         jrePathSearch.addActionListener(new ActionListener() {
             private JFileChooser fc = new JFileChooser();
+
             public void actionPerformed(ActionEvent e) {
                 fc.setCurrentDirectory(new File(jrePath.getText()));
                 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 fc.showDialog(LauncherFrame.this, Lang.getString("ui.jrepath.filechooser.title"));
-                if(fc.getSelectedFile() != null)
+                if (fc.getSelectedFile() != null)
                     jrePath.setText(fc.getSelectedFile().getPath());
             }
         });
@@ -494,11 +502,7 @@ public class LauncherFrame extends JFrame {
         memorySizeSlider.setPreferredSize(new Dimension(10, 38));
         memorySizeSlider.setMinimum(0);
         memorySizeSlider.setMaximum(8192);
-        memorySizeSlider.addChangeListener(new ChangeListener(){
-            public void stateChanged(ChangeEvent e) {
-                memorySize.setText(String.valueOf(memorySizeSlider.getValue()));
-            }
-        });
+        memorySizeSlider.addChangeListener(e -> memorySize.setText(String.valueOf(memorySizeSlider.getValue())));
 
         systemPanel.add(enableProxy, UI.gbc(0, 3, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(5)));
         enableProxy.setPreferredSize(new Dimension(10, 20));
@@ -527,9 +531,9 @@ public class LauncherFrame extends JFrame {
     }
 
     public void setStdOut() {
-        if(thisStdOut != null && thisStdOut == System.out) {
+        if (thisStdOut != null && thisStdOut == System.out) {
             System.setOut(oldStdOut);
-            if(Config.showDebugInfo) {
+            if (Config.showDebugInfo) {
                 System.setErr(oldStdErr);
             }
         } else {
@@ -537,18 +541,14 @@ public class LauncherFrame extends JFrame {
             oldStdOut = System.out;
             oldStdErr = System.err;
             System.setOut(thisStdOut);
-            if(Config.showDebugInfo) {
+            if (Config.showDebugInfo) {
                 System.setErr(thisStdOut);
             }
         }
     }
 
     public void outputConsole(final String message) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                commentLabel.setText(message);
-            }
-        });
+        SwingUtilities.invokeLater(() -> commentLabel.setText(message));
     }
 
     class ConsoleOutputStream extends OutputStream {
@@ -563,19 +563,19 @@ public class LauncherFrame extends JFrame {
             }
         }
 
-        public void write(int b) throws IOException {
+        public void write(int b) {
             synchronized (buffer) {
-                if(b == 13) {
+                if (b == 13) {
                     String message = new String(buffer, 0, pos);
                     outputConsole(message);
-                    if(oldStdOut != null) {
+                    if (oldStdOut != null) {
                         oldStdOut.print(message);
                     }
                     pos = 0;
                 } else {
                     buffer[pos] = (byte) b;
                     pos++;
-                    if(pos >= buffer.length) {
+                    if (pos >= buffer.length) {
                         pos = 0;
                     }
                 }
@@ -585,10 +585,10 @@ public class LauncherFrame extends JFrame {
 
     class LauncherFrameFocusTraversalPolicy extends FocusTraversalPolicy {
 
-        public List<Component> componentListProfile = new ArrayList<Component>();
-        public List<Component> componentListModule = new ArrayList<Component>();
-        public List<Component> componentListDirectory = new ArrayList<Component>();
-        public List<Component> componentListSystem = new ArrayList<Component>();
+        public List<Component> componentListProfile = new ArrayList<>();
+        public List<Component> componentListModule = new ArrayList<>();
+        public List<Component> componentListDirectory = new ArrayList<>();
+        public List<Component> componentListSystem = new ArrayList<>();
 
         public LauncherFrameFocusTraversalPolicy() {
             initPre(componentListProfile);

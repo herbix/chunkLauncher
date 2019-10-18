@@ -13,15 +13,15 @@ public class RunnableModuleAssets {
     public String index;
     public boolean virtual;
     public boolean mapToResources;
-    public List<AssetItem> objects = new ArrayList<AssetItem>();
+    public List<AssetItem> objects = new ArrayList<>();
 
     public RunnableModuleAssets(JSONObject json, String index) {
         this.index = index;
         this.virtual = json.has("virtual") && json.getBoolean("virtual");
         this.mapToResources = json.has("map_to_resources") && json.getBoolean("map_to_resources");
         JSONObject objs = json.getJSONObject("objects");
-        for(String key : objs.keySet()) {
-            objects.add(new AssetItem(objs.getJSONObject(key), key, this));
+        for (String key : objs.keySet()) {
+            objects.add(new AssetItem(objs.getJSONObject(key), key));
         }
     }
 
@@ -41,17 +41,17 @@ public class RunnableModuleAssets {
 
         virtualDir.mkdirs();
 
-        for(AssetItem asset : objects) {
+        for (AssetItem asset : objects) {
             String path = asset.getRealFilePath();
             File file = new File(path);
-            if(!file.isFile()) {
+            if (!file.isFile()) {
                 return false;
             }
             File targetFile = new File(virtualDir, asset.getName());
-            if(targetFile.isFile()) {
+            if (targetFile.isFile()) {
                 continue;
             }
-            if(!EasyFileAccess.copyFile(file, targetFile)) {
+            if (!EasyFileAccess.copyFile(file, targetFile)) {
                 return false;
             }
         }

@@ -1,7 +1,5 @@
 package io.chaofan.chunklauncher;
 
-import java.io.IOException;
-
 import io.chaofan.chunklauncher.auth.AuthType;
 import io.chaofan.chunklauncher.util.Lang;
 
@@ -24,12 +22,12 @@ public class Profile {
     public Profile(String name, String saved) {
         profileName = name;
 
-        if(saved == null) {
+        if (saved == null) {
             return;
         }
 
         String[] split = saved.split(";");
-        if(split.length < 6) {
+        if (split.length < 6) {
             return;
         }
 
@@ -46,19 +44,17 @@ public class Profile {
     }
 
     public String toSavedString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(user);
-        sb.append(';');
-        sb.append(encodePass(pass));
-        sb.append(';');
-        sb.append(savePass);
-        sb.append(';');
-        sb.append(authType);
-        sb.append(';');
-        sb.append(version);
-        sb.append(';');
-        sb.append(runPath);
-        return sb.toString();
+        return user +
+                ';' +
+                encodePass(pass) +
+                ';' +
+                savePass +
+                ';' +
+                authType +
+                ';' +
+                version +
+                ';' +
+                runPath;
     }
 
     public void updateToFrame(LauncherFrame frame) {
@@ -74,7 +70,7 @@ public class Profile {
     public String getDetailString() {
         return "<html><body><p>" +
                 Lang.getString("ui.username.label") + " " + user + "</p><p>" +
-                Lang.getString("ui.auth.type.label") + " " + String.valueOf(AuthType.valueOf(authType)) + "</p><p>" +
+                Lang.getString("ui.auth.type.label") + " " + AuthType.valueOf(authType) + "</p><p>" +
                 Lang.getString("ui.version.label") + " " + version + "</p>" +
                 "</body></html>";
     }
@@ -82,14 +78,14 @@ public class Profile {
     public void updateFromFrame(LauncherFrame frame) {
         user = frame.user.getText();
         savePass = frame.savePass.isSelected();
-        if(savePass)
+        if (savePass)
             pass = frame.pass.getText();
         else
             pass = "";
-        authType = ((AuthType)frame.authType.getSelectedItem()).value();
-        if(frame.gameVersion.getSelectedItem() != null)
+        authType = ((AuthType) frame.authType.getSelectedItem()).value();
+        if (frame.gameVersion.getSelectedItem() != null)
             version = frame.gameVersion.getSelectedItem().toString();
-        if(version == null)
+        if (version == null)
             version = "";
         RunningDirectory runPathSelection = (RunningDirectory) frame.runPathDirectories.getSelectedItem();
         runPath = runPathSelection == null ? Config.directories.get(Config.DEFAULT) : runPathSelection;
@@ -105,27 +101,29 @@ public class Profile {
     private static String encodePass(String pass) {
         byte[] str = pass.getBytes();
 
-        for(int i=0; i<str.length; i++) {
+        for (int i = 0; i < str.length; i++) {
             str[i] ^= magic[i % magic.length];
         }
 
         String result = Base64.getEncoder().encodeToString(str);
         int equalIndex = result.indexOf('=');
-        if(equalIndex > 0) {
+        if (equalIndex > 0) {
             result = result.substring(0, equalIndex);
         }
         return result;
     }
 
     private static String decodePass(String encoded) {
-        while(encoded.length() % 4 != 0)
-            encoded += "=";
+        StringBuilder encodedBuilder = new StringBuilder(encoded);
+        while (encodedBuilder.length() % 4 != 0)
+            encodedBuilder.append("=");
+        encoded = encodedBuilder.toString();
 
         byte[] str;
 
         str = Base64.getDecoder().decode(encoded);
 
-        for(int i=0; i<str.length; i++) {
+        for (int i = 0; i < str.length; i++) {
             str[i] ^= magic[i % magic.length];
         }
 

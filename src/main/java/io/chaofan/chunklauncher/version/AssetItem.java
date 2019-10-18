@@ -7,16 +7,14 @@ import java.io.File;
 
 public class AssetItem {
 
-    private RunnableModuleAssets assets;
     private String name;
     private String hash;
     private int size;
 
-    public AssetItem(JSONObject json, String name, RunnableModuleAssets assets) {
+    public AssetItem(JSONObject json, String name) {
         this.name = name;
         this.hash = json.getString("hash");
         this.size = json.getInt("size");
-        this.assets = assets;
     }
 
     public String getName() {

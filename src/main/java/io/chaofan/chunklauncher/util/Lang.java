@@ -7,7 +7,7 @@ import java.util.Properties;
  * This class contains mothods about ui localization.
  * Localization files is contained in 'lang/' folder, with the
  * files '*.lang'.
- * 
+ *
  * @author Chaos
  * @since ChunkLauncher 1.3.2
  */
@@ -15,7 +15,7 @@ public class Lang {
 
     private static final String LANGUAGE_PRIMARY =
             System.getProperty("user.language", "en") + "-" +
-            System.getProperty("user.country", "US");
+                    System.getProperty("user.country", "US");
 
     private static final String LANGUAGE_SECONDARY =
             System.getProperty("user.language", "en");
@@ -23,13 +23,13 @@ public class Lang {
     private static final String LANGUAGE_DEFAULT = "en";
 
     private static final String SYSTEM_LANG_FILE_PRIMARY = "/lang/" +
-        LANGUAGE_PRIMARY + ".lang";
+            LANGUAGE_PRIMARY + ".lang";
 
     private static final String SYSTEM_LANG_FILE_SECONDARY = "/lang/" +
-        LANGUAGE_SECONDARY + ".lang";
+            LANGUAGE_SECONDARY + ".lang";
 
     private static final String SYSTEM_LANG_FILE_DEFAULT = "/lang/" +
-        LANGUAGE_DEFAULT + ".lang";
+            LANGUAGE_DEFAULT + ".lang";
 
     private static Properties langContentDefault = new Properties();
     private static Properties langContentSecondary = new Properties(langContentDefault);
@@ -37,6 +37,7 @@ public class Lang {
 
     /**
      * Use an id to get the localized string.
+     *
      * @param id The id, for example 'msg.auth.succeeded'
      * @return Localized string
      */
@@ -47,9 +48,10 @@ public class Lang {
 
     /**
      * Register a string for language.
+     *
      * @param language The language, for example 'en', 'zh-CN'.
-     * @param id The id, for example 'msg.auth.succeeded'
-     * @param value Localized string
+     * @param id       The id, for example 'msg.auth.succeeded'
+     * @param value    Localized string
      */
     public static void registerString(String language, String id, String value) {
         language = language.toLowerCase();
@@ -65,13 +67,13 @@ public class Lang {
     }
 
     private static void loadDefaultLangFile() {
-        if(!loadLangResource(SYSTEM_LANG_FILE_PRIMARY, langContentPrimary)) {
-            if(!loadLangResource(SYSTEM_LANG_FILE_SECONDARY, langContentPrimary))
+        if (!loadLangResource(SYSTEM_LANG_FILE_PRIMARY, langContentPrimary)) {
+            if (!loadLangResource(SYSTEM_LANG_FILE_SECONDARY, langContentPrimary))
                 loadLangResource(SYSTEM_LANG_FILE_DEFAULT, langContentPrimary);
             else
                 loadLangResource(SYSTEM_LANG_FILE_DEFAULT, langContentSecondary);
         } else {
-            if(!loadLangResource(SYSTEM_LANG_FILE_SECONDARY, langContentSecondary))
+            if (!loadLangResource(SYSTEM_LANG_FILE_SECONDARY, langContentSecondary))
                 loadLangResource(SYSTEM_LANG_FILE_DEFAULT, langContentSecondary);
             else
                 loadLangResource(SYSTEM_LANG_FILE_DEFAULT, langContentDefault);
@@ -82,7 +84,7 @@ public class Lang {
         try {
             properties.load(Lang.class.getResourceAsStream(resource));
             String encoding = properties.getProperty("encoding", null);
-            if(encoding != null) {
+            if (encoding != null) {
                 properties.load(new InputStreamReader(Lang.class.getResourceAsStream(resource), encoding));
             }
         } catch (Exception e) {

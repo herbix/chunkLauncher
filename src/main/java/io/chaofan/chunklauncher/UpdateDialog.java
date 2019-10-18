@@ -1,17 +1,9 @@
 package io.chaofan.chunklauncher;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-
 import io.chaofan.chunklauncher.util.Lang;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class UpdateDialog extends JDialog {
 
@@ -41,11 +33,7 @@ public class UpdateDialog extends JDialog {
         base.add(cancel);
         cancel.setSize(80, 25);
         cancel.setLocation(160, 40);
-        cancel.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
+        cancel.addActionListener(e -> setVisible(false));
 
         base.add(progress);
         progress.setSize(390, 20);
@@ -53,11 +41,7 @@ public class UpdateDialog extends JDialog {
     }
 
     public void setProgress(final double d) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                progress.setValue((int)((progress.getMaximum() - progress.getMinimum()) * d));
-            }
-        });
+        SwingUtilities.invokeLater(() -> progress.setValue((int) ((progress.getMaximum() - progress.getMinimum()) * d)));
     }
 
 }

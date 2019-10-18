@@ -13,6 +13,6 @@ public interface AuthDoneCallback {
      * @param authObject ServerAuth object self
      * @param succeed Whether the login is succeed
      */
-    public void authDone(ServerAuth authObject, boolean succeed);
+    void authDone(ServerAuth authObject, boolean succeed);
 
 }

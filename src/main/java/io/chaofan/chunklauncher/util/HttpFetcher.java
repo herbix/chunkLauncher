@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ import io.chaofan.chunklauncher.Config;
 
 /**
  * This class contains methods to easy access http contents.
- * 
+ *
  * @author Chaos
  * @since ChunkLauncher 1.3.2
  */
@@ -28,26 +29,26 @@ public final class HttpFetcher {
     private static JProgressBar progress = defpb;
 
     public static void setJProgressBar(JProgressBar p) {
-        if(p == null) {
+        if (p == null) {
             progress = defpb;
         }
         progress = p;
     }
 
     private static HttpURLConnection createConnection(String url, String method, int downloaded, int len, String type)
-            throws     IOException {
+            throws IOException {
         HttpURLConnection conn;
         URL console = new URL(url);
-        if(Config.enableProxy && Config.proxy != null) {
+        if (Config.enableProxy && Config.proxy != null) {
             conn = (HttpURLConnection) console.openConnection(Config.proxy);
         } else {
             conn = (HttpURLConnection) console.openConnection();
         }
         conn.setRequestMethod(method);
-        if(downloaded > 0) {
+        if (downloaded > 0) {
             conn.addRequestProperty("Range", downloaded + "-");
         }
-        if(len > 0) {
+        if (len > 0) {
             conn.addRequestProperty("Content-Type", type + "; charset=utf-8");
             conn.addRequestProperty("Content-Length", String.valueOf(len));
             conn.setUseCaches(false);
@@ -57,8 +58,8 @@ public final class HttpFetcher {
         return conn;
     }
 
-    private static void pipeStream(InputStream in, OutputStream out) throws IOException {
-        pipeStream(in, out, 0, -1);
+    private static int pipeStream(InputStream in, OutputStream out) throws IOException {
+        return pipeStream(in, out, 0, -1);
     }
 
     private static int pipeStream(InputStream in, OutputStream out, int downloaded, int length) throws IOException {
@@ -66,7 +67,7 @@ public final class HttpFetcher {
         int count;
 
         int n = 0;
-        if(length != 0) {
+        if (length != 0) {
             n = downloaded * 100 / length;
         }
 
@@ -74,7 +75,7 @@ public final class HttpFetcher {
             downloaded += count;
             if (count > 0) {
                 out.write(buffer, 0, count);
-                if(length != 0) {
+                if (length != 0) {
                     int newN = downloaded * 100 / length;
                     increaseProgressValue(newN - n);
                     n = newN;
@@ -89,17 +90,13 @@ public final class HttpFetcher {
 
     private static void increaseProgressValue(final int value) {
         if (value > 0) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    progress.setValue(progress.getValue() + value);
-                }
-            });
+            SwingUtilities.invokeLater(() -> progress.setValue(progress.getValue() + value));
         }
     }
 
     /**
      * Get content from the url.
+     *
      * @param url The url
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
@@ -108,7 +105,7 @@ public final class HttpFetcher {
 
         boolean failed = fetchToStream(url, out);
 
-        if(failed)
+        if (failed)
             return null;
         return new String(out.toByteArray());
     }
@@ -116,7 +113,8 @@ public final class HttpFetcher {
     /**
      * Get content from the url and save to a local file.
      * Be sure <b>param file</b> is a file that doesn't exist.
-     * @param url The url
+     *
+     * @param url  The url
      * @param file Local filename to save
      * @return Whether network access is available.
      * @throws IOException if the file can't be created
@@ -128,7 +126,7 @@ public final class HttpFetcher {
 
         out.close();
 
-        if(failed) {
+        if (failed) {
             new File(file).delete();
             return false;
         }
@@ -154,9 +152,9 @@ public final class HttpFetcher {
             try {
                 conn = createConnection(url, "GET", downloaded, 0, "application/x-www-form-urlencoded");
                 conn.connect();
-                if(length == -1) {
+                if (length == -1) {
                     String lenStr = conn.getHeaderField("Content-Length");
-                    if(lenStr == null)
+                    if (lenStr == null)
                         length = -2;
                     else
                         length = Integer.valueOf(lenStr);
@@ -177,7 +175,8 @@ public final class HttpFetcher {
 
     /**
      * Get content from the url, using POST method.
-     * @param url The url
+     *
+     * @param url    The url
      * @param params The map contains post params
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
@@ -187,7 +186,8 @@ public final class HttpFetcher {
 
     /**
      * Get content from the url, using POST method.
-     * @param url The url
+     *
+     * @param url  The url
      * @param json The JSON object to send
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
@@ -197,7 +197,8 @@ public final class HttpFetcher {
 
     /**
      * Get content from the url, using POST method.
-     * @param url The url
+     *
+     * @param url    The url
      * @param params The string contains post params
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
@@ -207,9 +208,10 @@ public final class HttpFetcher {
 
     /**
      * Get content from the url, using POST method.
-     * @param url The url
+     *
+     * @param url    The url
      * @param params The string contains post params
-     * @param type The param mime type
+     * @param type   The param mime type
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
     public static String fetchUsePostMethod(String url, String params, String type) {
@@ -222,7 +224,7 @@ public final class HttpFetcher {
             HttpURLConnection conn = null;
             failed = false;
             try {
-                byte[] toSend = params.getBytes("UTF-8");
+                byte[] toSend = params.getBytes(StandardCharsets.UTF_8);
                 conn = createConnection(url, "POST", 0, toSend.length, type);
                 conn.connect();
 
@@ -242,7 +244,7 @@ public final class HttpFetcher {
             }
         } while (failed && tryCount < 10);
 
-        if(failed)
+        if (failed)
             return null;
         return new String(out.toByteArray());
     }

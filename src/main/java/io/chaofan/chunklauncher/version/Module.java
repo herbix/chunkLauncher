@@ -40,7 +40,7 @@ public abstract class Module {
     }
 
     public String getFormattedReleaseTime() {
-        Date releaseTime = null;
+        Date releaseTime;
         try {
             releaseTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX").parse(getActualReleaseTime());
         } catch (ParseException e) {

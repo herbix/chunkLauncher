@@ -17,21 +17,21 @@ public class ClassUtil {
 
         String classPathString = System.getProperty("java.class.path");
 
-        if(searchJre) {
+        if (searchJre) {
             classPathString += System.getProperty("path.separator") + System.getProperty("sun.boot.class.path");
         }
 
         String[] classPaths = classPathString.split(System.getProperty("path.separator"));
 
-        List<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<>();
 
         String packagePath = packageName.replaceAll("\\.", "/");
 
-        for(String classPath : classPaths) {
+        for (String classPath : classPaths) {
             getClassesFromPackage(packageName, results, packagePath, classPath, ClassUtil.class.getClassLoader());
         }
 
-        return results.toArray(new Class<?>[results.size()]);
+        return results.toArray(new Class<?>[0]);
     }
 
     public static boolean isInClassPath(String path) {
@@ -43,14 +43,14 @@ public class ClassUtil {
         for (String classPath : classPaths) {
             if (new File(classPath).getAbsoluteFile().equals(pathFile)) {
                 return true;
-        }
+            }
         }
 
         return false;
     }
 
     public static Class<?>[] getClassesFromPackage(String packageName, String classPath, boolean useNewLoader) {
-        List<Class<?>> results = new ArrayList<Class<?>>();
+        List<Class<?>> results = new ArrayList<>();
         String packagePath = packageName.replaceAll("\\.", "/");
 
         ClassLoader loader = ClassUtil.class.getClassLoader();
@@ -63,24 +63,24 @@ public class ClassUtil {
         }
 
         getClassesFromPackage(packageName, results, packagePath, classPath, loader);
-        return results.toArray(new Class<?>[results.size()]);
+        return results.toArray(new Class<?>[0]);
     }
 
     private static void getClassesFromPackage(String packageName, List<Class<?>> results, String packagePath, String classPath, ClassLoader loader) {
         File cpFile = new File(classPath);
 
-        if(cpFile.isDirectory()) {
+        if (cpFile.isDirectory()) {
             File pFile = new File(cpFile, packagePath);
 
-            if(pFile.isDirectory()) {
+            if (pFile.isDirectory()) {
                 File[] files = pFile.listFiles();
                 if (files == null) {
                     return;
                 }
-                for(File cFile : files) {
+                for (File cFile : files) {
                     String cFileName = cFile.getName();
 
-                    if(cFile.isFile() && cFileName.endsWith(".class") && !cFileName.contains("$")) {
+                    if (cFile.isFile() && cFileName.endsWith(".class") && !cFileName.contains("$")) {
                         try {
                             results.add(loader.loadClass(packageName + "." + cFileName.substring(0, cFileName.length() - 6)));
                         } catch (ClassNotFoundException ignored) {
@@ -88,19 +88,19 @@ public class ClassUtil {
                     }
                 }
             }
-        } else if(cpFile.isFile()) {
+        } else if (cpFile.isFile()) {
             try {
                 JarFile jFile = new JarFile(cpFile);
 
                 Enumeration<JarEntry> jEntrys = jFile.entries();
 
-                while(jEntrys.hasMoreElements()) {
+                while (jEntrys.hasMoreElements()) {
                     JarEntry jClass = jEntrys.nextElement();
                     String jClassPath = jClass.getName();
 
-                    if(jClassPath.startsWith(packagePath)) {
+                    if (jClassPath.startsWith(packagePath)) {
                         String jClassName = jClassPath.substring(packagePath.length() + 1);
-                        if(!jClassName.contains("/") && jClassName.endsWith(".class") && !jClassName.contains("$")) {
+                        if (!jClassName.contains("/") && jClassName.endsWith(".class") && !jClassName.contains("$")) {
                             try {
                                 results.add(loader.loadClass(packageName + "." + jClassName.substring(0, jClassName.length() - 6)));
                             } catch (ClassNotFoundException ignored) {

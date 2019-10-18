@@ -16,7 +16,7 @@ public class VersionManager {
     public synchronized static boolean initVersionInfo(String path) {
 
         String text = EasyFileAccess.loadFile(path);
-        if(text == null)
+        if (text == null)
             return false;
 
         try {
@@ -28,9 +28,9 @@ public class VersionManager {
 
             JSONArray versions = content.getJSONArray("versions");
 
-            versionList = new HashMap<String, Version>();
+            versionList = new HashMap<>();
 
-            for(int i=0; i<versions.length(); i++) {
+            for (int i = 0; i < versions.length(); i++) {
                 JSONObject arrelem = versions.getJSONObject(i);
 
                 Version elem = new Version(arrelem);
@@ -38,7 +38,7 @@ public class VersionManager {
                 versionList.put(elem.id, elem);
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return false;
         }
 

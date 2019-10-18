@@ -7,19 +7,23 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.5
-* Change some states to icon
-* Update to JRE 1.8
-* Update json inheritance mechanisms
-* Fix support for pre-1.6 game versions
+### 1.9.6
+* Edit launch parameter creation mechanisms
+* Update code style
+* Sort content of comboboxes
 
 ## Working Version
-No.
 
 ## Executable
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.9.5
+* Change some states to icon
+* Update to JRE 1.8
+* Update json inheritance mechanisms
+* Fix support for pre-1.6 game versions
 
 ### 1.9.4
 * Hot fix for module loading

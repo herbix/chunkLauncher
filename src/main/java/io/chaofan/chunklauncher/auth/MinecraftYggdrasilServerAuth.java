@@ -41,10 +41,10 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
         String result = HttpFetcher.fetchUsePostMethod("https://authserver.mojang.com/authenticate", obj);
 
-        if(result == null) {
+        if (result == null) {
             List<AuthDBItem> stored = this.profiles.findUsernameFromDB(getName());
 
-            if(stored.isEmpty() || JOptionPane.YES_OPTION !=
+            if (stored.isEmpty() || JOptionPane.YES_OPTION !=
                     JOptionPane.showConfirmDialog(null, Lang.getString("msg.yggdrasil.saved"), "ChunkLauncher", JOptionPane.YES_NO_OPTION)) {
                 callback.authDone(this, false);
                 return;
@@ -56,20 +56,20 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
         JSONObject resultObj = new JSONObject(result);
 
-        if(resultObj.has("clientToken") && !resultObj.getString("clientToken").equals(token)) {
+        if (resultObj.has("clientToken") && !resultObj.getString("clientToken").equals(token)) {
             callback.authDone(this, false);
             return;
         }
 
         JSONObject profile = null;
 
-        if(resultObj.getJSONArray("availableProfiles").length() > 0) {
+        if (resultObj.getJSONArray("availableProfiles").length() > 0) {
             JSONArray profiles = resultObj.getJSONArray("availableProfiles");
 
-            List<String> list = new ArrayList<String>();
-            Map<String, JSONObject> map = new HashMap<String, JSONObject>();
+            List<String> list = new ArrayList<>();
+            Map<String, JSONObject> map = new HashMap<>();
 
-            for(int i=0; i<profiles.length(); i++) {
+            for (int i = 0; i < profiles.length(); i++) {
                 JSONObject item = profiles.getJSONObject(i);
                 String name = item.getString("name");
                 list.add(name);
@@ -79,7 +79,7 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
             profile = map.get(selectFrom(list));
         }
 
-        if(profile == null) {
+        if (profile == null) {
             this.profiles.save();
             callback.authDone(this, false);
             return;
@@ -92,12 +92,12 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
         setUserType("mojang");
 
-        if(resultObj.has("user")) {
+        if (resultObj.has("user")) {
             Map<String, Collection<Object>> properties = getUserProperties();
             JSONObject user = resultObj.getJSONObject("user");
             JSONArray arr = null;
 
-            if(user.has("properties")) {
+            if (user.has("properties")) {
                 arr = user.getJSONArray("properties");
                 makeUserproperties(properties, arr);
             }
@@ -122,7 +122,7 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
         setUserType("mojang");
 
-        if(selected.userProperties != null) {
+        if (selected.userProperties != null) {
             makeUserproperties(getUserProperties(), selected.userProperties);
         }
         callback.authDone(this, true);
@@ -130,16 +130,12 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
     private void makeUserproperties(Map<String, Collection<Object>> properties, JSONArray arr) {
 
-        for(int i=0; i<arr.length(); i++) {
+        for (int i = 0; i < arr.length(); i++) {
             JSONObject item = arr.getJSONObject(i);
             String name = item.getString("name");
             Object value = item.get("value");
 
-            Collection<Object> list = properties.get(name);
-            if(list == null) {
-                list = new ArrayList<Object>();
-                properties.put(name, list);
-            }
+            Collection<Object> list = properties.computeIfAbsent(name, k -> new ArrayList<>());
 
             list.add(value);
         }
@@ -163,8 +159,8 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
             this.path = path;
             String json = EasyFileAccess.loadFile(path);
             try {
-                store = new JSONObject(json);
-            } catch(Exception e) {
+                store = json == null ? new JSONObject() : new JSONObject(json);
+            } catch (Exception e) {
                 store = new JSONObject();
                 store.put("profiles", Collections.EMPTY_MAP);
             }
@@ -175,7 +171,7 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
         }
 
         public String getClientToken() {
-            if(store.has("clientToken")) {
+            if (store.has("clientToken")) {
                 return store.getString("clientToken");
             } else {
                 String value = UUID.randomUUID().toString();
@@ -185,7 +181,7 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
         }
 
         private JSONObject getAuthDB() {
-            if(!store.has("authenticationDatabase")) {
+            if (!store.has("authenticationDatabase")) {
                 store.put("authenticationDatabase", Collections.EMPTY_MAP);
             }
             return store.getJSONObject("authenticationDatabase");
@@ -193,18 +189,18 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
         public List<AuthDBItem> findUsernameFromDB(String username) {
             try {
-                List<AuthDBItem> result = new ArrayList<AuthDBItem>();
+                List<AuthDBItem> result = new ArrayList<>();
                 JSONObject db = getAuthDB();
                 Iterator<?> i = db.keys();
-                while(i.hasNext()) {
+                while (i.hasNext()) {
                     JSONObject item = db.getJSONObject((String) i.next());
                     AuthDBItem dbitem = new AuthDBItem(item);
-                    if(dbitem.username != null && dbitem.username.equals(username)) {
+                    if (dbitem.username != null && dbitem.username.equals(username)) {
                         result.add(dbitem);
                     }
                 }
                 return result;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return Collections.emptyList();
             }
         }
@@ -220,8 +216,8 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
     static class AuthDBItem {
 
         public AuthDBItem(String playerUuid, String username,
-                String accessToken, String userid, String displayName,
-                JSONArray userProperties) {
+                          String accessToken, String userid, String displayName,
+                          JSONArray userProperties) {
             this.uuid = playerUuid.replaceAll("([a-fA-F0-9]{8})([a-fA-F0-9]{4})" +
                     "([a-fA-F0-9]{4})([a-fA-F0-9]{4})([a-fA-F0-9]{12})", "$1-$2-$3-$4-$5");
             this.username = username;
@@ -242,17 +238,17 @@ public class MinecraftYggdrasilServerAuth extends ServerAuth {
 
         public JSONObject toJson() {
             JSONObject data = new JSONObject();
-            if(username != null)
+            if (username != null)
                 data.put("username", username);
-            if(accessToken != null)
+            if (accessToken != null)
                 data.put("accessToken", accessToken);
-            if(userid != null)
+            if (userid != null)
                 data.put("userid", userid);
-            if(uuid != null)
+            if (uuid != null)
                 data.put("uuid", uuid);
-            if(displayName != null)
+            if (displayName != null)
                 data.put("displayName", displayName);
-            if(userProperties != null)
+            if (userProperties != null)
                 data.put("userProperties", userProperties);
             return data;
         }

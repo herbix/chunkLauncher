@@ -2,7 +2,9 @@ package io.chaofan.chunklauncher.version;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -29,7 +31,7 @@ public class RunnableModule extends Module {
 
     private JProgressBar progress;
 
-    public RunnableModule(ModuleInstallCallback icallback,    ModuleUninstallCallback ucallback) {
+    public RunnableModule(ModuleInstallCallback icallback, ModuleUninstallCallback ucallback) {
         super(icallback, ucallback);
     }
 
@@ -38,16 +40,16 @@ public class RunnableModule extends Module {
     }
 
     public void install(final JProgressBar progress) {
-        if(isUninstalling) {
+        if (isUninstalling) {
             System.out.println(Lang.getString("msg.module.isuninstalling"));
             return;
         }
-        if(isDownloading()) {
+        if (isDownloading()) {
             System.out.println(Lang.getString("msg.module.isinstalling"));
             return;
         }
 
-        if(moduleInfo != null && !moduleInfo.canRunInThisOS()) {
+        if (moduleInfo != null && !moduleInfo.canRunInThisOS()) {
             System.out.println(Lang.getString("msg.module.notallowed"));
             System.out.println(Lang.getString("msg.module.failed") + "[" + getName() + "] " +
                     Lang.getString("msg.module.reason") + moduleInfo.incompatibilityReason);
@@ -58,24 +60,21 @@ public class RunnableModule extends Module {
 
         System.out.println(Lang.getString("msg.module.start") + "[" + getName() + "]");
 
-        if(!tryLoadModuleInfo()) {
+        if (!tryLoadModuleInfo()) {
             moduleDownloader.addDownload(
-                new Downloadable(getModuleJsonUrl(),
-                new GameDownloadCallback("json", null)));
+                    new Downloadable(getModuleJsonUrl(),
+                            new GameDownloadCallback("json", null)));
         } else {
-            if(!checkInherit(moduleInfo, true)) {
+            if (!checkInherit(moduleInfo, true)) {
                 checkModuleAssets();
             }
         }
 
-        if(progress != null) {
+        if (progress != null) {
             this.progress = progress;
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    progress.setValue(0);
-                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
-                }
+            SwingUtilities.invokeLater(() -> {
+                progress.setValue(0);
+                progress.setMaximum(moduleDownloader.downloadCount() * 100);
             });
         }
 
@@ -95,24 +94,24 @@ public class RunnableModule extends Module {
         @Override
         public void downloadDone(Downloadable d, boolean succeed, boolean queueEmpty) {
 
-            if(succeed) {
-                if(type.equals("json")) {
-                    downloadDoneJson(d);
-                } else if(type.equals("json-inhert")) {
-                    downloadDoneJsonInhert(d);
-                } else if(type.equals("bin")) {
-                    downloadDoneBin(d, queueEmpty);
-                } else if(type.equals("sha")) {
-                    downloadDoneSha(d, queueEmpty);
+            if (succeed) {
+                switch (type) {
+                    case "json":
+                        downloadDoneJson(d);
+                        break;
+                    case "json-inhert":
+                        downloadDoneJsonInhert(d);
+                        break;
+                    case "bin":
+                        downloadDoneBin(d, queueEmpty);
+                        break;
+                    case "sha":
+                        downloadDoneSha(d, queueEmpty);
+                        break;
                 }
             } else {
-                if(progress != null) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            progress.setValue(0);
-                        }
-                    });
+                if (progress != null) {
+                    SwingUtilities.invokeLater(() -> progress.setValue(0));
                 }
                 moduleDownloader.forceStop();
                 System.out.println(Lang.getString("msg.module.failed") + "[" + getName() + "]");
@@ -123,7 +122,7 @@ public class RunnableModule extends Module {
             JSONObject json = new JSONObject(d.getDownloaded());
             moduleInfo = new RunnableModuleInfo(json);
 
-            if(!moduleInfo.canRunInThisOS()) {
+            if (!moduleInfo.canRunInThisOS()) {
                 System.out.println(Lang.getString("msg.module.notallowed"));
                 System.out.println(Lang.getString("msg.module.reason") + moduleInfo.incompatibilityReason);
                 moduleDownloader.forceStop();
@@ -134,7 +133,7 @@ public class RunnableModule extends Module {
             new File(getModuleJsonPath()).getParentFile().mkdirs();
             EasyFileAccess.saveFile(getModuleJsonPath(), d.getDownloaded());
 
-            if(checkInherit(moduleInfo, true)) {
+            if (checkInherit(moduleInfo, true)) {
                 return;
             }
             checkModuleAssets();
@@ -147,13 +146,13 @@ public class RunnableModule extends Module {
             new File(currentModule.getModuleJsonPath()).getParentFile().mkdirs();
             EasyFileAccess.saveFile(currentModule.getModuleJsonPath(), d.getDownloaded());
 
-            if(checkInherit(currentModule.moduleInfo, true)) {
+            if (checkInherit(currentModule.moduleInfo, true)) {
                 return;
             }
 
             moduleInfo.inheritStack.pop();
             RunnableModule stackModule = currentModule;
-            while(!moduleInfo.inheritStack.empty()) {
+            while (!moduleInfo.inheritStack.empty()) {
                 RunnableModule t = moduleInfo.inheritStack.pop();
                 t.moduleInfo.addInheritedInfo(stackModule.moduleInfo);
                 stackModule = t;
@@ -167,7 +166,7 @@ public class RunnableModule extends Module {
             File file = new File(d.getSavedFile());
             File fileReal;
 
-            if(lib != null) {
+            if (lib != null) {
                 fileReal = new File(lib.getRealFilePath());
             } else {
                 fileReal = new File(getModuleJarPath());
@@ -176,7 +175,7 @@ public class RunnableModule extends Module {
             fileReal.delete();
             file.renameTo(fileReal);
 
-            if(queueEmpty) {
+            if (queueEmpty) {
                 finishInstall();
             }
         }
@@ -190,7 +189,7 @@ public class RunnableModule extends Module {
             fileReal.delete();
             file.renameTo(fileReal);
 
-            if(queueEmpty) {
+            if (queueEmpty) {
                 finishInstall();
             }
         }
@@ -203,7 +202,7 @@ public class RunnableModule extends Module {
         new File(toWhere).mkdirs();
 
         EasyZipAccess.extractZip(fileReal.getPath(),
-            lib.getExtractTempPath() + "/", toWhere, excludes, "");
+                lib.getExtractTempPath() + "/", toWhere, excludes, "");
     }
 
     public boolean checkInherit() {
@@ -211,24 +210,21 @@ public class RunnableModule extends Module {
     }
 
     private boolean checkInherit(RunnableModuleInfo info, boolean needDownload) {
-        if(info.inheritsFrom != null) {
+        if (info.inheritsFrom != null) {
             Module m = ModuleManager.getModuleFromName(info.inheritsFrom);
-            if(m != null && m instanceof RunnableModule) {
-                RunnableModule rm = (RunnableModule)m;
-                if(!rm.tryLoadModuleInfo() || rm.checkInherit()) {
-                    if(needDownload) {
+            if (m instanceof RunnableModule) {
+                RunnableModule rm = (RunnableModule) m;
+                if (!rm.tryLoadModuleInfo() || rm.checkInherit()) {
+                    if (needDownload) {
                         moduleInfo.inheritStack.push(rm);
                         moduleDownloader.addDownload(
-                            new Downloadable(rm.getModuleJsonUrl(),
-                            new GameDownloadCallback("json-inhert", null)));
+                                new Downloadable(rm.getModuleJsonUrl(),
+                                        new GameDownloadCallback("json-inhert", null)));
 
-                        if(progress != null) {
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progress.setValue(0);
-                                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
-                                }
+                        if (progress != null) {
+                            SwingUtilities.invokeLater(() -> {
+                                progress.setValue(0);
+                                progress.setMaximum(moduleDownloader.downloadCount() * 100);
                             });
                         }
                     }
@@ -242,18 +238,15 @@ public class RunnableModule extends Module {
     }
 
     private void checkModuleAssets() {
-        if(!tryLoadModuleAssets()) {
+        if (!tryLoadModuleAssets()) {
             moduleDownloader.addDownload(
-                new Downloadable(getModuleAssetsIndexUrl(),
-                new AssetDownloadCallback("json", null)));
+                    new Downloadable(getModuleAssetsIndexUrl(),
+                            new AssetDownloadCallback("json", null)));
 
-            if(progress != null) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        progress.setValue(0);
-                        progress.setMaximum(moduleDownloader.downloadCount() * 100);
-                    }
+            if (progress != null) {
+                SwingUtilities.invokeLater(() -> {
+                    progress.setValue(0);
+                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
                 });
             }
         } else {
@@ -267,23 +260,23 @@ public class RunnableModule extends Module {
 
         int addCount = 0;
 
-        if(!gameJarDownloaded()) {
+        if (!gameJarDownloaded()) {
 
             new File(getModuleJarTempPath()).getParentFile().mkdirs();
             new File(getModuleJarPath()).getParentFile().mkdirs();
 
             moduleDownloader.addDownload(
-                new Downloadable(getModuleJarUrl(), getModuleJarTempPath(),
-                new GameDownloadCallback("bin", null)));
+                    new Downloadable(getModuleJarUrl(), getModuleJarTempPath(),
+                            new GameDownloadCallback("bin", null)));
 
             addCount++;
         }
 
-        for(Library lib : moduleInfo.libraries) {
-            if(!lib.needDownloadInOS())
+        for (Library lib : moduleInfo.libraries) {
+            if (!lib.needDownloadInOS())
                 continue;
 
-            if(lib.downloaded()) {
+            if (lib.downloaded()) {
                 continue;
             }
 
@@ -293,19 +286,19 @@ public class RunnableModule extends Module {
             String shaUrl = lib.getShaUrl();
             if (shaUrl != null) {
                 moduleDownloader.addDownload(
-                    new Downloadable(shaUrl, lib.getTempShaPath(),
-                    new GameDownloadCallback("sha", lib)));
+                        new Downloadable(shaUrl, lib.getTempShaPath(),
+                                new GameDownloadCallback("sha", lib)));
             }
 
             moduleDownloader.addDownload(
-                new Downloadable(lib.getFullUrl(), lib.getTempFilePath(),
-                new GameDownloadCallback("bin", lib)));
+                    new Downloadable(lib.getFullUrl(), lib.getTempFilePath(),
+                            new GameDownloadCallback("bin", lib)));
 
             addCount++;
         }
 
-        for(AssetItem asset : moduleAssets.objects) {
-            if(asset.downloaded()) {
+        for (AssetItem asset : moduleAssets.objects) {
+            if (asset.downloaded()) {
                 continue;
             }
 
@@ -314,35 +307,27 @@ public class RunnableModule extends Module {
 
             moduleDownloader.addDownload(
                     new Downloadable(asset.getFullUrl(), asset.getTempFilePath(),
-                    new AssetDownloadCallback("bin", asset)));
+                            new AssetDownloadCallback("bin", asset)));
 
             addCount++;
         }
 
-        if(addCount == 0) {
-            new Thread() {
-                @Override
-                public void run() {
-                    finishInstall();
-                }
-            }.start();
+        if (addCount == 0) {
+            new Thread(this::finishInstall).start();
         }
 
-        if(progress != null) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    progress.setValue(0);
-                    progress.setMaximum(moduleDownloader.downloadCount() * 100);
-                }
+        if (progress != null) {
+            SwingUtilities.invokeLater(() -> {
+                progress.setValue(0);
+                progress.setMaximum(moduleDownloader.downloadCount() * 100);
             });
         }
     }
 
     private boolean gameJarDownloaded() {
-        if(Config.enableChecksum && tryLoadModuleInfo() && moduleInfo.downloads != null) {
+        if (Config.enableChecksum && tryLoadModuleInfo() && moduleInfo.downloads != null) {
             DownloadInfo info = moduleInfo.downloads.get("client");
-            if(info != null && info.sha1 != null) {
+            if (info != null && info.sha1 != null) {
                 return EasyFileAccess.doSha1Checksum2(info.sha1, getModuleJarPath());
             }
         }
@@ -361,8 +346,8 @@ public class RunnableModule extends Module {
         @Override
         public void downloadDone(Downloadable d, boolean succeed, boolean queueEmpty) {
 
-            if(succeed) {
-                if(type.equals("json")) {
+            if (succeed) {
+                if (type.equals("json")) {
                     JSONObject json = new JSONObject(d.getDownloaded());
                     moduleAssets = new RunnableModuleAssets(json, getAssetsIndex());
 
@@ -371,7 +356,7 @@ public class RunnableModule extends Module {
 
                     addDownloadList();
 
-                } else if(type.equals("bin")) {
+                } else if (type.equals("bin")) {
 
                     File file = new File(d.getSavedFile());
                     File fileReal;
@@ -381,7 +366,7 @@ public class RunnableModule extends Module {
                     fileReal.delete();
                     file.renameTo(fileReal);
 
-                    if(queueEmpty) {
+                    if (queueEmpty) {
                         finishInstall();
                     }
                 }
@@ -395,20 +380,20 @@ public class RunnableModule extends Module {
     private void finishInstall() {
         System.out.println(Lang.getString("msg.module.succeeded") + "[" + getName() + "]");
         installState = 1;
-        if(installCallback != null)
+        if (installCallback != null)
             installCallback.installDone();
     }
 
     public void uninstall() {
-        if(isUninstalling) {
+        if (isUninstalling) {
             System.out.println(Lang.getString("msg.module.isuninstalling"));
             return;
         }
-        if(isDownloading()) {
+        if (isDownloading()) {
             System.out.println(Lang.getString("msg.module.isinstalling"));
             return;
         }
-        if(!tryLoadModuleInfo()) {
+        if (!tryLoadModuleInfo()) {
             System.out.println(Lang.getString("msg.module.notinstalled"));
             return;
         }
@@ -419,48 +404,44 @@ public class RunnableModule extends Module {
         installState = 0;
         uninstallCallback.uninstallStart();
 
-        new Thread() {
-            @Override
-            public void run() {
+        new Thread(() -> {
+            File versionDir = new File(getModuleJsonPath()).getParentFile();
+            System.out.println(Lang.getString("msg.module.delete") + versionDir.getPath());
+            EasyFileAccess.deleteFileForce(versionDir);
 
-                File versionDir = new File(getModuleJsonPath()).getParentFile();
-                System.out.println(Lang.getString("msg.module.delete") + versionDir.getPath());
-                EasyFileAccess.deleteFileForce(versionDir);
-
-                List<Library> toRemove = new ArrayList<Library>();
-                if(tryLoadModuleInfo()) {
-                    toRemove.addAll(moduleInfo.libraries);
-                }
-
-                for(Module m : ModuleManager.modules) {
-                    if(!(m instanceof RunnableModule))
-                        continue;
-                    if(!m.isInstalled())
-                        continue;
-                    if(m == RunnableModule.this)
-                        continue;
-                    toRemove.removeAll(((RunnableModule)m).moduleInfo.libraries);
-                }
-
-                for(Library l : toRemove) {
-                    if(!l.needDownloadInOS())
-                        continue;
-
-                    File libFile = new File(l.getRealFilePath());
-                    System.out.println(Lang.getString("msg.module.delete") + libFile.getPath());
-                    libFile.delete();
-
-                    do {
-                        libFile = libFile.getParentFile();
-                    } while(!libFile.getName().equals("libraries") && libFile.delete());
-                }
-
-                isUninstalling = false;
-                System.out.println(Lang.getString("msg.module.uninstallsucceeded") + "[" + RunnableModule.this.getName() + "]");
-                moduleInfo = null;
-                uninstallCallback.uninstallDone();
+            List<Library> toRemove = new ArrayList<>();
+            if (tryLoadModuleInfo()) {
+                toRemove.addAll(moduleInfo.libraries);
             }
-        }.start();
+
+            for (Module m : ModuleManager.modules) {
+                if (!(m instanceof RunnableModule))
+                    continue;
+                if (!m.isInstalled())
+                    continue;
+                if (m == RunnableModule.this)
+                    continue;
+                toRemove.removeAll(((RunnableModule) m).moduleInfo.libraries);
+            }
+
+            for (Library l : toRemove) {
+                if (!l.needDownloadInOS())
+                    continue;
+
+                File libFile = new File(l.getRealFilePath());
+                System.out.println(Lang.getString("msg.module.delete") + libFile.getPath());
+                libFile.delete();
+
+                do {
+                    libFile = libFile.getParentFile();
+                } while (!libFile.getName().equals("libraries") && libFile.delete());
+            }
+
+            isUninstalling = false;
+            System.out.println(Lang.getString("msg.module.uninstallsucceeded") + "[" + RunnableModule.this.getName() + "]");
+            moduleInfo = null;
+            uninstallCallback.uninstallDone();
+        }).start();
     }
 
     public String getName() {
@@ -469,57 +450,57 @@ public class RunnableModule extends Module {
 
     public boolean isInstalled() {
 
-        if(installState == -1) {
+        if (installState == -1) {
 
-            if(!gameJarDownloaded()) {
+            if (!gameJarDownloaded()) {
                 installState = 0;
                 return false;
             }
 
-            if(!tryLoadModuleInfo()) {
+            if (!tryLoadModuleInfo()) {
                 installState = 0;
                 return false;
             }
 
-            if(checkInherit()) {
+            if (checkInherit()) {
                 installState = 0;
                 return false;
             }
 
-            if(!tryLoadModuleAssets()) {
+            if (!tryLoadModuleAssets()) {
                 installState = 0;
                 return false;
             }
 
             try {
 
-                for(Library lib : moduleInfo.libraries) {
-                    if(!lib.needDownloadInOS())
+                for (Library lib : moduleInfo.libraries) {
+                    if (!lib.needDownloadInOS())
                         continue;
 
-                    if(!lib.downloaded()) {
+                    if (!lib.downloaded()) {
                         installState = 0;
                         return false;
                     }
                 }
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 installState = 0;
                 return false;
             }
 
             try {
 
-                for(AssetItem asset : moduleAssets.objects) {
+                for (AssetItem asset : moduleAssets.objects) {
                     String path = asset.getRealFilePath();
 
-                    if(!new File(path).isFile()) {
+                    if (!new File(path).isFile()) {
                         installState = 0;
                         return false;
                     }
                 }
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 installState = 0;
                 return false;
             }
@@ -530,12 +511,16 @@ public class RunnableModule extends Module {
         return installState == 1;
     }
 
-    public String[] getRunningParams() {
-        return moduleInfo.minecraftArguments.clone();
+    public String[] getRunningParams(Set<String> providedFeatures) {
+        return Arrays.stream(moduleInfo.minecraftArguments)
+                .flatMap(str -> Arrays.stream(str.getValue(providedFeatures)))
+                .toArray(String[]::new);
     }
 
-    public String[] getJvmParams() {
-        return moduleInfo.jvmArguments.clone();
+    public String[] getJvmParams(Set<String> providedFeatures) {
+        return Arrays.stream(moduleInfo.jvmArguments)
+                .flatMap(str -> Arrays.stream(str.getValue(providedFeatures)))
+                .toArray(String[]::new);
     }
 
     public String getMainClass() {
@@ -546,11 +531,11 @@ public class RunnableModule extends Module {
         StringBuilder sb = new StringBuilder();
         String separator = System.getProperty("path.separator");
 
-        for(int i=0; i<moduleInfo.libraries.size(); i++) {
+        for (int i = 0; i < moduleInfo.libraries.size(); i++) {
             Library lib = moduleInfo.libraries.get(i);
-            if(lib.needExtract())
+            if (lib.needExtract())
                 continue;
-            if(!lib.needDownloadInOS())
+            if (!lib.needDownloadInOS())
                 continue;
             sb.append(lib.getRealFilePath().replace('/', System.getProperty("file.separator").charAt(0)));
             sb.append(separator);
@@ -560,7 +545,7 @@ public class RunnableModule extends Module {
 
         sb.append(separator);
 
-        if(sb.length() > 0)
+        if (sb.length() > 0)
             sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
@@ -568,16 +553,16 @@ public class RunnableModule extends Module {
     public String getNativePath(String arch) {
         String extractTarget = getModuleNativePath();
 
-        for(int i=0; i<moduleInfo.libraries.size(); i++) {
+        for (int i = 0; i < moduleInfo.libraries.size(); i++) {
             Library lib = moduleInfo.libraries.get(i);
-            if(!lib.needDownloadInOS() || !lib.needExtract() ||
+            if (!lib.needDownloadInOS() || !lib.needExtract() ||
                     !lib.isCompatibleForArch(arch))
                 continue;
 
             List<String> excludes = lib.getExtractExclude();
             String extractBase = extractTarget + "/";
             File realFile = new File(lib.getRealFilePath());
-            if(!EasyZipAccess.checkHasAll(realFile.getPath(),
+            if (!EasyZipAccess.checkHasAll(realFile.getPath(),
                     extractBase, excludes, "")) {
                 extractLib(lib, realFile, extractBase);
             }
@@ -587,17 +572,17 @@ public class RunnableModule extends Module {
     }
 
     public String getTime() {
-        if(version.time != null)
+        if (version.time != null)
             return version.time;
-        if(tryLoadModuleInfo())
+        if (tryLoadModuleInfo())
             return moduleInfo.time;
         return " ";
     }
 
     public String getReleaseTime() {
-        if(version.releaseTime != null)
+        if (version.releaseTime != null)
             return version.releaseTime;
-        if(tryLoadModuleInfo())
+        if (tryLoadModuleInfo())
             return moduleInfo.releaseTime;
         return " ";
     }
@@ -607,25 +592,25 @@ public class RunnableModule extends Module {
     }
 
     public String getType() {
-        if(version.type != null)
+        if (version.type != null)
             return version.type;
-        if(tryLoadModuleInfo())
+        if (tryLoadModuleInfo())
             return moduleInfo.type;
         return "unknown";
     }
 
     public String getState() {
-        if(isInstalled()) {
+        if (isInstalled()) {
             return Lang.getString("ui.module.installed");
         }
-        if(tryLoadModuleInfo() || tryLoadModuleInfo()) {
+        if (tryLoadModuleInfo() || tryLoadModuleInfo()) {
             return Lang.getString("ui.module.notfinished");
         }
         return Lang.getString("ui.module.notinstalled");
     }
 
     public String getAssetsIndex() {
-        if(tryLoadModuleInfo()) {
+        if (tryLoadModuleInfo()) {
             return moduleInfo.assets;
         }
         return "legacy";
@@ -652,10 +637,10 @@ public class RunnableModule extends Module {
 
     private String getModuleJarUrl() {
         String jarVersion = getName();
-        if(tryLoadModuleInfo()) {
-            if(moduleInfo.downloads != null) {
+        if (tryLoadModuleInfo()) {
+            if (moduleInfo.downloads != null) {
                 DownloadInfo info = moduleInfo.downloads.get("client");
-                if(info != null && info.url != null) {
+                if (info != null && info.url != null) {
                     return info.url;
                 }
             }
@@ -677,9 +662,9 @@ public class RunnableModule extends Module {
     }
 
     private String getModuleAssetsIndexUrl() {
-        if(tryLoadModuleInfo()) {
-            if(moduleInfo.assetIndex != null) {
-                if(moduleInfo.assetIndex.url != null) {
+        if (tryLoadModuleInfo()) {
+            if (moduleInfo.assetIndex != null) {
+                if (moduleInfo.assetIndex.url != null) {
                     return moduleInfo.assetIndex.url;
                 }
             }
@@ -692,17 +677,17 @@ public class RunnableModule extends Module {
     }
 
     private boolean tryLoadModuleInfo() {
-        if(moduleInfo != null)
+        if (moduleInfo != null)
             return true;
 
         String resourceStr = EasyFileAccess.loadFile(getModuleJsonPath());
-        if(resourceStr == null) {
+        if (resourceStr == null) {
             return false;
         }
 
         try {
             moduleInfo = new RunnableModuleInfo(new JSONObject(resourceStr));
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Launcher.exceptionReport(e);
             return false;
@@ -711,24 +696,24 @@ public class RunnableModule extends Module {
     }
 
     private boolean tryLoadModuleAssets() {
-        if(moduleAssets != null) {
+        if (moduleAssets != null) {
             return true;
         }
 
         String resourceStr = EasyFileAccess.loadFile(getModuleAssetsIndexPath());
-        if(resourceStr == null) {
+        if (resourceStr == null) {
             return false;
         }
 
-        if(moduleInfo.assetIndex != null && moduleInfo.assetIndex.sha1 != null) {
-            if(Config.enableChecksum && !EasyFileAccess.doSha1Checksum2(moduleInfo.assetIndex.sha1, getModuleAssetsIndexPath())) {
+        if (moduleInfo.assetIndex != null && moduleInfo.assetIndex.sha1 != null) {
+            if (Config.enableChecksum && !EasyFileAccess.doSha1Checksum2(moduleInfo.assetIndex.sha1, getModuleAssetsIndexPath())) {
                 return false;
             }
         }
 
         try {
             moduleAssets = new RunnableModuleAssets(new JSONObject(resourceStr), getAssetsIndex());
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Launcher.exceptionReport(e);
             return false;

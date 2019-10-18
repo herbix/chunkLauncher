@@ -6,8 +6,6 @@ import io.chaofan.chunklauncher.util.Lang;
 import io.chaofan.chunklauncher.util.UI;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -85,93 +83,79 @@ public class DirectoryTabPanel extends JPanel {
     }
 
     private void initListeners() {
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int row = table.getSelectedRow();
-                if (row < 0) {
-                    return;
-                }
-                Object object = table.getValueAt(row, 0);
-                if (object instanceof IEnableProvider) {
-                    enable.setEnabled(!((IEnableProvider) object).isEnabled());
-                    disable.setEnabled(((IEnableProvider) object).isEnabled());
-                }
+        table.getSelectionModel().addListSelectionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row < 0) {
+                return;
+            }
+            Object object = table.getValueAt(row, 0);
+            if (object instanceof IEnableProvider) {
+                enable.setEnabled(!((IEnableProvider) object).isEnabled());
+                disable.setEnabled(((IEnableProvider) object).isEnabled());
             }
         });
 
-        enable.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ITableRowProvider rowProvider = getSelectedProvider();
-                if (rowProvider == null) {
-                    return;
-                }
-                File f = rowProvider.getFile();
-                String path = f.getPath();
-                f.renameTo(new File(path.substring(0, path.length() - 9)));
-                refresh();
+        enable.addActionListener(e -> {
+            ITableRowProvider rowProvider = getSelectedProvider();
+            if (rowProvider == null) {
+                return;
             }
+            File f = rowProvider.getFile();
+            String path = f.getPath();
+            f.renameTo(new File(path.substring(0, path.length() - 9)));
+            refresh();
         });
 
-        disable.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ITableRowProvider rowProvider = getSelectedProvider();
-                if (rowProvider == null) {
-                    return;
-                }
-                File f = rowProvider.getFile();
-                String path = f.getPath();
-                f.renameTo(new File(path + ".disabled"));
-                refresh();
+        disable.addActionListener(e -> {
+            ITableRowProvider rowProvider = getSelectedProvider();
+            if (rowProvider == null) {
+                return;
             }
+            File f = rowProvider.getFile();
+            String path = f.getPath();
+            f.renameTo(new File(path + ".disabled"));
+            refresh();
         });
 
-        remove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ITableRowProvider rowProvider = getSelectedProvider();
-                if (rowProvider == null) {
-                    return;
-                }
-                int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.directory.tab.removeconfirm"),
-                        "ChunkLauncher", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(r != JOptionPane.YES_OPTION) {
-                    return;
-                }
-                EasyFileAccess.deleteFileForce(rowProvider.getFile());
-                refresh();
+        remove.addActionListener(e -> {
+            ITableRowProvider rowProvider = getSelectedProvider();
+            if (rowProvider == null) {
+                return;
             }
+            int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.directory.tab.removeconfirm"),
+                    "ChunkLauncher", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (r != JOptionPane.YES_OPTION) {
+                return;
+            }
+            EasyFileAccess.deleteFileForce(rowProvider.getFile());
+            refresh();
         });
 
-        copy.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ITableRowProvider rowProvider = getSelectedProvider();
-                if (rowProvider == null) {
-                    return;
-                }
-                File file = rowProvider.getFile();
-                String name = (String) JOptionPane.showInputDialog(frame, Lang.getString("msg.directory.tab.inputname"),
-                        "ChunkLauncher", JOptionPane.QUESTION_MESSAGE, null, null, file.getName());
-                if(name == null || name.equals("")) {
-                    return;
-                }
-                File targetFile = new File(directory, name);
-                if (targetFile.exists()) {
-                    System.out.println(Lang.getString("msg.directory.tab.existed"));
-                    return;
-                }
-                if (!EasyFileAccess.copyDirectory(file, targetFile)) {
-                    System.out.println(Lang.getString("msg.directory.tab.copyfailed"));
-                }
-                refresh();
+        copy.addActionListener(e -> {
+            ITableRowProvider rowProvider = getSelectedProvider();
+            if (rowProvider == null) {
+                return;
             }
+            File file = rowProvider.getFile();
+            String name = (String) JOptionPane.showInputDialog(frame, Lang.getString("msg.directory.tab.inputname"),
+                    "ChunkLauncher", JOptionPane.QUESTION_MESSAGE, null, null, file.getName());
+            if (name == null || name.equals("")) {
+                return;
+            }
+            File targetFile = new File(directory, name);
+            if (targetFile.exists()) {
+                System.out.println(Lang.getString("msg.directory.tab.existed"));
+                return;
+            }
+            if (!EasyFileAccess.copyDirectory(file, targetFile)) {
+                System.out.println(Lang.getString("msg.directory.tab.copyfailed"));
+            }
+            refresh();
         });
 
         install.addActionListener(new ActionListener() {
             private JFileChooser fc = new JFileChooser();
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 fc.setFileFilter(type.getInstallFilter());

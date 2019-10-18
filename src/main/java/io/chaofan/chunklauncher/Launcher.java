@@ -1,21 +1,5 @@
 package io.chaofan.chunklauncher;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import io.chaofan.chunklauncher.auth.AuthDoneCallback;
 import io.chaofan.chunklauncher.auth.AuthType;
 import io.chaofan.chunklauncher.auth.ServerAuth;
 import io.chaofan.chunklauncher.download.DownloadCallbackAdapter;
@@ -26,11 +10,17 @@ import io.chaofan.chunklauncher.util.EasyFileAccess;
 import io.chaofan.chunklauncher.util.HttpFetcher;
 import io.chaofan.chunklauncher.util.Lang;
 import io.chaofan.chunklauncher.version.Module;
-import io.chaofan.chunklauncher.version.ModuleCallbackAdapter;
-import io.chaofan.chunklauncher.version.ModuleManager;
-import io.chaofan.chunklauncher.version.RunnableModule;
-import io.chaofan.chunklauncher.version.VersionManager;
-import io.chaofan.chunklauncher.version.Version;
+import io.chaofan.chunklauncher.version.*;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Launcher {
 
@@ -54,14 +44,17 @@ public class Launcher {
         public void installStart() {
             refreshComponentsList();
         }
+
         @Override
         public void installDone() {
             refreshComponentsList();
         }
+
         @Override
         public void uninstallStart() {
             refreshComponentsList();
         }
+
         @Override
         public void uninstallDone() {
             refreshComponentsList();
@@ -74,7 +67,7 @@ public class Launcher {
         frame.setStdOut();
         selectSetting(frame.profileSetting);
         synchronized (this) {
-            if(!showFrame) {
+            if (!showFrame) {
                 return;
             }
             frame.setVisible(true);
@@ -88,8 +81,8 @@ public class Launcher {
 
     private void initGameDirs() {
         File gameFolder = new File(Config.gamePath);
-        if(!gameFolder.isDirectory()) {
-            if(!gameFolder.mkdirs())
+        if (!gameFolder.isDirectory()) {
+            if (!gameFolder.mkdirs())
                 System.out.println(Lang.getString("msg.gamepath.error"));
         }
         new File(Config.gamePath + Config.MINECRAFT_VERSION_PATH).mkdirs();
@@ -101,29 +94,27 @@ public class Launcher {
     private void initGameComponentsList() {
         VersionManager.initVersionInfo(Config.gamePath + Config.MINECRAFT_VERSION_FILE);
         Map<String, Version> versionList = VersionManager.getVersionList();
-        if(versionList != null) {
+        if (versionList != null) {
             ModuleManager.initModules(versionList, mcallback, mcallback);
             refreshComponentsList();
         }
         mainDownloader.addDownload(
-            new Downloadable(Config.MINECRAFT_VERSION_DOWNLOAD_URL,
-            Config.TEMP_DIR + "/version_temp", new VersionDownloadCallback())
-            );
+                new Downloadable(Config.MINECRAFT_VERSION_DOWNLOAD_URL,
+                        Config.TEMP_DIR + "/version_temp", new VersionDownloadCallback())
+        );
     }
 
     private void refreshComponentsList() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                int i = frame.modules.getSelectedRow();
-                ModuleManager.showModules(frame.modulesModel);
-                frame.modules.getSelectionModel().setSelectionInterval(i, i);
+        SwingUtilities.invokeLater(() -> {
+            int i = frame.modules.getSelectedRow();
+            ModuleManager.showModules(frame.modulesModel);
+            frame.modules.getSelectionModel().setSelectionInterval(i, i);
 
-                Object s = frame.gameVersion.getSelectedItem();
-                if(s == null)
-                    s = Config.currentProfile.version;
-                ModuleManager.showModules(frame.gameVersion);
-                frame.gameVersion.setSelectedItem(s);
-            }
+            Object s = frame.gameVersion.getSelectedItem();
+            if (s == null)
+                s = Config.currentProfile.version;
+            ModuleManager.showModules(frame.gameVersion);
+            frame.gameVersion.setSelectedItem(s);
         });
     }
 
@@ -132,9 +123,10 @@ public class Launcher {
         public void downloadStart(Downloadable d) {
             System.out.println(Lang.getString("msg.version.downloading"));
         }
+
         @Override
         public void downloadDone(Downloadable d, boolean succeed, boolean queueEmpty) {
-            if(succeed) {
+            if (succeed) {
                 System.out.println(Lang.getString("msg.version.succeeded"));
                 File versionFile = new File(Config.gamePath + Config.MINECRAFT_VERSION_FILE);
                 File versionFileNew = new File(Config.TEMP_DIR + "/version_temp");
@@ -143,7 +135,7 @@ public class Launcher {
                 versionFileNew.renameTo(versionFile);
                 VersionManager.initVersionInfo(Config.gamePath + Config.MINECRAFT_VERSION_FILE);
                 Map<String, Version> versionList = VersionManager.getVersionList();
-                if(versionList == null)
+                if (versionList == null)
                     return;
                 ModuleManager.initModules(versionList, mcallback, mcallback);
                 refreshComponentsList();
@@ -166,117 +158,104 @@ public class Launcher {
         frame.uninstallModules.addActionListener(new ModuleActionListener());
         frame.launch.addActionListener(new LaunchActionListener());
 
-        frame.addProfile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.profile.inputname"),
+        frame.addProfile.addActionListener(e -> {
+            String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.profile.inputname"),
                     "ChunkLauncher", JOptionPane.QUESTION_MESSAGE);
-                if(name == null || name.equals("")) {
-                    return;
-                }
-                if(Config.profiles.containsKey(name)) {
-                    System.out.println(Lang.getString("msg.profile.exists"));
-                    return;
-                }
-                Profile profile = new Profile(name, null);
-
-                Config.profiles.put(name, profile);
-                frame.profiles.addItem(profile);
-                frame.profiles.setSelectedItem(profile);
+            if (name == null || name.equals("")) {
+                return;
             }
+            if (Config.profiles.containsKey(name)) {
+                System.out.println(Lang.getString("msg.profile.exists"));
+                return;
+            }
+            Profile profile = new Profile(name, null);
+
+            Config.profiles.put(name, profile);
+            frame.profiles.addItem(profile);
+            frame.profiles.setSelectedItem(profile);
         });
 
-        frame.removeProfile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if(Config.currentProfile.profileName.equals(Config.DEFAULT)) {
-                    System.out.println(Lang.getString("msg.profile.cannotremovedefault"));
-                    return;
-                }
-                int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.profile.removeconfirm"),
+        frame.removeProfile.addActionListener(e -> {
+            if (Config.currentProfile.profileName.equals(Config.DEFAULT)) {
+                System.out.println(Lang.getString("msg.profile.cannotremovedefault"));
+                return;
+            }
+            int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.profile.removeconfirm"),
                     "ChunkLauncher", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(r != JOptionPane.YES_OPTION) {
-                    return;
-                }
-                Config.profiles.remove(Config.currentProfile.profileName);
-                frame.profiles.removeItem(Config.currentProfile);
+            if (r != JOptionPane.YES_OPTION) {
+                return;
             }
+            Config.profiles.remove(Config.currentProfile.profileName);
+            frame.profiles.removeItem(Config.currentProfile);
         });
 
-        frame.profiles.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                Config.currentProfile.updateFromFrame(frame);
-                Config.currentProfile = (Profile)frame.profiles.getSelectedItem();
-                if(Config.currentProfile == null) {
-                    Config.currentProfile = Config.profiles.get(Config.DEFAULT);
-                }
-                Config.currentProfile.updateToFrame(frame);
+        frame.profiles.addItemListener(e -> {
+            Config.currentProfile.updateFromFrame(frame);
+            Config.currentProfile = (Profile) frame.profiles.getSelectedItem();
+            if (Config.currentProfile == null) {
+                Config.currentProfile = Config.profiles.get(Config.DEFAULT);
             }
+            Config.currentProfile.updateToFrame(frame);
         });
 
         frame.showOld.addActionListener(new ShowInModuleListListener());
         frame.showSnapshot.addActionListener(new ShowInModuleListListener());
 
-        frame.directories.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    RunningDirectory deselected = (RunningDirectory) e.getItem();
-                    if (deselected != null) {
-                        deselected.directory = frame.directoryPath.getText();
-                    }
-                } else if (e.getStateChange() == ItemEvent.SELECTED) {
-                    RunningDirectory selected = (RunningDirectory) e.getItem();
-                    if (selected != null) {
-                        frame.directoryPath.setText(selected.directory);
-                    }
+        frame.directories.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
+                RunningDirectory deselected = (RunningDirectory) e.getItem();
+                if (deselected != null) {
+                    deselected.directory = frame.directoryPath.getText();
+                }
+            } else if (e.getStateChange() == ItemEvent.SELECTED) {
+                RunningDirectory selected = (RunningDirectory) e.getItem();
+                if (selected != null) {
+                    frame.directoryPath.setText(selected.directory);
                 }
             }
         });
 
-        frame.addDirectory.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.directory.inputname"),
-                        "ChunkLauncher", JOptionPane.QUESTION_MESSAGE);
-                if(name == null || name.equals("")) {
-                    return;
-                }
-                if(Config.directories.containsKey(name)) {
-                    System.out.println(Lang.getString("msg.directory.exists"));
-                    return;
-                }
-                RunningDirectory directory = new RunningDirectory(name, ".");
-
-                Config.directories.put(name, directory);
-                frame.directories.addItem(directory);
-                frame.runPathDirectories.addItem(directory);
-                frame.directories.setSelectedItem(directory);
+        frame.addDirectory.addActionListener(e -> {
+            String name = JOptionPane.showInputDialog(frame, Lang.getString("msg.directory.inputname"),
+                    "ChunkLauncher", JOptionPane.QUESTION_MESSAGE);
+            if (name == null || name.equals("")) {
+                return;
             }
+            if (Config.directories.containsKey(name)) {
+                System.out.println(Lang.getString("msg.directory.exists"));
+                return;
+            }
+            RunningDirectory directory = new RunningDirectory(name, ".");
+
+            Config.directories.put(name, directory);
+            frame.directories.addItem(directory);
+            frame.runPathDirectories.addItem(directory);
+            frame.directories.setSelectedItem(directory);
         });
 
-        frame.removeDirectory.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                RunningDirectory selectedDirectory = (RunningDirectory)frame.directories.getSelectedItem();
-                if(selectedDirectory == null) {
-                    System.out.println(Lang.getString("msg.directory.pleaseselectadirectory"));
-                    return;
-                }
-                if(selectedDirectory.name.equals(Config.DEFAULT)) {
-                    System.out.println(Lang.getString("msg.directory.cannotremovedefault"));
-                    return;
-                }
-                int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.directory.removeconfirm"),
-                        "ChunkLauncher", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(r != JOptionPane.YES_OPTION) {
-                    return;
-                }
-                Config.directories.remove(selectedDirectory.name);
-                frame.directories.removeItem(selectedDirectory);
-                frame.runPathDirectories.removeItem(selectedDirectory);
-                for (Profile profile : Config.profiles.values()) {
-                    if (profile.runPath == selectedDirectory) {
-                        profile.runPath = Config.directories.get(Config.DEFAULT);
-                        if (profile == Config.currentProfile) {
-                            frame.runPathDirectories.setSelectedItem(profile.runPath);
-                        }
+        frame.removeDirectory.addActionListener(e -> {
+            RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
+            if (selectedDirectory == null) {
+                System.out.println(Lang.getString("msg.directory.pleaseselectadirectory"));
+                return;
+            }
+            if (selectedDirectory.name.equals(Config.DEFAULT)) {
+                System.out.println(Lang.getString("msg.directory.cannotremovedefault"));
+                return;
+            }
+            int r = JOptionPane.showConfirmDialog(frame, Lang.getString("msg.directory.removeconfirm"),
+                    "ChunkLauncher", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (r != JOptionPane.YES_OPTION) {
+                return;
+            }
+            Config.directories.remove(selectedDirectory.name);
+            frame.directories.removeItem(selectedDirectory);
+            frame.runPathDirectories.removeItem(selectedDirectory);
+            for (Profile profile : Config.profiles.values()) {
+                if (profile.runPath == selectedDirectory) {
+                    profile.runPath = Config.directories.get(Config.DEFAULT);
+                    if (profile == Config.currentProfile) {
+                        frame.runPathDirectories.setSelectedItem(profile.runPath);
                     }
                 }
             }
@@ -286,23 +265,23 @@ public class Launcher {
     class SelectTabListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            selectSetting((JButton)e.getSource());
+            selectSetting((JButton) e.getSource());
         }
     }
 
     class ModuleActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Module m = ModuleManager.getSelectedModule(frame.modules);
-            if(m == null) {
+            if (m == null) {
                 System.out.println(Lang.getString("msg.module.noselection"));
                 return;
             }
-            if(e.getSource() == frame.installModules) {
-                if(m.isInstalled()) {
+            if (e.getSource() == frame.installModules) {
+                if (m.isInstalled()) {
                     System.out.println(Lang.getString("msg.module.alreadyinstalled"));
                 } else {
                     Config.updateFromFrame(frame);
-                    ((RunnableModule)m).install(frame.progress);
+                    ((RunnableModule) m).install(frame.progress);
                 }
             } else {
                 m.uninstall();
@@ -316,26 +295,26 @@ public class Launcher {
 
         public void actionPerformed(ActionEvent e) {
 
-            if(isLoggingIn) {
+            if (isLoggingIn) {
                 System.out.println(Lang.getString("msg.game.isloggingin"));
                 return;
             }
 
-            if(frame.gameVersion.getSelectedIndex() == -1) {
+            if (frame.gameVersion.getSelectedIndex() == -1) {
                 System.out.println(Lang.getString("msg.game.basicrequire"));
                 return;
             }
 
-            if(frame.user.getText().equals("")) {
+            if (frame.user.getText().equals("")) {
                 System.out.println(Lang.getString("msg.game.nousername"));
                 return;
             }
 
             final ServerAuth auth;
 
-            if(frame.authType.getSelectedItem() != null) {
-                auth = ((AuthType)frame.authType.getSelectedItem()).
-                    newInstance(frame.user.getText(), frame.pass.getText());
+            if (frame.authType.getSelectedItem() != null) {
+                auth = ((AuthType) frame.authType.getSelectedItem()).
+                        newInstance(frame.user.getText(), frame.pass.getText());
             } else {
                 System.out.println("msg.auth.noselection");
                 return;
@@ -343,33 +322,26 @@ public class Launcher {
 
             isLoggingIn = true;
 
-            new Thread() {
-                @Override
-                public void run() {
-                    auth.login(new AuthDoneCallback() {
-                        public void authDone(ServerAuth auth, boolean succeed) {
-                            if(succeed) {
-                                System.out.println(Lang.getString("msg.auth.succeeded"));
-                                Config.updateFromFrame(frame);
-                                Runner runner = new Runner(ModuleManager.getSelectedModule(frame.gameVersion), auth);
-                                if(!runner.prepare()) {
-                                    isLoggingIn = false;
-                                    return;
-                                }
-                                frame.setVisible(false);
-                                frame.setStdOut();
-                                Config.saveConfig();
-                                Downloader.stopAll();
-                                runner.start();
-                                frame.dispose();
-                            } else {
-                                System.out.println(Lang.getString("msg.auth.failed"));
-                                isLoggingIn = false;
-                            }
-                        }
-                    });
+            new Thread(() -> auth.login((auth1, succeed) -> {
+                if (succeed) {
+                    System.out.println(Lang.getString("msg.auth.succeeded"));
+                    Config.updateFromFrame(frame);
+                    Runner runner = new Runner(ModuleManager.getSelectedModule(frame.gameVersion), auth1);
+                    if (!runner.prepare()) {
+                        isLoggingIn = false;
+                        return;
+                    }
+                    frame.setVisible(false);
+                    frame.setStdOut();
+                    Config.saveConfig();
+                    Downloader.stopAll();
+                    runner.start();
+                    frame.dispose();
+                } else {
+                    System.out.println(Lang.getString("msg.auth.failed"));
+                    isLoggingIn = false;
                 }
-            }.start();
+            })).start();
         }
     }
 
@@ -384,14 +356,11 @@ public class Launcher {
 
     private void run() {
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (instance) {
-                    initFrame();
-                    instance.notifyAll();
-                    initFrameDone = true;
-                }
+        SwingUtilities.invokeLater(() -> {
+            synchronized (instance) {
+                initFrame();
+                instance.notifyAll();
+                initFrameDone = true;
             }
         });
 
@@ -407,7 +376,7 @@ public class Launcher {
 
         System.out.println(helpWords);
 
-        if(Config.proxy != null) {
+        if (Config.proxy != null) {
             System.out.println(Lang.getString("msg.useproxy") + Config.getProxyString());
         }
 
@@ -424,13 +393,13 @@ public class Launcher {
 
     public void selectSetting(JButton source) {
         String targetCard;
-        if(source == frame.profileSetting) {
+        if (source == frame.profileSetting) {
             targetCard = "profile";
-        } else if(source == frame.moduleSetting) {
+        } else if (source == frame.moduleSetting) {
             targetCard = "module";
-        } else if(source == frame.directorySetting) {
+        } else if (source == frame.directorySetting) {
             targetCard = "directory";
-        } else if(source == frame.systemSetting) {
+        } else if (source == frame.systemSetting) {
             targetCard = "system";
         } else {
             return;
@@ -452,7 +421,7 @@ public class Launcher {
     }
 
     public static void exceptionReport(String str) {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("version", VERSION);
         params.put("message", str);
         HttpFetcher.fetchUsePostMethod("http://bugreport.herbix.me/chunkLauncher.php", params);
@@ -464,7 +433,7 @@ public class Launcher {
 
     public static void hideFrame() {
         synchronized (instance) {
-            if(instance.frame != null) {
+            if (instance.frame != null) {
                 instance.frame.setVisible(false);
             }
             instance.showFrame = false;
@@ -473,7 +442,7 @@ public class Launcher {
 
     public static void unhideFrame() {
         synchronized (instance) {
-            if(instance.frame != null) {
+            if (instance.frame != null) {
                 instance.frame.setVisible(true);
             }
             instance.showFrame = true;
@@ -490,12 +459,9 @@ public class Launcher {
 
         new Updater().checkUpdate();
 
-        Runtime.getRuntime().addShutdownHook(shutdownHook = new Thread(){
-            @Override
-            public void run() {
-                EasyFileAccess.deleteFileForce(new File(Config.TEMP_DIR));
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(shutdownHook = new Thread(() ->
+            EasyFileAccess.deleteFileForce(new File(Config.TEMP_DIR))
+        ));
 
         try {
             instance.run();
@@ -503,13 +469,10 @@ public class Launcher {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             t.printStackTrace(new PrintStream(out));
             final String str = out.toString();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    JOptionPane.showMessageDialog(null, Lang.getString("msg.main.error") + str,
-                            Lang.getString("msg.main.error.title"), JOptionPane.ERROR_MESSAGE);
-                }
-            });
+            SwingUtilities.invokeLater(() ->
+                JOptionPane.showMessageDialog(null, Lang.getString("msg.main.error") + str,
+                    Lang.getString("msg.main.error.title"), JOptionPane.ERROR_MESSAGE)
+            );
             exceptionReport(str);
         }
     }

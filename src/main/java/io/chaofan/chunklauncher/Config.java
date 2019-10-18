@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -19,40 +20,40 @@ public class Config {
     public static final String CONFIG_FILE = "Launcher.properties";
 
     public static final String MINECRAFT_DOWNLOAD_BASE =
-        "https://s3.amazonaws.com/Minecraft.Download";
+            "https://s3.amazonaws.com/Minecraft.Download";
     public static final String MINECRAFT_DOWNLOAD_LIBRARY =
-        "https://libraries.minecraft.net";
+            "https://libraries.minecraft.net";
     public static final String MINECRAFT_RESOURCE_BASE =
-        "http://resources.download.minecraft.net";
+            "http://resources.download.minecraft.net";
     public static final String MINECRAFT_VERSION_DOWNLOAD_URL =
-        "https://launchermeta.mojang.com/mc/game/version_manifest.json";
+            "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     public static final String MINECRAFT_VERSION_FILE =
-        "/versions/versions.json";
+            "/versions/versions.json";
     public static final String MINECRAFT_VERSION_PATH =
-        "/versions";
+            "/versions";
     public static final String MINECRAFT_LIBRARY_PATH =
-        "/libraries";
+            "/libraries";
     public static final String MINECRAFT_ASSET_PATH =
-        "/assets";
+            "/assets";
     public static final String MINECRAFT_OBJECTS_PATH =
-        "/assets/objects";
+            "/assets/objects";
     public static final String MINECRAFT_INDEXES_PATH =
-        "/assets/indexes";
+            "/assets/indexes";
     public static final String MINECRAFT_VIRTUAL_PATH =
-        "/assets/virtual";
+            "/assets/virtual";
     public static final String MINECRAFT_VERSION_FORMAT =
-        "/versions/%s/%s.json";
+            "/versions/%s/%s.json";
     public static final String MINECRAFT_VERSION_GAME_FORMAT =
-        "/versions/%s/%s.jar";
+            "/versions/%s/%s.jar";
     public static final String MINECRAFT_VERSION_NATIVE_PATH_FORMAT =
-        "/versions/%s/%s-natives";
+            "/versions/%s/%s-natives";
 
     public static final String TEMP_DIR = new File(new File(System.getProperty("java.io.tmpdir")), "ChunkLauncher").getPath();
 
     public static final String DEFAULT = "(Default)";
 
     public static Profile currentProfile = null;
-    public static Map<String, Profile> profiles = new HashMap<String, Profile>();
+    public static Map<String, Profile> profiles = new HashMap<>();
     public static String jrePath = System.getProperty("java.home");
     public static boolean d64 = false;
     public static boolean d32 = false;
@@ -72,7 +73,7 @@ public class Config {
     public static int proxyPort;
     public static boolean enableChecksum = false;
     public static RunningDirectory currentDirectory = null;
-    public static Map<String, RunningDirectory> directories = new HashMap<String, RunningDirectory>();
+    public static Map<String, RunningDirectory> directories = new HashMap<>();
 
     public static void saveConfig() {
         Properties p = new Properties();
@@ -84,7 +85,7 @@ public class Config {
         p.setProperty("current-etag", currentETag);
         p.setProperty("dont-update-until", String.valueOf(dontUpdateUntil));
         StringBuilder profileList = new StringBuilder();
-        for(String profileName : profiles.keySet()) {
+        for (String profileName : profiles.keySet()) {
             profileList.append(profileName);
             profileList.append(";");
             p.setProperty("profile-" + profileName, profiles.get(profileName).toSavedString());
@@ -99,7 +100,7 @@ public class Config {
         p.setProperty("proxy-type", proxyType);
         p.setProperty("enable-checksum", String.valueOf(enableChecksum));
         StringBuilder directoryList = new StringBuilder();
-        for(Map.Entry<String, RunningDirectory> entry : directories.entrySet()) {
+        for (Map.Entry<String, RunningDirectory> entry : directories.entrySet()) {
             directoryList.append(entry.getKey());
             directoryList.append(";");
             directoryList.append(entry.getValue().directory);
@@ -134,53 +135,64 @@ public class Config {
             in = new FileInputStream(CONFIG_FILE);
             p.load(in);
             jrePath = p.getProperty("jre-path", System.getProperty("java.home"));
-            if(jrePath.equals("")) {
+            if (jrePath.equals("")) {
                 jrePath = System.getProperty("java.home");
             }
             try {
                 d64 = Boolean.valueOf(p.getProperty("d64", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 d32 = Boolean.valueOf(p.getProperty("d32", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 showDebugInfo = Boolean.valueOf(p.getProperty("show-debug", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 showOld = Boolean.valueOf(p.getProperty("show-old", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 showSnapshot = Boolean.valueOf(p.getProperty("show-snapshot", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 memory = Integer.valueOf(p.getProperty("memory", "1024"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             gamePathOld = p.getProperty("game-path", Util.getWorkingDirectory().getPath());
             gamePath = new File(gamePathOld).getAbsolutePath();
             try {
                 currentETag = p.getProperty("current-etag", "");
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 dontUpdateUntil = Long.valueOf(p.getProperty("dont-update-until", String.valueOf(Long.MIN_VALUE)));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
 
             try {
                 setProxyString(p.getProperty("proxy", null));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             try {
                 enableProxy = Boolean.valueOf(p.getProperty("proxy-enabled", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
             proxyType = p.getProperty("proxy-type", "HTTP");
             try {
                 enableChecksum = Boolean.valueOf(p.getProperty("enable-checksum", "false"));
-            } catch (Exception ignored) {    }
+            } catch (Exception ignored) {
+            }
 
             // Load directories first because profiles use them.
             directories.clear();
             String directoryList = p.getProperty("directories", "");
             String[] split = directoryList.split(";");
-            for(int i=0; i<split.length-1; i+=2) {
-                directories.put(split[i], new RunningDirectory(split[i], split[i+1]));
+            for (int i = 0; i < split.length - 1; i += 2) {
+                directories.put(split[i], new RunningDirectory(split[i], split[i + 1]));
             }
 
             if (!directories.containsKey(DEFAULT)) {
@@ -192,8 +204,8 @@ public class Config {
             profiles.clear();
             String profileList = p.getProperty("profiles", "");
             split = profileList.split(";");
-            for(String profileName : split) {
-                if(profileName.equals(""))
+            for (String profileName : split) {
+                if (profileName.equals(""))
                     continue;
                 Profile profile = new Profile(profileName, p.getProperty("profile-" + profileName, null));
                 profiles.put(profileName, profile);
@@ -218,11 +230,11 @@ public class Config {
     public static void updateToFrame(LauncherFrame frame) {
         frame.jrePath.setText(jrePath);
         frame.memorySizeSlider.setValue(memory);
-        if(!d32 && !d64)
+        if (!d32 && !d64)
             frame.runningModeDefault.setSelected(true);
-        if(d32)
+        if (d32)
             frame.runningMode32.setSelected(true);
-        if(d64)
+        if (d64)
             frame.runningMode64.setSelected(true);
         frame.showOld.setSelected(showOld);
         frame.showSnapshot.setSelected(showSnapshot);
@@ -233,35 +245,33 @@ public class Config {
         // update directories first
         frame.directories.removeAllItems();
         frame.runPathDirectories.removeAllItems();
-        for (RunningDirectory directory : directories.values()) {
+        directories.values().stream().sorted(Comparator.comparing(a -> a.name)).forEach(directory -> {
             frame.directories.addItem(directory);
             frame.runPathDirectories.addItem(directory);
-        }
+        });
         frame.directories.setSelectedItem(currentDirectory);
         RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
         if (selectedDirectory != null) {
             frame.directoryPath.setText(selectedDirectory.directory);
         }
         frame.profiles.removeAllItems();
-        for(Profile profile : profiles.values()) {
-            frame.profiles.addItem(profile);
-        }
+        profiles.values().stream().sorted(Comparator.comparing(a -> a.profileName)).forEach(frame.profiles::addItem);
         frame.profiles.setSelectedItem(currentProfile);
         currentProfile.updateToFrame(frame);
     }
 
     public static void updateFromFrame(LauncherFrame frame) {
         profiles.clear();
-        for(int i=0; i<frame.profiles.getItemCount(); i++) {
+        for (int i = 0; i < frame.profiles.getItemCount(); i++) {
             Profile profile = frame.profiles.getItemAt(i);
             profiles.put(profile.profileName, profile);
         }
-        currentProfile = (Profile)frame.profiles.getSelectedItem();
-        if(currentProfile == null)
+        currentProfile = (Profile) frame.profiles.getSelectedItem();
+        if (currentProfile == null)
             currentProfile = profiles.get(DEFAULT);
         currentProfile.updateFromFrame(frame);
         jrePath = frame.jrePath.getText();
-        if(jrePath.equals("")) {
+        if (jrePath.equals("")) {
             jrePath = System.getProperty("java.home");
         }
         d64 = frame.runningMode64.isSelected();
@@ -270,18 +280,20 @@ public class Config {
         showSnapshot = frame.showSnapshot.isSelected();
         try {
             memory = Integer.valueOf(frame.memorySize.getText());
-        } catch (Exception ignored) {    }
+        } catch (Exception ignored) {
+        }
         enableProxy = frame.enableProxy.isSelected();
-        proxyType = frame.proxyType.getSelectedItem().toString();
+        proxyType = String.valueOf(frame.proxyType.getSelectedItem());
         try {
             setProxyString(frame.proxy.getText());
-        } catch (Exception ignored) {    }
+        } catch (Exception ignored) {
+        }
         RunningDirectory selectedDirectory = (RunningDirectory) frame.directories.getSelectedItem();
         if (selectedDirectory != null) {
             selectedDirectory.directory = frame.directoryPath.getText();
         }
         directories.clear();
-        for(int i=0; i<frame.directories.getItemCount(); i++) {
+        for (int i = 0; i < frame.directories.getItemCount(); i++) {
             RunningDirectory directory = frame.directories.getItemAt(i);
             directories.put(directory.name, directory);
         }
@@ -295,7 +307,7 @@ public class Config {
     public static void setProxyString(String str) {
         proxyString = str;
         int index = proxyString.lastIndexOf(':');
-        if(index == -1) {
+        if (index == -1) {
             proxyHost = proxyString;
             proxyPort = 3128;
         } else {
@@ -307,8 +319,8 @@ public class Config {
 
     private static Type getProxyType() {
         Type result = Type.DIRECT;
-        if(proxyType.equals("HTTP")) result = Type.HTTP;
-        else if(proxyType.equals("Socks")) result = Type.SOCKS;
+        if (proxyType.equals("HTTP")) result = Type.HTTP;
+        else if (proxyType.equals("Socks")) result = Type.SOCKS;
         return result;
     }
 

@@ -25,7 +25,7 @@ public abstract class ServerAuth {
     private String playerName;
     private String uuid;
     private String userType;
-    private Map<String, Collection<Object>> userProperties = new HashMap<String, Collection<Object>>();
+    private Map<String, Collection<Object>> userProperties = new HashMap<>();
 
     /**
      * Login user name and password should be passed to this constructor.

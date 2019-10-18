@@ -7,11 +7,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +24,7 @@ import io.chaofan.chunklauncher.util.Lang;
 public class Runner {
 
     private RunnableModule module;
-    private List<String> params = new ArrayList<String>();
+    private List<String> params = new ArrayList<>();
     private ServerAuth auth;
 
     public Runner(RunnableModule module, ServerAuth auth) {
@@ -44,23 +40,23 @@ public class Runner {
 
         String javaraw = java;
 
-        if(OS.getCurrentPlatform() == OS.WINDOWS) {
-            if(new File(java + "w.exe").exists()) {
+        if (OS.getCurrentPlatform() == OS.WINDOWS) {
+            if (new File(java + "w.exe").exists()) {
                 java += "w.exe";
             } else {
-                if(!new File(java + ".exe").exists()) {
+                if (!new File(java + ".exe").exists()) {
                     System.out.println(Lang.getString("msg.jrepath.error"));
                     return false;
                 }
             }
         } else {
-            if(!new File(java).exists()) {
+            if (!new File(java).exists()) {
                 System.out.println(Lang.getString("msg.jrepath.error"));
                 return false;
             }
         }
 
-        Map<String, String> valueMap = new HashMap<String, String>();
+        Map<String, String> valueMap = new HashMap<>();
 
         valueMap.put("auth_access_token", auth.getAccessToken());
         valueMap.put("user_properties", new JSONObject(auth.getUserProperties()).toString());
@@ -84,9 +80,9 @@ public class Runner {
 
         String arch = isJre64Bit(javaraw) ? "64" : "32";
 
-        if(Config.d64)
+        if (Config.d64)
             arch = "64";
-        if(Config.d32)
+        if (Config.d32)
             arch = "32";
 
         valueMap.put("natives_directory", module.getNativePath(arch));
@@ -101,26 +97,28 @@ public class Runner {
         params.add("-Xmx" + Config.memory + "M");
         params.add("-Xms" + Config.memory + "M");
 
-        if(Config.d64)
+        if (Config.d64)
             params.add("-d64");
-        if(Config.d32)
+        if (Config.d32)
             params.add("-d32");
 
-        String[] jvmParams = module.getJvmParams();
-        if(!replaceParams(jvmParams, valueMap)) {
+        Set<String> providedFeatures = new HashSet<>();
+
+        String[] jvmParams = module.getJvmParams(providedFeatures);
+        if (!replaceParams(jvmParams, valueMap)) {
             return false;
         }
 
         params.addAll(Arrays.asList(jvmParams));
         params.add(module.getMainClass());
 
-        String[] gameParams = module.getRunningParams();
-        if(!replaceParams(gameParams, valueMap)) {
+        String[] gameParams = module.getRunningParams(providedFeatures);
+        if (!replaceParams(gameParams, valueMap)) {
             return false;
         }
 
-        if(Config.enableProxy && Config.proxy != null) {
-            if(Config.proxyType.equals("Socks")) {
+        if (Config.enableProxy && Config.proxy != null) {
+            if (Config.proxyType.equals("Socks")) {
                 params.add("--proxyHost");
                 params.add(Config.proxyHost);
                 params.add("--proxyPort");
@@ -130,7 +128,7 @@ public class Runner {
             }
         }
 
-        if(module.isAssetsVirtual() && !module.copyAssetsToVirtual()) {
+        if (module.isAssetsVirtual() && !module.copyAssetsToVirtual()) {
             System.out.println(Lang.getString("msg.assets.cannotload"));
             return false;
         }
@@ -140,23 +138,23 @@ public class Runner {
         return true;
     }
 
-    private static final Pattern paramPattern = Pattern.compile("\\$\\{([a-zA-Z0-9_]*)\\}");
+    private static final Pattern paramPattern = Pattern.compile("\\$\\{([a-zA-Z0-9_]*)}");
 
     private boolean replaceParams(String[] gameParams, Map<String, String> map) {
         StringBuilder sb = new StringBuilder();
 
-        for(int i=0; i<gameParams.length; i++) {
+        for (int i = 0; i < gameParams.length; i++) {
             String param = gameParams[i];
             Matcher m = paramPattern.matcher(param);
             int lastend = 0;
             sb.setLength(0);
 
-            while(m.find()) {
+            while (m.find()) {
                 sb.append(param, lastend, m.start());
                 String key = m.group(1);
                 String value = map.get(key);
 
-                if(value == null) {
+                if (value == null) {
                     System.out.println(Lang.getString("msg.run.unknownparam1") +
                             key + Lang.getString("msg.run.unknownparam2"));
                     return false;
@@ -174,7 +172,7 @@ public class Runner {
 
     public void start() {
         try {
-            ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[params.size()]));
+            ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[0]));
             pb.directory(new File(Config.gamePath));
             pb.redirectErrorStream(true);
 
@@ -187,11 +185,11 @@ public class Runner {
             out.write("Running with params : " + params + "\r\n");
 
             String line;
-            while((line = in.readLine()) != null) {
+            while ((line = in.readLine()) != null) {
                 out.write(line + "\n");
                 System.out.println(line);
-                if(checkWindowOpened(line)) {
-                    if(!Config.showDebugInfo) {
+                if (checkWindowOpened(line)) {
+                    if (!Config.showDebugInfo) {
                         out.close();
                         return;
                     }
@@ -200,7 +198,7 @@ public class Runner {
             }
             out.close();
 
-            if(!windowOpened) {
+            if (!windowOpened) {
                 JOptionPane.showMessageDialog(null, Lang.getString("msg.run.failed"), "ChunkLauncher", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -231,7 +229,7 @@ public class Runner {
             byte[] buffer = new byte[1024];
             int n;
 
-            while((n = in.read(buffer)) >= 0) {
+            while ((n = in.read(buffer)) >= 0) {
                 sb.append(new String(buffer, 0, n));
             }
 

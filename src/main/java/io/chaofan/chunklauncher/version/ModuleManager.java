@@ -1,8 +1,6 @@
 package io.chaofan.chunklauncher.version;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.swing.JComboBox;
@@ -15,23 +13,23 @@ public class ModuleManager {
 
     public static Module[] modules = null;
 
-    private static Map<Integer, Module> moduleFromListItem = new HashMap<Integer, Module>();
-    private static Map<String, Module> moduleFromChoiceItem = new HashMap<String, Module>();
-    private static Map<String, Module> moduleFromName = new HashMap<String, Module>();
+    private static Map<Integer, Module> moduleFromListItem = new HashMap<>();
+    private static Map<String, Module> moduleFromChoiceItem = new HashMap<>();
+    private static Map<String, Module> moduleFromName = new HashMap<>();
 
     public synchronized static void showModules(DefaultTableModel model) {
         model.setRowCount(0);
 
         moduleFromListItem.clear();
-        for(int i=0, j=0; i<modules.length; i++) {
+        for (int i = 0, j = 0; i < modules.length; i++) {
             Module m = modules[i];
-            if(!m.isInstalled() && !Config.showOld && m.getType().startsWith("old")) {
+            if (!m.isInstalled() && !Config.showOld && m.getType().startsWith("old")) {
                 continue;
             }
-            if(!m.isInstalled() && !Config.showSnapshot && m.getType().startsWith("snapshot")) {
+            if (!m.isInstalled() && !Config.showSnapshot && m.getType().startsWith("snapshot")) {
                 continue;
             }
-            model.addRow(new String[]{ m.getState(), m.getName(), m.getType(), m.getFormattedReleaseTime() });
+            model.addRow(new String[]{m.getState(), m.getName(), m.getType(), m.getFormattedReleaseTime()});
             moduleFromListItem.put(j, m);
             j++;
         }
@@ -40,13 +38,13 @@ public class ModuleManager {
     public synchronized static void showModules(JComboBox<String> list) {
         list.removeAllItems();
         moduleFromChoiceItem.clear();
-        for(int i=0; i<modules.length; i++) {
-            Module m = modules[i];
-            if(m.isInstalled()) {
+        Arrays.stream(modules)
+            .filter(Module::isInstalled)
+            .sorted(Comparator.comparing(Module::getActualReleaseTime).reversed())
+            .forEach(m -> {
                 list.addItem(m.getName());
                 moduleFromChoiceItem.put(m.getName(), m);
-            }
-        }
+            });
     }
 
     public static Module getSelectedModule(JTable table) {
@@ -58,57 +56,50 @@ public class ModuleManager {
     }
 
     public synchronized static void initModules(Map<String, Version> versions,
-        ModuleInstallCallback icallback, ModuleUninstallCallback ucallback) {
+                                                ModuleInstallCallback icallback, ModuleUninstallCallback ucallback) {
 
-        List<Module> moduleList = new ArrayList<Module>();
+        List<Module> moduleList = new ArrayList<>();
 
         Set<String> versionIds = versions.keySet();
-        for(String key : versionIds) {
+        for (String key : versionIds) {
             Version elem = versions.get(key);
             RunnableModule rm = new RunnableModule(icallback, ucallback);
             rm.version = elem;
-            if(moduleFromName.containsKey(rm.getName()))
-                moduleList.add(moduleFromName.get(rm.getName()));
-            else
-                moduleList.add(rm);
+            moduleList.add(moduleFromName.getOrDefault(rm.getName(), rm));
         }
 
         File versionFolder = new File(Config.gamePath + "/versions");
-        if(versionFolder.isDirectory()) {
-            for(File inFolder : versionFolder.listFiles()) {
-                if(inFolder.isDirectory() && !versionIds.contains(inFolder.getName())) {
+        if (versionFolder.isDirectory()) {
+            File[] files = versionFolder.listFiles();
+            if (files != null) {
+                for (File inFolder : files) {
+                    if (inFolder.isDirectory() && !versionIds.contains(inFolder.getName())) {
 
-                    File jsonFile = new File(inFolder, inFolder.getName() + ".json");
+                        File jsonFile = new File(inFolder, inFolder.getName() + ".json");
 
-                    if(jsonFile.isFile()) {
-                        Version ver = new Version();
-                        ver.id = inFolder.getName();
-                        RunnableModule rm = new RunnableModule(icallback, ucallback);
-                        rm.version = ver;
-                        if(moduleFromName.containsKey(rm.getName()))
-                            moduleList.add(moduleFromName.get(rm.getName()));
-                        else
-                            moduleList.add(rm);
+                        if (jsonFile.isFile()) {
+                            Version ver = new Version();
+                            ver.id = inFolder.getName();
+                            RunnableModule rm = new RunnableModule(icallback, ucallback);
+                            rm.version = ver;
+                            moduleList.add(moduleFromName.getOrDefault(rm.getName(), rm));
+                        }
+
                     }
-
                 }
             }
         }
 
-        Collections.sort(moduleList, new Comparator<Module>(){
-            public int compare(Module o1, Module o2) {
-                return -o1.getActualReleaseTime().compareTo(o2.getActualReleaseTime());
-            }
-        });
+        moduleList.sort((o1, o2) -> -o1.getActualReleaseTime().compareTo(o2.getActualReleaseTime()));
 
-        modules = moduleList.toArray(new Module[moduleList.size()]);
+        modules = moduleList.toArray(new Module[0]);
 
         moduleFromName.clear();
-        for(Module m : modules) {
+        for (Module m : modules) {
             moduleFromName.put(m.getName(), m);
         }
 
-        for(Module m : modules) {
+        for (Module m : modules) {
             m.getState();
         }
     }

@@ -2,8 +2,8 @@ package io.chaofan.chunklauncher.version;
 
 public interface ModuleUninstallCallback {
 
-    public void uninstallStart();
+    void uninstallStart();
 
-    public void uninstallDone();
+    void uninstallDone();
 
 }
