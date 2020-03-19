@@ -7,10 +7,8 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.6
-* Edit launch parameter creation mechanisms
-* Update code style
-* Sort content of comboboxes
+### 1.9.7
+* Add Russian translation (Contributor: @artdeell)
 
 ## Working Version
 
@@ -18,6 +16,11 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 <a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
 
 ## History Versions
+
+### 1.9.6
+* Edit launch parameter creation mechanisms
+* Update code style
+* Sort content of comboboxes
 
 ### 1.9.5
 * Change some states to icon
