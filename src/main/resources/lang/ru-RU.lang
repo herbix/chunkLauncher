@@ -1,0 +1,156 @@
+
+encoding=UTF-8
+
+msg.auth.connecting1=Соединение
+msg.auth.connecting2=Проверьте имя пользователя или пароль
+msg.auth.failed=Авторизация не удалась
+msg.auth.succeeded=Авторизация прошла успешно
+msg.auth.noselection=Выберите метод авторизации
+msg.auth.minelogin.failed.0=Ошибка сети
+msg.auth.minelogin.failed.1=Неверный логин
+msg.auth.minelogin.failed.2=Неизвестная ошибка
+msg.auth.minelogin.failed.3=Данного пользователя не сущеcтвует
+msg.auth.minelogin.failed.4=Требуется проверка
+msg.auth.minelogin.failed.5=Неверный пароль
+msg.auth.skinme.donthavechar=У вас нету этого персонажа
+
+msg.download.failed=Ошибка загрузки:
+msg.download.start=Загружается: 
+msg.download.succeeded=Загружено: 
+
+msg.game.basicrequire=Как минимум Вам нужны загружаемые ресурсы и хотя бы один модуль для запуска.
+msg.game.nousername=Введите имя пользователя.
+msg.game.isloggingin=Система выполняет попытку входа
+
+msg.module.alreadyinstalled=Этот модуль уже установлен.
+msg.module.failed=Установка не удалась.
+msg.module.isinstalling=Модуль устанавливается
+msg.module.isuninstalling=Модуль удаляется
+msg.module.noselection=Сначала выберите модуль!
+msg.module.notallowed=Эта версия Minecraft не совместима с вашей ОС
+msg.module.reason=Причина:
+msg.module.start=Запустить установку
+msg.module.startuninstall=Удалить
+msg.module.succeeded=Установка завершена
+msg.module.uninstallsucceeded=Удаление завершено
+msg.module.delete=Удаление
+msg.module.notinstalled=Этот модуль не установлен
+
+msg.update.request=Доступна новая версия ChunkLauncher. Желаете ли Вы её загрузить?
+msg.update.exception1=Программа создала неизвестное исключение:
+msg.update.exception2=. Обновление было остановлено.
+
+msg.version.downloading=Обновление информации о версиях...
+msg.version.failed=Невозможно обновить информацию о версиях.
+msg.version.succeeded=Обновление информации прошло успешно.
+
+msg.profile.cannotremovedefault=Нельзя удалить профиль по умолчанию.
+msg.profile.removeconfirm=Вы действительно хотите удалить профиль?
+msg.profile.exists=Профиль с таким именем существовал.
+msg.profile.inputname=Введите имя профиля:
+
+msg.directory.pleaseselectadirectory=Пожалуйста выберите папку.
+msg.directory.cannotremovedefault=Нельзя удалить папку по умолчанию.
+msg.directory.removeconfirm=Вы действительно хотите удалить папку?
+msg.directory.exists=Папка с таким именем существовала
+msg.directory.inputname=Введите имя для папки:
+msg.directory.tab.removeconfirm=Вы уверены что хотите удалить выбранное?
+msg.directory.tab.inputname=Выберите название для цели:
+msg.directory.tab.existed=Этот выбор существует
+msg.directory.tab.copyfailed=Копирование не удалось.
+msg.directory.pleaseselectanitem=Выберите что-то.
+
+msg.main.error=Произошла ошибка:
+msg.main.error.title=Ошибка
+
+msg.gamepath.error=Невозможно использовать папку .minecraft
+msg.help=Почта для уведомления о багах: herbix@163.com
+msg.jrepath.error=Невозможно запустить Java по указанному пути.
+msg.zip.unzip=Распаковка
+msg.comingsoon=Пока это сделать нельзя
+msg.assets.cannotload=Невозможно загрузить доп. контент.
+msg.run.unknownparam1=Нету такого параметра: "
+msg.run.unknownparam2=".
+msg.twitch.inputname=Введите имя игрока:
+msg.yggdrasil.saved=Невозможно соединится с сервером авторизации. Желаете ли вы использовать пиратский режим для игры без сети?
+msg.run.failed=Запуск завершился ошибкой. Уделите внимание файлу last.log для получения подробной информации.
+msg.useproxy=Используется прокси:
+msg.proxy.notsocks=Minecraft поддерживает только Socks прокси-серверы. Используется прямое подключение.
+
+ui.mode.d32=-d32
+ui.mode.d64=-d64
+ui.mode.default=По умолчанию
+
+ui.module.install=Установить
+ui.module.label=Версии:
+ui.module.uninstall=Удалить
+ui.module.old=Устаревшие
+ui.module.snapshot=Снапшоты
+
+ui.table.name=Название
+ui.table.state=Статус
+ui.table.type=Тип
+ui.table.releasetime=Дата и время выпуска
+
+ui.jrepath.label=Путь к Java:
+ui.jrepath.filechooser.title=Выбрать путь к Java
+
+ui.profile.label=Профили:
+ui.profile.add=Добавить
+ui.profile.remove=Удалить
+
+ui.directory.label=Папки:
+ui.directory.add=Добавить
+ui.directory.remove=Удалить
+ui.directory.pathlabel=Путь:
+ui.directory.saves=Миры
+ui.directory.resourcepacks=Ресурспаки
+ui.directory.texturepacks=Текстурпаки
+ui.directory.shaderpacks=Шейдеры
+ui.directory.mods=Моды
+ui.directory.tab.install=Установить
+ui.directory.tab.enable=Включить
+ui.directory.tab.disable=Отключить
+ui.directory.tab.copy=Копировать
+ui.directory.tab.remove=Удалить
+ui.directory.tab.item=Название
+ui.directory.tab.lastmodified=Дата изменения
+ui.directory.tab.version=Версия
+ui.directory.tab.mcversion=Версия Minecraft
+ui.directory.tab.state=Состояние
+ui.directory.tab.zipfile=ZIP-файл
+ui.directory.tab.jarfile=JAR-файл
+
+ui.runpath.label=Рабочая папка
+ui.runpath.filechooser.title=Выбрать рабочую папку...
+
+ui.char.title=Выбор персонажа
+ui.char.ok=ОК
+ui.char.cancel=Отмена
+
+ui.update.title=Обновление...
+ui.launch=Запустить
+ui.memory.label=Объём памяти(МБ):
+ui.offline=Пиратский режим
+ui.ok=ОК
+ui.cancel=Отмена
+ui.password.label=Пароль:
+ui.savepassword=Сохранить пароль
+ui.username.label=Пользователь:
+ui.version.label=Версия:
+
+ui.auth.type.label=Авторизация:
+ui.auth.type.offline=Пиратская
+ui.auth.type.minecraft=Официальная (устаревшая)
+ui.auth.type.minelogin=MineLogin
+ui.auth.type.yggdrasil=Официальная
+ui.auth.type.twitch=Twitch
+
+ui.tab.profile=Профили
+ui.tab.module=Модули
+ui.tab.directory=Папки
+ui.tab.system=Прочее
+
+ui.proxy.type.label=Тип прокси:
+ui.proxy.hostport.label=Прокси-сервер (Хост:Порт)
+ui.proxy.enable.label=Использовать прокси
