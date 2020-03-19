@@ -14,8 +14,11 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Working Version
 
+### 1.9.8
+* Check releases on github instead of files in repo for updating
+
 ## Executable
-<a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
+[Latest release](https://github.com/herbix/chunkLauncher/releases/latest)
 
 ## History Versions
 

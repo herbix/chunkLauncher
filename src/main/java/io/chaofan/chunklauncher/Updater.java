@@ -13,17 +13,60 @@ import java.util.zip.ZipEntry;
 
 import javax.swing.JOptionPane;
 
+import io.chaofan.chunklauncher.util.HttpFetcher;
 import io.chaofan.chunklauncher.util.Lang;
 import io.chaofan.chunklauncher.util.OS;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Updater {
 
+    private static final String RELEASE_URL = "https://api.github.com/repos/herbix/chunkLauncher/releases/latest";
     private static final String UPDATE_URL = "https://github.com/herbix/chunkLauncher/raw/master/bin/ChunkLauncher.jar";
 
     private String currentFile;
 
     private String eTag = "";
     private int size = 0;
+
+    private String getUpdateUrl(String releaseUrl) {
+        String data = HttpFetcher.fetch(releaseUrl);
+        if (data == null) {
+            return null;
+        }
+
+        JSONObject obj = new JSONObject(data);
+        String version = obj.getString("tag_name");
+        if (version.startsWith("v")) {
+            version = version.substring(1);
+        }
+
+        if (versionCompare(version, Launcher.VERSION) <= 0) {
+            return null;
+        }
+
+        JSONArray assets = obj.getJSONArray("assets");
+        for (int i=0; i<assets.length(); i++) {
+            JSONObject asset = assets.getJSONObject(i);
+            if (asset.getString("name").equalsIgnoreCase("ChunkLauncher.jar")) {
+                return asset.getString("browser_download_url");
+            }
+        }
+
+        return null;
+    }
+
+    private int versionCompare(String a, String b) {
+        String[] splitA = a.split("\\.");
+        String[] splitB = b.split("\\.");
+        for (int i=0; i<splitA.length && i<splitB.length; i++) {
+            int c = Integer.compare(Integer.parseInt(splitA[i]), Integer.parseInt(splitB[i]));
+            if (c != 0) {
+                return c;
+            }
+        }
+        return Integer.compare(splitA.length, splitB.length);
+    }
 
     private InputStream getRemoteFileInfo(String updateUrl) {
         URLConnection conn;
@@ -98,7 +141,11 @@ public class Updater {
             currentFile = currentFile.substring(4 + 5);
             currentFile = currentFile.substring(0, currentFile.lastIndexOf('!'));
 
-            InputStream in = getRemoteFileInfo(UPDATE_URL);
+            String updateUrl = getUpdateUrl(RELEASE_URL);
+            if (updateUrl == null)
+                return;
+
+            InputStream in = getRemoteFileInfo(updateUrl);
             if (in == null)
                 return;
 
