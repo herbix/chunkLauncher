@@ -1,5 +1,7 @@
 # ChunkLauncher
 
+![CIBuildonPush](https://github.com/herbix/chunkLauncher/workflows/CIBuildonPush/badge.svg?event=push)
+
 ## Introduction
 ChunkLauncher is an unofficial minecraft game launcher. Main features of the launcher is the same as the official launcher, including managing game versions, player profiles and launching minecraft. ChunkLauncher also supports <a href="http://files.minecraftforge.net/">Minecraft Forge</a> game versions.
 
