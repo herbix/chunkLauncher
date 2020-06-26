@@ -9,19 +9,21 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.7
-* Add Russian translation (Contributor: @artdeell)
-
-## Working Version
-
 ### 1.9.8
 * Check releases on github instead of files in repo for updating
 * Choose larger version if same package is in dependency list twice.
+
+## Working Version
+
+### 1.9.9
 
 ## Executable
 [Latest release](https://github.com/herbix/chunkLauncher/releases/latest)
 
 ## History Versions
+
+### 1.9.7
+* Add Russian translation (Contributor: @artdeell)
 
 ### 1.9.6
 * Edit launch parameter creation mechanisms
