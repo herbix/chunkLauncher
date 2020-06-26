@@ -105,7 +105,7 @@ public class RunnableModuleInfo {
     }
 
     public void addInheritedInfo(RunnableModuleInfo inherited) {
-        JSONObject mergedJson = JsonUtil.mergeJson(originalJson, inherited.fullJson);
+        JSONObject mergedJson = JsonUtil.mergeJson(originalJson, inherited.fullJson, true);
         if (mergedJson.has("inheritsFrom")) {
             mergedJson.remove("inheritsFrom");
         }
