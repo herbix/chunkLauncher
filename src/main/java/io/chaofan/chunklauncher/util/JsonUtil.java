@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class JsonUtil {
-    public static JSONObject mergeJson(JSONObject patchedJson, JSONObject originalJson) {
+    public static JSONObject mergeJson(JSONObject patchedJson, JSONObject originalJson, boolean reverseArray) {
         JSONObject output = new JSONObject(originalJson.toString());
         for (String key : patchedJson.keySet()) {
             Object patchedObject = patchedJson.get(key);
@@ -15,9 +15,9 @@ public class JsonUtil {
 
             Object originalObject = originalJson.get(key);
             if (originalObject instanceof JSONArray && patchedObject instanceof JSONArray) {
-                output.put(key, mergeJson((JSONArray) patchedObject, (JSONArray) originalObject));
+                output.put(key, mergeJson((JSONArray) patchedObject, (JSONArray) originalObject, reverseArray));
             } else if (originalObject instanceof JSONObject && patchedObject instanceof JSONObject) {
-                output.put(key, mergeJson((JSONObject) patchedObject, (JSONObject) originalObject));
+                output.put(key, mergeJson((JSONObject) patchedObject, (JSONObject) originalObject, reverseArray));
             } else {
                 output.put(key, patchedObject);
             }
@@ -25,7 +25,12 @@ public class JsonUtil {
         return output;
     }
 
-    public static JSONArray mergeJson(JSONArray patchedJson, JSONArray originalJson) {
+    public static JSONArray mergeJson(JSONArray patchedJson, JSONArray originalJson, boolean reverseArray) {
+        if (reverseArray) {
+            JSONArray t = patchedJson;
+            patchedJson = originalJson;
+            originalJson = t;
+        }
         JSONArray result = new JSONArray(originalJson.toString());
         for (Object item : patchedJson) {
             result.put(item);

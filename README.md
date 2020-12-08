@@ -1,5 +1,7 @@
 # ChunkLauncher
 
+![CIBuildonPush](https://github.com/herbix/chunkLauncher/workflows/CIBuildonPush/badge.svg?event=push)
+
 ## Introduction
 ChunkLauncher is an unofficial minecraft game launcher. Main features of the launcher is the same as the official launcher, including managing game versions, player profiles and launching minecraft. ChunkLauncher also supports <a href="http://files.minecraftforge.net/">Minecraft Forge</a> game versions.
 
@@ -7,17 +9,26 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
+### 1.9.8
+* Check releases on github instead of files in repo for updating
+* Choose larger version if same package is in dependency list twice.
+
+## Working Version
+
+### 1.9.9
+
+## Executable
+[Latest release](https://github.com/herbix/chunkLauncher/releases/latest)
+
+## History Versions
+
+### 1.9.7
+* Add Russian translation (Contributor: @artdeell)
+
 ### 1.9.6
 * Edit launch parameter creation mechanisms
 * Update code style
 * Sort content of comboboxes
-
-## Working Version
-
-## Executable
-<a href="/bin/ChunkLauncher.jar">ChunkLauncher.jar</a>
-
-## History Versions
 
 ### 1.9.5
 * Change some states to icon
