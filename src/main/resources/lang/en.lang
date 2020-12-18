@@ -12,6 +12,15 @@ msg.auth.minelogin.failed.3=No such user.
 msg.auth.minelogin.failed.4=Need verify.
 msg.auth.minelogin.failed.5=Bad password.
 msg.auth.skinme.donthavechar=You don't have this character.
+msg.auth.microsoft.login.msa=Logging in Microsft account...
+msg.auth.microsoft.login.xbl=Logging in Xbox Live...
+msg.auth.microsoft.login.mc=Logging in Minecraft...
+msg.auth.microsoft.failed.timeout=Login timeout
+msg.auth.microsoft.failed.dontowngame=You don't own Minecraft on this account
+msg.auth.microsoft.failed.nobrowser=Failed to open browser
+msg.auth.microsoft.failed.authenticationfailed=Authentication failed
+msg.auth.microsoft.failed.authenticationfaileddot=Authentication failed.
+msg.auth.microsoft.succeeded=Authentication succeeded. You can close this window now.
 
 msg.download.failed=Download failed: 
 msg.download.start=Start download: 
@@ -145,10 +154,11 @@ ui.version.label=Version:
 
 ui.auth.type.label=Auth Type:
 ui.auth.type.offline=Offline
-ui.auth.type.minecraft=Official(Legacy)
+ui.auth.type.minecraft=Mojang Account (Legacy)
 ui.auth.type.minelogin=MineLogin
-ui.auth.type.yggdrasil=Official
+ui.auth.type.yggdrasil=Mojang Account
 ui.auth.type.twitch=Twitch
+ui.auth.type.microsoft=Microsoft Account
 
 ui.tab.profile=Profile Manage
 ui.tab.module=Module Manage

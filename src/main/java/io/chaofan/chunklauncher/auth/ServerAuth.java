@@ -186,6 +186,11 @@ public abstract class ServerAuth {
     }
 
     /**
+     * @return whether password is inputted in launcher.
+     */
+    public static boolean canInputPassword() { return true; }
+
+    /**
      * Show a dialog, where user can choose one of his/her characters
      * from a character list.
      *

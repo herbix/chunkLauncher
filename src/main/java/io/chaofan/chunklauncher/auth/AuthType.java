@@ -13,9 +13,10 @@ public class AuthType {
     private static List<AuthType> values = new ArrayList<>();
     private static boolean authTypeInitialized = false;
 
-    private String name;
     private Class<?> auth;
+    private String name;
     private String alias;
+    private boolean canInputPassword = true;
 
     private AuthType(Class<?> auth) {
         try {
@@ -35,6 +36,12 @@ public class AuthType {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        try {
+            this.canInputPassword = (Boolean) auth.getDeclaredMethod("canInputPassword").invoke(null);
+        } catch (Exception e) {
+            // Silent
+        }
     }
 
     public ServerAuth newInstance(String name, String pass) {
@@ -53,6 +60,10 @@ public class AuthType {
 
     public String value() {
         return alias;
+    }
+
+    public boolean canInputPassword() {
+        return canInputPassword;
     }
 
     private static void initAuthType() {

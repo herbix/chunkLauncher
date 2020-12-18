@@ -258,6 +258,10 @@ public class LauncherFrame extends JFrame {
         for (AuthType at : AuthType.values()) {
             authType.addItem(at);
         }
+        authType.addItemListener(e -> {
+            AuthType authTypeObject = (AuthType) authType.getSelectedItem();
+            pass.setEnabled(authTypeObject == null || authTypeObject.canInputPassword());
+        });
 
         JPanel gameVersionLine = new JPanel();
         gameVersionLine.setLayout(new GridBagLayout());
