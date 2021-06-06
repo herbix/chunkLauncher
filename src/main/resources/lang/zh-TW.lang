@@ -13,6 +13,15 @@ msg.auth.minelogin.failed.3=MineLogin用戶不存在，請註冊
 msg.auth.minelogin.failed.4=MineLogin需要驗證
 msg.auth.minelogin.failed.5=MineLogin密碼錯誤
 msg.auth.skinme.donthavechar=你的帳號中沒有這個角色
+msg.auth.microsoft.login.msa=正在登錄微軟帳號……
+msg.auth.microsoft.login.xbl=正在登錄Xbox Live帳號……
+msg.auth.microsoft.login.mc=正在登錄Minecraft……
+msg.auth.microsoft.failed.timeout=登入超時
+msg.auth.microsoft.failed.dontowngame=此帳號未購買Minecraft
+msg.auth.microsoft.failed.nobrowser=無法打開瀏覽器
+msg.auth.microsoft.failed.authenticationfailed=微軟帳號登入失敗
+msg.auth.microsoft.failed.authenticationfaileddot=登入失敗。
+msg.auth.microsoft.succeeded=登入成功。您現在可以關閉此視窗。
 
 msg.download.failed=下載失敗：
 msg.download.start=開始下載：
@@ -145,6 +154,11 @@ ui.auth.type.minecraft=正版（舊）
 ui.auth.type.minelogin=MineLogin
 ui.auth.type.yggdrasil=正版
 ui.auth.type.twitch=Twitch
+ui.auth.type.minecraft=Mojang帳號（舊）
+ui.auth.type.minelogin=MineLogin
+ui.auth.type.yggdrasil=Mojang帳號
+ui.auth.type.twitch=Twitch
+ui.auth.type.microsoft=微軟帳號
 
 ui.tab.profile=登入管理
 ui.tab.module=組件管理

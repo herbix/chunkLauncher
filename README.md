@@ -9,18 +9,21 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.9.8
-* Check releases on github instead of files in repo for updating
-* Choose larger version if same package is in dependency list twice.
+### 1.10.0
+* Support Microsoft account login.
 
 ## Working Version
 
-### 1.9.9
+### 1.10.1
 
 ## Executable
 [Latest release](https://github.com/herbix/chunkLauncher/releases/latest)
 
 ## History Versions
+
+### 1.9.8
+* Check releases on github instead of files in repo for updating
+* Choose larger version if same package is in dependency list twice.
 
 ### 1.9.7
 * Add Russian translation (Contributor: @artdeell)

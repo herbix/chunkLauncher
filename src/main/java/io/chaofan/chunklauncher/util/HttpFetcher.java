@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
@@ -28,6 +30,8 @@ public final class HttpFetcher {
     private static final JProgressBar defpb = new JProgressBar();
     private static JProgressBar progress = defpb;
 
+    public static String lastErrorResponse = null;
+
     public static void setJProgressBar(JProgressBar p) {
         if (p == null) {
             progress = defpb;
@@ -36,6 +40,13 @@ public final class HttpFetcher {
     }
 
     private static HttpURLConnection createConnection(String url, String method, int downloaded, int len, String type)
+            throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", type + "; charset=utf-8");
+        return createConnection(url, method, downloaded, len, headers);
+    }
+
+    private static HttpURLConnection createConnection(String url, String method, int downloaded, int len, Map<String, String> headers)
             throws IOException {
         HttpURLConnection conn;
         URL console = new URL(url);
@@ -48,11 +59,12 @@ public final class HttpFetcher {
         if (downloaded > 0) {
             conn.addRequestProperty("Range", downloaded + "-");
         }
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            conn.addRequestProperty(entry.getKey(), entry.getValue());
+        }
         if (len > 0) {
-            conn.addRequestProperty("Content-Type", type + "; charset=utf-8");
             conn.addRequestProperty("Content-Length", String.valueOf(len));
             conn.setUseCaches(false);
-            conn.setDoInput(true);
             conn.setDoOutput(true);
         }
         return conn;
@@ -101,9 +113,20 @@ public final class HttpFetcher {
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
     public static String fetch(String url) {
+        return fetch(url, null);
+    }
+
+    /**
+     * Get content from the url.
+     *
+     * @param url     The url
+     * @param headers Http headers
+     * @return The content. If exception occurs, <i>null</i> will be returned.
+     */
+    public static String fetch(String url, Map<String, String> headers) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        boolean failed = fetchToStream(url, out);
+        boolean failed = fetchToStream(url, out, headers);
 
         if (failed)
             return null;
@@ -122,7 +145,7 @@ public final class HttpFetcher {
     public static boolean fetchAndSave(String url, String file) throws IOException {
         OutputStream out = new FileOutputStream(file);
 
-        boolean failed = fetchToStream(url, out);
+        boolean failed = fetchToStream(url, out, null);
 
         out.close();
 
@@ -138,9 +161,10 @@ public final class HttpFetcher {
      *
      * @param url The url
      * @param out Stream to output
+     * @param headers Http headers
      * @return Whether the operation succeed
      */
-    public static boolean fetchToStream(String url, OutputStream out) {
+    public static boolean fetchToStream(String url, OutputStream out, Map<String, String> headers) {
         boolean failed;
         int tryCount = 0;
         int downloaded = 0;
@@ -150,7 +174,11 @@ public final class HttpFetcher {
             HttpURLConnection conn = null;
             failed = false;
             try {
-                conn = createConnection(url, "GET", downloaded, 0, "application/x-www-form-urlencoded");
+                if (headers == null) {
+                    conn = createConnection(url, "GET", downloaded, 0, "application/x-www-form-urlencoded");
+                } else {
+                    conn = createConnection(url, "GET", downloaded, 0, headers);
+                }
                 conn.connect();
                 if (length == -1) {
                     String lenStr = conn.getHeaderField("Content-Length");
@@ -159,9 +187,23 @@ public final class HttpFetcher {
                     else
                         length = Integer.valueOf(lenStr);
                 }
-                InputStream in = conn.getInputStream();
-                pipeStream(in, out, downloaded, length);
-                in.close();
+
+                if (conn.getResponseCode() >= 400) {
+                    lastErrorResponse = null;
+                    InputStream in = conn.getErrorStream();
+                    ByteArrayOutputStream newOut = new ByteArrayOutputStream();
+                    pipeStream(in, newOut);
+                    in.close();
+                    lastErrorResponse = new String(newOut.toByteArray());
+                    failed = true;
+                    if (conn.getResponseCode() < 500) {
+                        break;
+                    }
+                } else {
+                    InputStream in = conn.getInputStream();
+                    pipeStream(in, out, downloaded, length);
+                    in.close();
+                }
             } catch (Exception e) {
                 failed = true;
             } finally {
@@ -215,6 +257,20 @@ public final class HttpFetcher {
      * @return The content. If exception occurs, <i>null</i> will be returned.
      */
     public static String fetchUsePostMethod(String url, String params, String type) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", type + "; charset=utf-8");
+        return fetchUsePostMethod(url, params, headers);
+    }
+
+    /**
+     * Get content from the url, using POST method.
+     *
+     * @param url     The url
+     * @param params  The string contains post params
+     * @param headers Http headers
+     * @return The content. If exception occurs, <i>null</i> will be returned.
+     */
+    public static String fetchUsePostMethod(String url, String params, Map<String, String> headers) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         boolean failed;
@@ -225,7 +281,7 @@ public final class HttpFetcher {
             failed = false;
             try {
                 byte[] toSend = params.getBytes(StandardCharsets.UTF_8);
-                conn = createConnection(url, "POST", 0, toSend.length, type);
+                conn = createConnection(url, "POST", 0, toSend.length, headers);
                 conn.connect();
 
                 OutputStream os = conn.getOutputStream();
@@ -233,9 +289,21 @@ public final class HttpFetcher {
                 os.flush();
                 os.close();
 
-                InputStream in = conn.getInputStream();
-                pipeStream(in, out);
-                in.close();
+                if (conn.getResponseCode() >= 400) {
+                    lastErrorResponse = null;
+                    InputStream in = conn.getErrorStream();
+                    pipeStream(in, out);
+                    in.close();
+                    lastErrorResponse = new String(out.toByteArray());
+                    failed = true;
+                    if (conn.getResponseCode() < 500) {
+                        break;
+                    }
+                } else {
+                    InputStream in = conn.getInputStream();
+                    pipeStream(in, out);
+                    in.close();
+                }
             } catch (Exception e) {
                 failed = true;
             } finally {
