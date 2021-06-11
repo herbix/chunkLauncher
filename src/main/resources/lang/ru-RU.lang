@@ -13,6 +13,15 @@ msg.auth.minelogin.failed.3=Данного пользователя не сущ�
 msg.auth.minelogin.failed.4=Требуется проверка
 msg.auth.minelogin.failed.5=Неверный пароль
 msg.auth.skinme.donthavechar=У вас нету этого персонажа
+msg.auth.microsoft.login.msa=Вход в аккаунт Microsoft...
+msg.auth.microsoft.login.xbl=Вход в Xbox Live...
+msg.auth.microsoft.login.mc=Вход в профиль Minecraft...
+msg.auth.microsoft.failed.timeout=Вышло время входа
+msg.auth.microsoft.failed.dontowngame=Вы не владеете Minecraft на этом аккаунте!
+msg.auth.microsoft.failed.nobrowser=Невозможно открыть браузер
+msg.auth.microsoft.failed.authenticationfailed=Авторизация не удалась
+msg.auth.microsoft.failed.authenticationfaileddot=Авторизация не удалась.
+msg.auth.microsoft.succeeded=Авторизация прошла успешна, вы можете закрыть это окно.
 
 msg.download.failed=Ошибка загрузки:
 msg.download.start=Загружается: 
@@ -140,10 +149,11 @@ ui.username.label=Пользователь:
 ui.version.label=Версия:
 
 ui.auth.type.label=Авторизация:
-ui.auth.type.offline=Пиратская
-ui.auth.type.minecraft=Официальная (устаревшая)
+ui.auth.type.offline=Без аккаунта
+ui.auth.type.minecraft=Аккаунт Minecraft (устаревший)
 ui.auth.type.minelogin=MineLogin
-ui.auth.type.yggdrasil=Официальная
+ui.auth.type.yggdrasil=Аккаунт Mojang
+ui.auth.type.microsoft=Аккаунт Microsoft
 ui.auth.type.twitch=Twitch
 
 ui.tab.profile=Профили
