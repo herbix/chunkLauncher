@@ -204,7 +204,7 @@ public class LauncherFrame extends JFrame {
         JLabel profilesLabel2 = new JLabel(Lang.getString("ui.profile.label"));
 
         profilesComboBoxLine.add(profilesLabel2, UI.gbc(0, 0, UI.insets(0, 5, 0, 0)));
-        profilesLabel2.setPreferredSize(new Dimension(80, 20));
+        profilesLabel2.setPreferredSize(new Dimension(140, 20));
 
         profilesComboBoxLine.add(profiles2, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         profiles2.setPreferredSize(new Dimension(10, 23));
@@ -221,7 +221,7 @@ public class LauncherFrame extends JFrame {
         profilePanel.add(userLine, UI.gbc(0, 1, 1, 0, GridBagConstraints.HORIZONTAL));
 
         userLine.add(userLabel, UI.gbc(0, 0, UI.insets(5, 5, 5, 0)));
-        userLabel.setPreferredSize(new Dimension(80, 20));
+        userLabel.setPreferredSize(new Dimension(140, 20));
 
         userLine.add(user, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         user.setPreferredSize(new Dimension(10, 25));
@@ -231,7 +231,7 @@ public class LauncherFrame extends JFrame {
         profilePanel.add(passwordLine, UI.gbc(0, 2, 1, 0, GridBagConstraints.HORIZONTAL));
 
         passwordLine.add(passLabel, UI.gbc(0, 0, UI.insets(5, 5, 5, 0)));
-        passLabel.setPreferredSize(new Dimension(80, 20));
+        passLabel.setPreferredSize(new Dimension(140, 20));
 
         passwordLine.add(pass, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         pass.setPreferredSize(new Dimension(10, 25));
@@ -243,7 +243,7 @@ public class LauncherFrame extends JFrame {
             }
         });
 
-        profilePanel.add(savePass, UI.gbc(0, 3, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(0, 85, 5, 0)));
+        profilePanel.add(savePass, UI.gbc(0, 3, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(0, 145, 5, 0)));
         savePass.setPreferredSize(new Dimension(10, 20));
 
         JPanel authTypeLine = new JPanel();
@@ -251,7 +251,7 @@ public class LauncherFrame extends JFrame {
         profilePanel.add(authTypeLine, UI.gbc(0, 4, 1, 0, GridBagConstraints.HORIZONTAL));
 
         authTypeLine.add(authTypeLabel, UI.gbc(0, 0, UI.insets(5, 5, 5, 0)));
-        authTypeLabel.setPreferredSize(new Dimension(80, 20));
+        authTypeLabel.setPreferredSize(new Dimension(140, 20));
 
         authTypeLine.add(authType, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         authType.setPreferredSize(new Dimension(10, 23));
@@ -268,7 +268,7 @@ public class LauncherFrame extends JFrame {
         profilePanel.add(gameVersionLine, UI.gbc(0, 5, 1, 0, GridBagConstraints.HORIZONTAL));
 
         gameVersionLine.add(gameVersionLabel, UI.gbc(0, 0, UI.insets(5, 5, 5, 0)));
-        gameVersionLabel.setPreferredSize(new Dimension(80, 20));
+        gameVersionLabel.setPreferredSize(new Dimension(140, 20));
 
         gameVersionLine.add(gameVersion, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         gameVersion.setPreferredSize(new Dimension(10, 23));
@@ -318,18 +318,18 @@ public class LauncherFrame extends JFrame {
 
         moduleBottomPart.add(installModules);
         installModules.setLocation(5, 10);
-        installModules.setSize(90, 30);
+        installModules.setSize(120, 30);
 
         moduleBottomPart.add(uninstallModules);
-        uninstallModules.setLocation(100, 10);
-        uninstallModules.setSize(90, 30);
+        uninstallModules.setLocation(130, 10);
+        uninstallModules.setSize(120, 30);
 
         moduleBottomPart.add(showOld);
-        showOld.setLocation(195, 12);
+        showOld.setLocation(255, 12);
         showOld.setSize(100, 25);
 
         moduleBottomPart.add(showSnapshot);
-        showSnapshot.setLocation(295, 12);
+        showSnapshot.setLocation(355, 12);
         showSnapshot.setSize(100, 25);
 
         //================ directory panel ====================

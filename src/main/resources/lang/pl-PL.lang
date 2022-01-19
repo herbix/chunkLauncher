@@ -160,10 +160,10 @@ ui.auth.type.yggdrasil=Konto Mojang
 ui.auth.type.twitch=Twitch
 ui.auth.type.microsoft=Konto Microsoft
 
-ui.tab.profile=Zarządzaj profilem
-ui.tab.module=Zarządzaj modułem
-ui.tab.directory=Zarządzaj katalogiem
-ui.tab.system=Ustawienia systemowe
+ui.tab.profile=Profilem
+ui.tab.module=Modułem
+ui.tab.directory=Katalogiem
+ui.tab.system=Systemowe
 
 ui.proxy.type.label=Typ serwera pośredniczącego:
 ui.proxy.hostport.label=Serwer pośredniczacy (Host:Port)
