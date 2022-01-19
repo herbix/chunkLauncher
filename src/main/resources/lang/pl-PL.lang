@@ -1,0 +1,171 @@
+app.version=${project.version}
+
+msg.auth.connecting1=Łączenie 
+msg.auth.connecting2=\u0020to sprawdź nazwę użytkownika i hasło...
+msg.auth.failed=Uwierzytelnienie nieudane.
+msg.auth.succeeded=Uwierzytelnienie zakończone powodzeniem.
+msg.auth.noselection=Wybierz typ uwierzytelniania.
+msg.auth.minelogin.failed.0=Błąd sieci.
+msg.auth.minelogin.failed.1=Błędna nazwa użytkownika.
+msg.auth.minelogin.failed.2=Błąd wewnętrzny.
+msg.auth.minelogin.failed.3=Nie ma takiego użytkownika.
+msg.auth.minelogin.failed.4=Potrzebuję uwierzytelnienia.
+msg.auth.minelogin.failed.5=Błędne hasło.
+msg.auth.skinme.donthavechar=Nie masz tego znaku.
+msg.auth.microsoft.login.msa=Logowanie w Microsoftcie...
+msg.auth.microsoft.login.xbl=Logowanie w XBoxie Live...
+msg.auth.microsoft.login.mc=Logowanie w Minecraftcie...
+msg.auth.microsoft.failed.timeout=Skończony czas na zalogowanie
+msg.auth.microsoft.failed.dontowngame=Nie masz kupionego Minecrafta na tym koncie
+msg.auth.microsoft.failed.nobrowser=Otworzenie przeglądarki zakończone niepowodzeniem
+msg.auth.microsoft.failed.authenticationfailed=Uwierzytelnianie nieudane
+msg.auth.microsoft.failed.authenticationfaileddot=Uwierzytelnianie nieudane.
+msg.auth.microsoft.succeeded=Uwierzytelnianie udane. Możesz teraz zamknąć to okno.
+
+msg.download.failed=Pobieranie nieudane: 
+msg.download.start=Rozpoczęcie pobierania: 
+msg.download.succeeded=Zakończono pobieranie: 
+
+msg.game.basicrequire=Potrzebujesz plików gry i przynajmniej jeden moduł gry, żeby ją uruchomić.
+msg.game.nousername=Proszę wprowadź nazwę użytkownika.
+msg.game.isloggingin=System próbuje cię zalogować.
+
+msg.module.alreadyinstalled=Moduł został odinstalowany. 
+msg.module.failed=Instalacja nieudana.
+msg.module.isinstalling=Moduł jest instalowany.
+msg.module.isuninstalling=Moduł jest deinstalowany.
+msg.module.noselection=Najpierw wybierz moduł.
+msg.module.notallowed=Ta wersja Minecrafta nie jest kompatybilna z twoim systemem operacyjnym.
+msg.module.reason=Powód: 
+msg.module.start=Rozpocznij instalację
+msg.module.startuninstall=Rozpocznij deinstalację
+msg.module.succeeded=Instalacja zakończona
+msg.module.uninstallsucceeded=Deinstalacja zakończona
+msg.module.delete=Kasowanie
+msg.module.notinstalled=Moduł nie jest zainstalowany.
+
+msg.update.request=Nowa wersja Chunk Launchera dostępna. Czy chcesz zaktualizować?
+msg.update.exception1=Wyjątek występuje: 
+msg.update.exception2=. Zatrzymano aktualizowanie.
+
+msg.version.downloading=Aktualizowanie informacji o wersjach...
+msg.version.failed=Nie jest możliwe zaktualizowanie informacji o wersjach.
+msg.version.succeeded=Informacja o wersjach została zaktualizowana.
+
+msg.profile.cannotremovedefault=Nie można skasować domyślnego profilu.
+msg.profile.removeconfirm=Jesteś pewien, że chcesz skasować ten profil?
+msg.profile.exists=Profil z tą nazwą istniał.
+msg.profile.inputname=Wpisz nazwę profilu:
+
+msg.directory.pleaseselectadirectory=Wybierz katalog.
+msg.directory.cannotremovedefault=Nie można skasować domyślnego katalogu.
+msg.directory.removeconfirm=Jesteś pewien, że chcesz usunąć ten katalog?
+msg.directory.exists=Katalog z tą nazwą istniał.
+msg.directory.inputname=Wpisz nazwę katalogu:
+msg.directory.tab.removeconfirm=Jesteś pewien, że chcesz skasować ten przedmiot?
+msg.directory.tab.inputname=Wpisz nazwę docelową:
+msg.directory.tab.existed=The item exists.
+msg.directory.tab.copyfailed=Kopiowanie nieudane.
+msg.directory.pleaseselectanitem=Proszę, wybierz przedmiot.
+
+msg.main.error=Wystąpił błąd:\u000A
+msg.main.error.title=Błąd
+
+msg.gamepath.error=Nie można użyć katalogu '.minecraft'.
+msg.help=Zgłaszaj błedy na: herbix@163.com.
+msg.jrepath.error=Nie można uruchomić Javy z tej ścieżki.
+msg.zip.unzip=Rozpakowywanie 
+msg.comingsoon=Nie można tego zrobić teraz.
+msg.assets.cannotload=Nie można wczytać plików gry.
+msg.run.unknownparam1=Nie ma parametru "
+msg.run.unknownparam2=".
+msg.twitch.inputname=Wpisz swoją nazwę gracza:
+msg.yggdrasil.saved=Nie można połączyć się z serwerem logowania. Użyć danych lokalnych?
+msg.run.failed=Uruchamianie nieudane. Przeczytaj last.log, żeby się dowiedzieć więcej.
+msg.useproxy=Używanie serwera przesyłowego:
+msg.proxy.notsocks=Minecraft wspiera tylko model Socks. Używanie linku bezpośredniego.
+
+ui.mode.d32=-d32
+ui.mode.d64=-d64
+ui.mode.default=Domyślny
+
+ui.module.install=Zainstaluj
+ui.module.installed=\u2B1B
+ui.module.label=Wersje:
+ui.module.notinstalled=\u2B1C
+ui.module.uninstall=Odinstaluj
+ui.module.notfinished=\u2B15
+ui.module.old=Stare wersje
+ui.module.snapshot=Snapshoty
+
+ui.table.name=Nazwa
+ui.table.state=Tryb
+ui.table.type=Typ
+ui.table.releasetime=Czas wydania
+
+ui.jrepath.label=Ścieżka Javy:
+ui.jrepath.filechooser.title=Wybierz ścieżkę Javy:
+
+ui.profile.label=Profile:
+ui.profile.add=Dodaj
+ui.profile.remove=Skasuj
+
+ui.directory.label=Biblioteki:
+ui.directory.add=Dodaj
+ui.directory.remove=Skasuj
+ui.directory.pathlabel=Ścieżka:
+ui.directory.saves=Zapisy
+ui.directory.resourcepacks=Paczki zasobów
+ui.directory.texturepacks=Paczki obrazków
+ui.directory.shaderpacks=Paczki świateł
+ui.directory.mods=Modyfikacje
+ui.directory.tab.install=Zainstaluj
+ui.directory.tab.enable=Włącz
+ui.directory.tab.disable=Wyłącz
+ui.directory.tab.copy=Skopiuj
+ui.directory.tab.remove=Skasuj
+ui.directory.tab.item=Nazwa
+ui.directory.tab.lastmodified=Ostatnio zmieniane
+ui.directory.tab.version=Wersja
+ui.directory.tab.mcversion=Wersja Minecrafta
+ui.directory.tab.state=Tryb
+ui.directory.tab.enabled=\u2B1B
+ui.directory.tab.disabled=\u2B1C
+ui.directory.tab.zipfile=Archiwum ZIP
+ui.directory.tab.jarfile=Program JAR
+
+ui.runpath.label=Katalog pracy
+ui.runpath.filechooser.title=Wybierz katalog pracy
+
+ui.char.title=Wybierz znak
+ui.char.ok=Dobra
+ui.char.cancel=Anuluj
+
+ui.update.title=Aktualizowanie...
+ui.launch=Uruchom
+ui.memory.label=Wielkość pamięci(MB):
+ui.offline=Bez internetu
+ui.ok=Dobra
+ui.cancel=Anuluj
+ui.password.label=Hasło:
+ui.savepassword=Zapisz hasło
+ui.username.label=Nazwa użytkownika:
+ui.version.label=Wersja:
+
+ui.auth.type.label=Typ uwierzytelniania:
+ui.auth.type.offline=Bez internetu
+ui.auth.type.minecraft=Konto Mojang (stare)
+ui.auth.type.minelogin=MineLogin
+ui.auth.type.yggdrasil=Konto Mojang
+ui.auth.type.twitch=Twitch
+ui.auth.type.microsoft=Konto Microsoft
+
+ui.tab.profile=Zarządzaj profilem
+ui.tab.module=Zarządzaj modułem
+ui.tab.directory=Zarządzaj katalogiem
+ui.tab.system=Ustawienia systemowe
+
+ui.proxy.type.label=Typ serwera pośredniczącego:
+ui.proxy.hostport.label=Serwer pośredniczacy (Host:Port)
+ui.proxy.enable.label=Włącz serwer pośredniczacy
+
