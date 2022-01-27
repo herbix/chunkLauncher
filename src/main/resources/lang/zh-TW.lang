@@ -1,5 +1,6 @@
 
 encoding=UTF-8
+name=中文（繁體）
 
 msg.auth.connecting1=正在連接
 msg.auth.connecting2=檢查用戶名和密碼
@@ -150,10 +151,6 @@ ui.version.label=遊戲版本
 
 ui.auth.type.label=登入方式
 ui.auth.type.offline=離線模式
-ui.auth.type.minecraft=正版（舊）
-ui.auth.type.minelogin=MineLogin
-ui.auth.type.yggdrasil=正版
-ui.auth.type.twitch=Twitch
 ui.auth.type.minecraft=Mojang帳號（舊）
 ui.auth.type.minelogin=MineLogin
 ui.auth.type.yggdrasil=Mojang帳號
@@ -168,3 +165,5 @@ ui.tab.system=系統設置
 ui.proxy.type.label=代理類型：
 ui.proxy.hostport.label=代理伺服器位址（主機名稱:埠）
 ui.proxy.enable.label=啟用代理
+
+ui.language.label=語言（需要重啟）：

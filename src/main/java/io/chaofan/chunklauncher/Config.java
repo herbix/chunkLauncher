@@ -13,9 +13,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import io.chaofan.chunklauncher.util.Language;
 import net.minecraft.bootstrap.Util;
 
+import javax.swing.*;
+
 public class Config {
+
+    public static final String LANGUAGE_SYSTEM =
+            System.getProperty("user.language", "en") + "-" +
+                    System.getProperty("user.country", "US");
 
     public static final String CONFIG_FILE = "Launcher.properties";
 
@@ -73,6 +80,7 @@ public class Config {
     public static int proxyPort;
     public static boolean enableChecksum = false;
     public static RunningDirectory currentDirectory = null;
+    public static String language = LANGUAGE_SYSTEM;
     public static Map<String, RunningDirectory> directories = new HashMap<>();
 
     public static void saveConfig() {
@@ -99,6 +107,7 @@ public class Config {
         p.setProperty("proxy-enabled", String.valueOf(enableProxy));
         p.setProperty("proxy-type", proxyType);
         p.setProperty("enable-checksum", String.valueOf(enableChecksum));
+        p.setProperty("language", language);
         StringBuilder directoryList = new StringBuilder();
         for (Map.Entry<String, RunningDirectory> entry : directories.entrySet()) {
             directoryList.append(entry.getKey());
@@ -139,27 +148,27 @@ public class Config {
                 jrePath = System.getProperty("java.home");
             }
             try {
-                d64 = Boolean.valueOf(p.getProperty("d64", "false"));
+                d64 = Boolean.parseBoolean(p.getProperty("d64", "false"));
             } catch (Exception ignored) {
             }
             try {
-                d32 = Boolean.valueOf(p.getProperty("d32", "false"));
+                d32 = Boolean.parseBoolean(p.getProperty("d32", "false"));
             } catch (Exception ignored) {
             }
             try {
-                showDebugInfo = Boolean.valueOf(p.getProperty("show-debug", "false"));
+                showDebugInfo = Boolean.parseBoolean(p.getProperty("show-debug", "false"));
             } catch (Exception ignored) {
             }
             try {
-                showOld = Boolean.valueOf(p.getProperty("show-old", "false"));
+                showOld = Boolean.parseBoolean(p.getProperty("show-old", "false"));
             } catch (Exception ignored) {
             }
             try {
-                showSnapshot = Boolean.valueOf(p.getProperty("show-snapshot", "false"));
+                showSnapshot = Boolean.parseBoolean(p.getProperty("show-snapshot", "false"));
             } catch (Exception ignored) {
             }
             try {
-                memory = Integer.valueOf(p.getProperty("memory", "1024"));
+                memory = Integer.parseInt(p.getProperty("memory", "1024"));
             } catch (Exception ignored) {
             }
             gamePathOld = p.getProperty("game-path", Util.getWorkingDirectory().getPath());
@@ -169,7 +178,7 @@ public class Config {
             } catch (Exception ignored) {
             }
             try {
-                dontUpdateUntil = Long.valueOf(p.getProperty("dont-update-until", String.valueOf(Long.MIN_VALUE)));
+                dontUpdateUntil = Long.parseLong(p.getProperty("dont-update-until", String.valueOf(Long.MIN_VALUE)));
             } catch (Exception ignored) {
             }
 
@@ -178,12 +187,12 @@ public class Config {
             } catch (Exception ignored) {
             }
             try {
-                enableProxy = Boolean.valueOf(p.getProperty("proxy-enabled", "false"));
+                enableProxy = Boolean.parseBoolean(p.getProperty("proxy-enabled", "false"));
             } catch (Exception ignored) {
             }
             proxyType = p.getProperty("proxy-type", "HTTP");
             try {
-                enableChecksum = Boolean.valueOf(p.getProperty("enable-checksum", "false"));
+                enableChecksum = Boolean.parseBoolean(p.getProperty("enable-checksum", "false"));
             } catch (Exception ignored) {
             }
 
@@ -220,6 +229,8 @@ public class Config {
 
             current = p.getProperty("current-profile", DEFAULT);
             currentProfile = profiles.get(current);
+
+            language = p.getProperty("language", LANGUAGE_SYSTEM);
 
             in.close();
         } catch (IOException e) {
@@ -258,6 +269,7 @@ public class Config {
         profiles.values().stream().sorted(Comparator.comparing(a -> a.profileName)).forEach(frame.profiles::addItem);
         frame.profiles.setSelectedItem(currentProfile);
         currentProfile.updateToFrame(frame);
+        updateLanguageToFrame(frame);
     }
 
     public static void updateFromFrame(LauncherFrame frame) {
@@ -279,7 +291,7 @@ public class Config {
         showOld = frame.showOld.isSelected();
         showSnapshot = frame.showSnapshot.isSelected();
         try {
-            memory = Integer.valueOf(frame.memorySize.getText());
+            memory = Integer.parseInt(frame.memorySize.getText());
         } catch (Exception ignored) {
         }
         enableProxy = frame.enableProxy.isSelected();
@@ -298,6 +310,8 @@ public class Config {
             directories.put(directory.name, directory);
         }
         currentDirectory = selectedDirectory;
+        Language selectedLanguage = (Language) frame.language.getSelectedItem();
+        language = selectedLanguage != null ? selectedLanguage.value : language;
     }
 
     public static String getProxyString() {
@@ -322,6 +336,27 @@ public class Config {
         if (proxyType.equals("HTTP")) result = Type.HTTP;
         else if (proxyType.equals("Socks")) result = Type.SOCKS;
         return result;
+    }
+
+    private static void updateLanguageToFrame(LauncherFrame frame) {
+        ComboBoxModel<Language> languageModel = frame.language.getModel();
+        boolean hasSelectedLanguage = false;
+        for (int i = 0; i < languageModel.getSize(); i++) {
+            if (languageModel.getElementAt(i).value.equals(language)) {
+                frame.language.setSelectedIndex(i);
+                hasSelectedLanguage = true;
+                break;
+            }
+        }
+        if (!hasSelectedLanguage && language.contains("-")) {
+            String languageAlt = language.split("-")[0];
+            for (int i = 0; i < languageModel.getSize(); i++) {
+                if (languageModel.getElementAt(i).value.equals(languageAlt)) {
+                    frame.language.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
     }
 
     static {

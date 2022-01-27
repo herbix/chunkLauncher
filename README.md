@@ -18,6 +18,7 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ### 1.10.2
 * Update Polish translation (Thanks @RDKRACZ)
+* Add language selection on GUI
 
 ## Executable
 [Latest release](https://github.com/herbix/chunkLauncher/releases/latest)

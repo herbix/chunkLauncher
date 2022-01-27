@@ -6,6 +6,7 @@ import io.chaofan.chunklauncher.directory.DirectoryType;
 import io.chaofan.chunklauncher.download.Downloader;
 import io.chaofan.chunklauncher.util.HttpFetcher;
 import io.chaofan.chunklauncher.util.Lang;
+import io.chaofan.chunklauncher.util.Language;
 import io.chaofan.chunklauncher.util.UI;
 
 import javax.swing.*;
@@ -82,6 +83,9 @@ public class LauncherFrame extends JFrame {
     JCheckBox enableProxy = new JCheckBox(Lang.getString("ui.proxy.enable.label"));
     JComboBox<String> proxyType = new JComboBox<>(new String[]{"HTTP", "Socks"});
     JTextField proxy = new JTextField();
+
+    JLabel languageLabel = new JLabel(Lang.getString("ui.language.label"));
+    JComboBox<Language> language = new JComboBox<>(Lang.getAvailableLanguages());
 
     JComboBox<RunningDirectory> directories = new JComboBox<>();
     JButton addDirectory = new JButton(Lang.getString("ui.directory.add"));
@@ -531,6 +535,16 @@ public class LauncherFrame extends JFrame {
         proxyLine.add(proxy, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
         proxy.setPreferredSize(new Dimension(10, 25));
 
+        JPanel languageLine = new JPanel();
+        languageLine.setLayout(new GridBagLayout());
+        systemPanel.add(languageLine, UI.gbc(0, 6, 1, 1, 1, 0, GridBagConstraints.HORIZONTAL, UI.insets(10, 0, 0, 0)));
+
+        languageLine.add(languageLabel, UI.gbc(0, 0, UI.insets(5, 5, 5, 0)));
+        languageLabel.setPreferredSize(new Dimension(180, 20));
+
+        languageLine.add(language, UI.gbc(1, 0, 1, 0, GridBagConstraints.HORIZONTAL));
+        language.setPreferredSize(new Dimension(10, 25));
+
         systemPanel.add(new JPanel(), UI.gbc(0, 100, 1, 1, GridBagConstraints.BOTH));
     }
 
@@ -635,6 +649,7 @@ public class LauncherFrame extends JFrame {
             componentListSystem.add(enableProxy);
             componentListSystem.add(proxyType);
             componentListSystem.add(proxy);
+            componentListSystem.add(language);
             initPost(componentListSystem);
         }
 

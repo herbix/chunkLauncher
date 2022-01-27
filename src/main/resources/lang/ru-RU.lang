@@ -1,5 +1,6 @@
 
 encoding=UTF-8
+name=Русский
 
 msg.auth.connecting1=Соединение
 msg.auth.connecting2=Проверьте имя пользователя или пароль
@@ -164,3 +165,5 @@ ui.tab.system=Прочее
 ui.proxy.type.label=Тип прокси:
 ui.proxy.hostport.label=Прокси-сервер (Хост:Порт)
 ui.proxy.enable.label=Использовать прокси
+
+ui.language.label=Язык:

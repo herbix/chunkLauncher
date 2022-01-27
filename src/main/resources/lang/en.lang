@@ -1,5 +1,8 @@
 app.version=${project.version}
 
+encoding=UTF-8
+name=English
+
 msg.auth.connecting1=Connecting 
 msg.auth.connecting2=\u0020to check user name and password...
 msg.auth.failed=Authentication failed.
@@ -169,3 +172,4 @@ ui.proxy.type.label=Proxy Type:
 ui.proxy.hostport.label=Proxy Server (Host:Port)
 ui.proxy.enable.label=Enable Proxy
 
+ui.language.label=Language (Need restart):

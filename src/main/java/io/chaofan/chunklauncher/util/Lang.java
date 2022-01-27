@@ -1,6 +1,11 @@
 package io.chaofan.chunklauncher.util;
 
+import io.chaofan.chunklauncher.Config;
+
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -13,9 +18,7 @@ import java.util.Properties;
  */
 public class Lang {
 
-    private static final String LANGUAGE_PRIMARY =
-            System.getProperty("user.language", "en") + "-" +
-                    System.getProperty("user.country", "US");
+    private static final String LANGUAGE_PRIMARY = Config.language;
 
     private static final String LANGUAGE_SECONDARY =
             System.getProperty("user.language", "en");
@@ -64,6 +67,22 @@ public class Lang {
         if (language.equals(LANGUAGE_PRIMARY.toLowerCase())) {
             langContentPrimary.setProperty(id, value);
         }
+    }
+
+    public static Language[] getAvailableLanguages() {
+        List<Language> languageList = new ArrayList<>();
+        for (String langFile : ClassUtil.listResources("lang")) {
+            if (langFile.endsWith(".lang")) {
+                String langValue = langFile.substring(0, langFile.length() - 5);
+                Properties properties = new Properties();
+                if (loadLangResource("/lang/" + langFile, properties)) {
+                    languageList.add(new Language(properties.getProperty("name", langValue), langValue));
+                }
+            }
+        }
+
+        languageList.sort(Comparator.comparing(a -> a.displayName));
+        return languageList.toArray(new Language[0]);
     }
 
     private static void loadDefaultLangFile() {

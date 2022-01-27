@@ -1,5 +1,6 @@
 
 encoding=UTF-8
+name=Polski
 
 app.version=${project.version}
 
@@ -172,3 +173,4 @@ ui.proxy.type.label=Typ serwera pośredniczącego:
 ui.proxy.hostport.label=Serwer pośredniczacy (Host:Port)
 ui.proxy.enable.label=Włącz serwer pośredniczacy
 
+ui.language.label=Język:

@@ -1,5 +1,6 @@
 
 encoding=gbk
+name=中文（简体）
 
 msg.auth.connecting1=正在连接
 msg.auth.connecting2=检查用户名和密码
@@ -164,3 +165,5 @@ ui.tab.system=系统设置
 ui.proxy.type.label=代理类型：
 ui.proxy.hostport.label=代理服务器地址（主机名:端口）
 ui.proxy.enable.label=启用代理
+
+ui.language.label=语言（需要重启）：

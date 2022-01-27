@@ -49,6 +49,20 @@ public class ClassUtil {
         return false;
     }
 
+    public static String[] listResources(String resourcesPath) {
+        String classPathString = System.getProperty("java.class.path");
+
+        String[] classPaths = classPathString.split(System.getProperty("path.separator"));
+
+        List<String> results = new ArrayList<>();
+
+        for (String classPath : classPaths) {
+            results.addAll(getItemsFromPackage(resourcesPath, classPath));
+        }
+
+        return results.toArray(new String[0]);
+    }
+
     public static Class<?>[] getClassesFromPackage(String packageName, String classPath, boolean useNewLoader) {
         List<Class<?>> results = new ArrayList<>();
         String packagePath = packageName.replaceAll("\\.", "/");
@@ -67,6 +81,18 @@ public class ClassUtil {
     }
 
     private static void getClassesFromPackage(String packageName, List<Class<?>> results, String packagePath, String classPath, ClassLoader loader) {
+        for (String file : getItemsFromPackage(packagePath, classPath)) {
+            if (file.endsWith(".class") && !file.contains("$")) {
+                try {
+                    results.add(loader.loadClass(packageName + "." + file.substring(0, file.length() - 6)));
+                } catch (ClassNotFoundException ignored) {
+                }
+            }
+        }
+    }
+
+    private static List<String> getItemsFromPackage(String packagePath, String classPath) {
+        List<String> result = new ArrayList<>();
         File cpFile = new File(classPath);
 
         if (cpFile.isDirectory()) {
@@ -75,16 +101,12 @@ public class ClassUtil {
             if (pFile.isDirectory()) {
                 File[] files = pFile.listFiles();
                 if (files == null) {
-                    return;
+                    return result;
                 }
                 for (File cFile : files) {
                     String cFileName = cFile.getName();
-
-                    if (cFile.isFile() && cFileName.endsWith(".class") && !cFileName.contains("$")) {
-                        try {
-                            results.add(loader.loadClass(packageName + "." + cFileName.substring(0, cFileName.length() - 6)));
-                        } catch (ClassNotFoundException ignored) {
-                        }
+                    if (cFile.isFile()) {
+                        result.add(cFileName);
                     }
                 }
             }
@@ -100,16 +122,15 @@ public class ClassUtil {
 
                     if (jClassPath.startsWith(packagePath)) {
                         String jClassName = jClassPath.substring(packagePath.length() + 1);
-                        if (!jClassName.contains("/") && jClassName.endsWith(".class") && !jClassName.contains("$")) {
-                            try {
-                                results.add(loader.loadClass(packageName + "." + jClassName.substring(0, jClassName.length() - 6)));
-                            } catch (ClassNotFoundException ignored) {
-                            }
+                        if (!jClassName.contains("/")) {
+                            result.add(jClassName);
                         }
                     }
                 }
             } catch (IOException ignored) {
             }
         }
+
+        return result;
     }
 }
