@@ -1,3 +1,6 @@
+
+encoding=UTF-8
+
 app.version=${project.version}
 
 msg.auth.connecting1=Łączenie 
@@ -160,10 +163,10 @@ ui.auth.type.yggdrasil=Konto Mojang
 ui.auth.type.twitch=Twitch
 ui.auth.type.microsoft=Konto Microsoft
 
-ui.tab.profile=Profilem
-ui.tab.module=Modułem
-ui.tab.directory=Katalogiem
-ui.tab.system=Systemowe
+ui.tab.profile=Profil
+ui.tab.module=Moduły
+ui.tab.directory=Katalog
+ui.tab.system=Ustawienia
 
 ui.proxy.type.label=Typ serwera pośredniczącego:
 ui.proxy.hostport.label=Serwer pośredniczacy (Host:Port)

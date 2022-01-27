@@ -17,6 +17,7 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 ## Working Version
 
 ### 1.10.2
+* Update Polish translation (Thanks @RDKRACZ)
 
 ## Executable
 [Latest release](https://github.com/herbix/chunkLauncher/releases/latest)

@@ -160,10 +160,10 @@ ui.auth.type.yggdrasil=Mojang Account
 ui.auth.type.twitch=Twitch
 ui.auth.type.microsoft=Microsoft Account
 
-ui.tab.profile=Profile Manage
-ui.tab.module=Module Manage
-ui.tab.directory=Directory Manage
-ui.tab.system=System Settings
+ui.tab.profile=Profile
+ui.tab.module=Modules
+ui.tab.directory=Directory
+ui.tab.system=Settings
 
 ui.proxy.type.label=Proxy Type:
 ui.proxy.hostport.label=Proxy Server (Host:Port)
