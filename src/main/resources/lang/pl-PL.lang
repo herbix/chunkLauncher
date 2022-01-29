@@ -2,8 +2,6 @@
 encoding=UTF-8
 name=Polski
 
-app.version=${project.version}
-
 msg.auth.connecting1=Łączenie 
 msg.auth.connecting2=\u0020to sprawdź nazwę użytkownika i hasło...
 msg.auth.failed=Uwierzytelnienie nieudane.
