@@ -6,7 +6,7 @@
 
     <groupId>io.chaofan.chunklauncher</groupId>
     <artifactId>chunklauncher</artifactId>
-    <version>1.10.2</version>
+    <version>1.10.3</version>
 
     <dependencies>
         <dependency>
