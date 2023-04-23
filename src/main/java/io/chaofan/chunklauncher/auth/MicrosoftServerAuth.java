@@ -68,6 +68,11 @@ public class MicrosoftServerAuth extends ServerAuth {
         callback.authDone(this, true);
     }
 
+    @Override
+    public String getClientId() {
+        return CLIENT_ID;
+    }
+
     private String loginToMinecraft(String uhs, String xstsToken) {
         JSONObject mcAuthQuery = new JSONObject();
         mcAuthQuery.put("identityToken", "XBL3.0 x=" + uhs + ";" + xstsToken);

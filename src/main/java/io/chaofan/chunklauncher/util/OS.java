@@ -1,5 +1,7 @@
 package io.chaofan.chunklauncher.util;
 
+import java.util.regex.Pattern;
+
 public enum OS {
 
     LINUX("linux", new String[]{"linux", "unix"}),
@@ -40,7 +42,7 @@ public enum OS {
         if (!osName.equals(getCurrentPlatform().getName())) {
             return false;
         }
-        if (osVersion != null && !System.getProperty("os.version").matches(osVersion)) {
+        if (osVersion != null && !Pattern.compile(osVersion).matcher(System.getProperty("os.version")).find()) {
             return false;
         }
         return true;

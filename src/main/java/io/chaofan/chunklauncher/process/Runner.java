@@ -60,11 +60,13 @@ public class Runner {
 
         valueMap.put("auth_access_token", auth.getAccessToken());
         valueMap.put("user_properties", new JSONObject(auth.getUserProperties()).toString());
+        valueMap.put("clientid", auth.getClientId());
 
         valueMap.put("auth_session", auth.getSession());
 
         valueMap.put("auth_player_name", auth.getPlayerName());
         valueMap.put("auth_uuid", auth.getUuid());
+        valueMap.put("auth_xuid", auth.getUuid()); // TODO find out what should be correct value
         valueMap.put("user_type", auth.getUserType());
 
         valueMap.put("profile_name", Config.currentProfile.profileName);

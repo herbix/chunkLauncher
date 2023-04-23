@@ -186,6 +186,11 @@ public abstract class ServerAuth {
     }
 
     /**
+     * @return client ID.
+     */
+    public String getClientId() { return ""; }
+
+    /**
      * @return whether password is inputted in launcher.
      */
     public static boolean canInputPassword() { return true; }

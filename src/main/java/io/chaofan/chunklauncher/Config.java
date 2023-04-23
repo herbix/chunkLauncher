@@ -31,7 +31,7 @@ public class Config {
     public static final String MINECRAFT_DOWNLOAD_LIBRARY =
             "https://libraries.minecraft.net";
     public static final String MINECRAFT_RESOURCE_BASE =
-            "http://resources.download.minecraft.net";
+            "https://resources.download.minecraft.net";
     public static final String MINECRAFT_VERSION_DOWNLOAD_URL =
             "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     public static final String MINECRAFT_VERSION_FILE =
