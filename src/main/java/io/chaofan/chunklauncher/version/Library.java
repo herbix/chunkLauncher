@@ -109,9 +109,9 @@ public class Library {
     public String getRealFilePath() {
         DownloadInfo info = getDownloadInfo();
         if (info != null && info.path != null) {
-            return Config.gamePath + Config.MINECRAFT_LIBRARY_PATH + "/" + info.path;
+            return getLibraryDirectory() + "/" + info.path;
         }
-        return Config.gamePath + Config.MINECRAFT_LIBRARY_PATH + "/" + getKey();
+        return getLibraryDirectory() + "/" + getKey();
     }
 
     public String getExtractTempPath() {
@@ -206,4 +206,7 @@ public class Library {
         return !have64BitVersion() || arch.equals(arch2);
     }
 
+    public static String getLibraryDirectory() {
+        return Config.gamePath + Config.MINECRAFT_LIBRARY_PATH;
+    }
 }

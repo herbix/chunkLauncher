@@ -9,9 +9,8 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 
 ## Latest Version
 
-### 1.10.4
-* Update Polish translation (Contributor: @glowiak)
-* Fix asset download
+### 1.10.5
+* Fix support for minecraft forge
 
 ## Working Version
 
@@ -19,6 +18,10 @@ ChunkLauncher is renamed from <a href="http://github.com/herbix/ssastLauncher">S
 [Latest release](https://github.com/herbix/chunkLauncher/releases/latest)
 
 ## History Versions
+
+### 1.10.4
+* Update Polish translation (Contributor: @glowiak)
+* Fix asset download
 
 ### 1.10.3
 * Misc fixes (Contributor: @RDKRACZ)

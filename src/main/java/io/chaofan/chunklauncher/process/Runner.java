@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import io.chaofan.chunklauncher.Launcher;
 import io.chaofan.chunklauncher.util.OS;
+import io.chaofan.chunklauncher.version.Library;
 import io.chaofan.chunklauncher.version.RunnableModule;
 import org.json.JSONObject;
 import io.chaofan.chunklauncher.Config;
@@ -23,9 +24,9 @@ import io.chaofan.chunklauncher.util.Lang;
 
 public class Runner {
 
-    private RunnableModule module;
-    private List<String> params = new ArrayList<>();
-    private ServerAuth auth;
+    private final RunnableModule module;
+    private final List<String> params = new ArrayList<>();
+    private final ServerAuth auth;
 
     public Runner(RunnableModule module, ServerAuth auth) {
         this.module = module;
@@ -93,6 +94,8 @@ public class Runner {
         valueMap.put("launcher_version", Launcher.VERSION);
 
         valueMap.put("classpath", module.getClassPath());
+        valueMap.put("classpath_separator", System.getProperty("path.separator"));
+        valueMap.put("library_directory", Library.getLibraryDirectory());
 
         params.add(java);
 
