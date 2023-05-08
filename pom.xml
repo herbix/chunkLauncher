@@ -6,7 +6,7 @@
 
     <groupId>io.chaofan.chunklauncher</groupId>
     <artifactId>chunklauncher</artifactId>
-    <version>1.10.5</version>
+    <version>1.10.4</version>
 
     <dependencies>
         <dependency>
@@ -18,6 +18,16 @@
             <groupId>com.flowpowered</groupId>
             <artifactId>flow-nbt</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>11</version>
         </dependency>
     </dependencies>
 

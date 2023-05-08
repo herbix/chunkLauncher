@@ -1,11 +1,14 @@
 package io.chaofan.chunklauncher.auth;
 
+import com.sun.javafx.webkit.WebConsoleListener;
+import io.chaofan.chunklauncher.WebViewDialog;
 import io.chaofan.chunklauncher.util.HttpFetcher;
 import io.chaofan.chunklauncher.util.Lang;
+import javafx.application.Platform;
+import javafx.scene.web.WebEngine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +34,7 @@ public class MicrosoftServerAuth extends ServerAuth {
             System.out.println(Lang.getString("msg.auth.microsoft.failed.timeout"));
             callback.authDone(this, false);
         } catch (Exception e) {
+            System.out.println(e);
             callback.authDone(this, false);
         }
     }
@@ -118,71 +122,61 @@ public class MicrosoftServerAuth extends ServerAuth {
 
     private String loginToMicrosoftAccount() throws IOException, URISyntaxException {
 
-        String url = AUTHORITY + "/oauth2/v2.0/authorize" +
+        String url = AUTHORITY + "oauth2/v2.0/authorize" +
                 "?client_id=" + CLIENT_ID +
                 "&response_type=code" +
-                "&redirect_uri=http%3A%2F%2Flocalhost%3A8324%2F" +
+                "&redirect_uri=" + URLEncoder.encode("https://login.microsoftonline.com/common/oauth2/nativeclient", "UTF-8") +
                 "&scope=" + URLEncoder.encode(SCOPE, "UTF-8") +
                 "&login_hint=" + URLEncoder.encode(this.getName(), "UTF-8");
         String authenticationCode;
+        String[] locationContainer = new String[1];
+        WebViewDialog webViewDialog = new WebViewDialog();
+        Platform.runLater(() -> {
+            WebEngine engine = webViewDialog.webView.getEngine();
+            engine.documentProperty().addListener((prop, oldDoc, newDoc) -> {
+                if (engine.getLocation().startsWith("https://login.microsoftonline.com/common/oauth2/nativeclient")) {
+                    locationContainer[0] = engine.getLocation();
+                    webViewDialog.setVisible(false);
+                }
+                System.out.println("OnChanged " + engine.getLocation());
+            });
+            WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
+                System.out.println(message + "[at " + lineNumber + "]");
+            });
+            engine.load(url);
+        });
 
-        try (ServerSocket serverSocket = new ServerSocket(8324)) {
-            // 5 minutes timeout
-            int TIMEOUT = 5 * 60 * 1000;
-            serverSocket.setSoTimeout(TIMEOUT);
+        webViewDialog.setVisible(true);
 
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URI(url));
-            } else {
-                System.out.println(Lang.getString("Failed to open browser"));
-                throw new IOException("Failed to open browser");
-            }
-
-            Socket s = serverSocket.accept();
-            s.setSoTimeout(TIMEOUT);
-            InputStream in = s.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String firstLine = reader.readLine();
-            String line = firstLine;
-            while (line.length() > 0) {
-                line = reader.readLine();
-            }
-
-            Pattern requestPattern = Pattern.compile("GET /\\?code=([^\\s]+) (HTTP/[0-9.]+)");
-            Matcher matcher = requestPattern.matcher(firstLine);
-            if (!matcher.find()) {
-                OutputStream out = s.getOutputStream();
-                sendResponse(Lang.getString("msg.auth.microsoft.failed.authenticationfaileddot"), "HTTP/1.0", out);
-                out.close();
-                s.close();
-                System.out.println(Lang.getString("msg.auth.microsoft.failed.authenticationfailed"));
-                throw new IOException("Authentication failed");
-            }
-
-            authenticationCode = matcher.group(1);
-            String httpVersion = matcher.group(2);
-
-            OutputStream out = s.getOutputStream();
-            sendResponse("<p>" + Lang.getString("msg.auth.microsoft.succeeded") + "</p>" +
-                    "<script>window.close()</script>", httpVersion, out);
-            out.close();
-            s.close();
+        String location = locationContainer[0];
+        if (location == null) {
+            System.out.println(Lang.getString("msg.auth.microsoft.failed.authenticationfailed"));
+            throw new IOException("Authentication failed");
         }
+
+        Pattern requestPattern = Pattern.compile("\\?code=([^\\s]+)");
+        Matcher matcher = requestPattern.matcher(location);
+        if (!matcher.find()) {
+            System.out.println(Lang.getString("msg.auth.microsoft.failed.authenticationfailed"));
+            throw new IOException("Authentication failed");
+        }
+
+        authenticationCode = matcher.group(1);
 
         Map<String, String> param = new HashMap<>();
         param.put("client_id", CLIENT_ID);
         param.put("code", authenticationCode);
         param.put("grant_type", "authorization_code");
         param.put("scope", SCOPE);
-        param.put("redirect_uri", "http://localhost:8324/");
+        param.put("redirect_uri", "https://login.microsoftonline.com/common/oauth2/nativeclient");
         String result = HttpFetcher.fetchUsePostMethod(AUTHORITY + "oauth2/v2.0/token", param);
 
         JSONObject resultObj = new JSONObject(result);
         return resultObj.getString("access_token");
     }
 
-    private void loginToMicrosoftAccountMsal() {
-/*
+    /*private String loginToMicrosoftAccountMsal() throws IOException, URISyntaxException {
+
         Set<String> scopes = new HashSet<String>(Arrays.asList(SCOPE));
 
         PublicClientApplication app =
@@ -192,14 +186,15 @@ public class MicrosoftServerAuth extends ServerAuth {
                         .build();
 
         InteractiveRequestParameters interactiveRequestParameters = InteractiveRequestParameters
-                .builder(new URI("http://localhost:8324"))
+                .builder(new URI("http://localhost"))
                 .scopes(scopes)
                 .build();
 
         IAuthenticationResult result = app.acquireToken(interactiveRequestParameters).join();
         String accessToken = result.accessToken();
-*/
-    }
+
+        return accessToken;
+    }*/
 
     private void sendResponse(String stringContent, String httpVersion, OutputStream out) throws IOException {
         byte[] content = stringContent.getBytes(StandardCharsets.UTF_8);

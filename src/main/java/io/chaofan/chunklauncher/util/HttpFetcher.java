@@ -70,7 +70,7 @@ public final class HttpFetcher {
         return conn;
     }
 
-    private static int pipeStream(InputStream in, OutputStream out) throws IOException {
+    public static int pipeStream(InputStream in, OutputStream out) throws IOException {
         return pipeStream(in, out, 0, -1);
     }
 
