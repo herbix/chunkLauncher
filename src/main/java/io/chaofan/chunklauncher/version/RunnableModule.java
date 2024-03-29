@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -528,26 +529,21 @@ public class RunnableModule extends Module {
     }
 
     public String getClassPath() {
-        StringBuilder sb = new StringBuilder();
-        String separator = System.getProperty("path.separator");
+        List<String> classPaths = new ArrayList<>();
 
+        char fileSeparator = System.getProperty("file.separator").charAt(0);
         for (int i = 0; i < moduleInfo.libraries.size(); i++) {
             Library lib = moduleInfo.libraries.get(i);
             if (lib.needExtract())
                 continue;
             if (!lib.needDownloadInOS())
                 continue;
-            sb.append(lib.getRealFilePath().replace('/', System.getProperty("file.separator").charAt(0)));
-            sb.append(separator);
+            classPaths.add(lib.getRealFilePath().replace('/', fileSeparator));
         }
 
-        sb.append(getModuleJarPath().replace('/', System.getProperty("file.separator").charAt(0)));
+        classPaths.add(getModuleJarPath().replace('/', fileSeparator));
 
-        sb.append(separator);
-
-        if (sb.length() > 0)
-            sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
+        return classPaths.stream().distinct().collect(Collectors.joining(System.getProperty("path.separator")));
     }
 
     public String getNativePath(String arch) {

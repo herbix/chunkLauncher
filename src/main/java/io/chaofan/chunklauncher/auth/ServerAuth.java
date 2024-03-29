@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.chaofan.chunklauncher.CharSelectDialog;
+import io.chaofan.chunklauncher.Config;
 
 /**
  * This class defines a method to login minecraft. The classes in
@@ -19,13 +20,15 @@ import io.chaofan.chunklauncher.CharSelectDialog;
  */
 public abstract class ServerAuth {
 
-    private String name;
-    private String pass;
+    protected final LauncherProfiles profiles = new LauncherProfiles(Config.gamePath + "/launcher_profiles.json");
+
+    private final String name;
+    private final String pass;
     private String accessToken;
     private String playerName;
     private String uuid;
     private String userType;
-    private Map<String, Collection<Object>> userProperties = new HashMap<>();
+    private final Map<String, Collection<Object>> userProperties = new HashMap<>();
 
     /**
      * Login user name and password should be passed to this constructor.

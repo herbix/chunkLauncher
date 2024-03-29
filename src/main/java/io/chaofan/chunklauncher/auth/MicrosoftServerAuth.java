@@ -65,6 +65,10 @@ public class MicrosoftServerAuth extends ServerAuth {
         setAccessToken(mcAuthToken);
         setUserType("mojang");
 
+        this.profiles.putData(new LauncherProfiles.AuthDBItem(getUuid(), getName(), getAccessToken(),
+                null, getPlayerName(), null));
+        this.profiles.save();
+
         callback.authDone(this, true);
     }
 
@@ -88,7 +92,7 @@ public class MicrosoftServerAuth extends ServerAuth {
         xstsQuery.put("TokenType", "JWT");
 
         xstsQueryProperties.put("SandboxId", "RETAIL");
-        xstsQueryProperties.put("UserTokens", new JSONArray(Arrays.asList(xboxLiveToken)));
+        xstsQueryProperties.put("UserTokens", new JSONArray(Collections.singletonList(xboxLiveToken)));
 
         Map<String, String> xstsQueryHeaders = new HashMap<>();
         xstsQueryHeaders.put("Content-Type", "application/json");
