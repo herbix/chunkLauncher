@@ -134,6 +134,7 @@ public class MicrosoftServerAuth extends ServerAuth {
             // 5 minutes timeout
             int TIMEOUT = 5 * 60 * 1000;
             serverSocket.setSoTimeout(TIMEOUT);
+            String os = System.getProperty("os.name").toLowerCase();
 
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(url));

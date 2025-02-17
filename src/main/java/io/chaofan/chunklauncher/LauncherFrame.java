@@ -571,6 +571,8 @@ public class LauncherFrame extends JFrame {
 
     class ConsoleOutputStream extends OutputStream {
 
+        final String newLine = System.lineSeparator();
+        final char newLineChar = newLine.charAt(newLine.length() - 1);
         final byte[] buffer = new byte[65536];
         int pos = 0;
 
@@ -583,19 +585,19 @@ public class LauncherFrame extends JFrame {
 
         public void write(int b) {
             synchronized (buffer) {
-                if (b == 13) {
+                if (b == newLineChar) {
                     String message = new String(buffer, 0, pos);
                     outputConsole(message);
                     if (oldStdOut != null) {
                         oldStdOut.print(message);
                     }
                     pos = 0;
-                } else {
-                    buffer[pos] = (byte) b;
-                    pos++;
-                    if (pos >= buffer.length) {
-                        pos = 0;
-                    }
+                }
+
+                buffer[pos] = (byte) b;
+                pos++;
+                if (pos >= buffer.length) {
+                    pos = 0;
                 }
             }
         }

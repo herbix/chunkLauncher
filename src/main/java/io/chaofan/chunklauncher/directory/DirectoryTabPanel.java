@@ -12,7 +12,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 
 public class DirectoryTabPanel extends JPanel {
 
@@ -102,7 +104,9 @@ public class DirectoryTabPanel extends JPanel {
             }
             File f = rowProvider.getFile();
             String path = f.getPath();
-            f.renameTo(new File(path.substring(0, path.length() - 9)));
+            try {
+                Files.move(f.toPath(), new File(path.substring(0, path.length() - 9)).toPath());
+            } catch (IOException ignored) {}
             refresh();
         });
 
@@ -113,7 +117,9 @@ public class DirectoryTabPanel extends JPanel {
             }
             File f = rowProvider.getFile();
             String path = f.getPath();
-            f.renameTo(new File(path + ".disabled"));
+            try {
+                Files.move(f.toPath(), new File(path + ".disabled").toPath());
+            } catch (IOException ignored) {}
             refresh();
         });
 

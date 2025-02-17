@@ -1,6 +1,8 @@
 package io.chaofan.chunklauncher.version;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -174,7 +176,9 @@ public class RunnableModule extends Module {
             }
 
             fileReal.delete();
-            file.renameTo(fileReal);
+            try {
+                Files.move(file.toPath(), fileReal.toPath());
+            } catch (IOException ignored) {}
 
             if (queueEmpty) {
                 finishInstall();
@@ -188,7 +192,9 @@ public class RunnableModule extends Module {
             fileReal = new File(lib.getRealShaPath());
 
             fileReal.delete();
-            file.renameTo(fileReal);
+            try {
+                Files.move(file.toPath(), fileReal.toPath());
+            } catch (IOException ignored) {}
 
             if (queueEmpty) {
                 finishInstall();
@@ -365,7 +371,9 @@ public class RunnableModule extends Module {
                     fileReal = new File(asset.getRealFilePath());
 
                     fileReal.delete();
-                    file.renameTo(fileReal);
+                    try {
+                        Files.move(file.toPath(), fileReal.toPath());
+                    } catch (IOException ignored) {}
 
                     if (queueEmpty) {
                         finishInstall();

@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -80,7 +81,7 @@ public class EasyZipAccess {
                     File extractedFileReal = new File(dest + prefixedName);
                     extractedFileReal.getParentFile().mkdirs();
                     extractedFileReal.delete();
-                    extractedFile.renameTo(extractedFileReal);
+                    Files.move(extractedFile.toPath(), extractedFileReal.toPath());
 
                 } catch (Exception e) {
                     e.printStackTrace();

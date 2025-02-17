@@ -18,7 +18,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,7 +134,10 @@ public class Launcher {
                 File versionFileNew = new File(Config.TEMP_DIR + "/version_temp");
                 versionFile.getParentFile().mkdirs();
                 versionFile.delete();
-                versionFileNew.renameTo(versionFile);
+                try {
+                    Files.move(versionFileNew.toPath(), versionFile.toPath());
+                } catch (IOException ignored) {
+                }
                 VersionManager.initVersionInfo(Config.gamePath + Config.MINECRAFT_VERSION_FILE);
                 Map<String, Version> versionList = VersionManager.getVersionList();
                 if (versionList == null)

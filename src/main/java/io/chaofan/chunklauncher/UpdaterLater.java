@@ -2,6 +2,7 @@ package io.chaofan.chunklauncher;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class UpdaterLater {
 
@@ -46,8 +47,11 @@ public class UpdaterLater {
         }
 
         for (int i = 0; i < 10; i++) {
-            if (tempFile.renameTo(realFile))
+            try {
+                Files.move(tempFile.toPath(), realFile.toPath());
                 break;
+            } catch (IOException ignored) {
+            }
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
